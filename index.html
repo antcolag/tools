@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Tests</title>
+	<script type="module" src="./tests.js"></script>
+	<script type="module" src="./reactive.js"></script>
+	<script type="module" src="./observe.js"></script>
+	<script type="module" src="./tools.js"></script>
+	<script type="module" defer>
+		import * as t from "./tests.js";
+		import * as r from "./reactive.js";
+		import * as o from "./observe.js";
+		import * as tt from "./tools.js";
+
+		new t.Test("tests shuld work").defer(true)
+
+		new t.Test("reactive shuld work", (arg) => {
+			var notifier = {};
+			var receiver = {}
+			r.iReactive.call(notifier)
+
+			t.ASSERT_F(notifier.x)
+			t.ASSERT_F(receiver.x)
+
+			notifier.bindable('x')
+			notifier.bind('x', receiver)
+			notifier.x = 1
+
+			t.ASSERT(1, notifier.x)
+			t.ASSERT(1, receiver.x)
+			return arg
+		}).run(true)
+
+
+		new t.Test("observables shuld work", (arg) => {
+			var notifier = {};
+			var receiver = {
+				test1Passed: false,
+				test2Passed: false,
+				test3Passed: 0,
+				test4Passed: 0,
+			}
+			o.iObservable.call(notifier)
+			notifier.on("evt1 evt2", () => {
+				receiver.test1Passed = true
+			}, () => {
+				receiver.test2Passed = true
+			})
+			notifier.once("evt2 evt3", () => {
+				receiver.test3Passed++
+			}, () => {
+				receiver.test4Passed++
+			})
+			t.ASSERT_F(receiver.test1Passed)
+			t.ASSERT_F(receiver.test2Passed)
+			t.ASSERT_F(receiver.test3Passed)
+			t.ASSERT_F(receiver.test4Passed)
+			notifier.fire("evt1 evt2")
+			notifier.fire("evt2")
+			notifier.fire("evt2 evt3")
+			t.ASSERT_T(receiver.test1Passed)
+			t.ASSERT_T(receiver.test2Passed)
+			t.ASSERT(1, receiver.test3Passed)
+			t.ASSERT(1, receiver.test4Passed)
+			return arg
+		}).run(true)
+	</script>
+
+</head>
+<body>
+
+	<h1>Test</h1>
+
+	<form action="">
+
+	</form>
+
+</body>
+</html>

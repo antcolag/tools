@@ -1,0 +1,61 @@
+import {
+	checkProp,
+	injector
+} from "./tools.js"
+
+export const OBSERVERS = Symbol('observers');
+
+export const HANDLERS = {
+	on,
+	once,
+	off,
+	fire
+}
+
+export function iObservable() {
+	injector.call(this, HANDLERS)
+}
+
+export default iObservable;
+
+function check(evt){
+	checkProp.call(this, OBSERVERS)
+	evt = evt.split(' ')
+	evt.forEach(e => this[OBSERVERS][e] = this[OBSERVERS][e] || []);
+	return evt;
+}
+
+function on(evt, ...f){
+	evt = check.call(this, evt);
+	if(evt.length > 1){
+		return evt.map(x => this.on(x, ...f))
+	}
+	this[OBSERVERS][evt[0]] = this[OBSERVERS][evt[0]].concat(f)
+	return f
+}
+
+function once(evt, ...f){
+	return this.on(evt, ...f.map(x => {
+		var handler = function(){
+			x.apply(this, arguments)
+			this.off(evt, handler)
+		}
+		return handler;
+	}))
+}
+
+function off(evt, ...f){
+	evt = check.call(this, evt);
+	if(evt.length > 1){
+		return evt.map(x => this.off(x, ...f))
+	}
+	return f.map(h => delete this[OBSERVERS][evt[0]][this[OBSERVERS][evt[0]].indexOf(h)])
+}
+
+function fire(evt, ...args){
+	evt = check.call(this, evt)
+	if(evt.length > 1){
+		return evt.map(x => this.fire(x, ...args))
+	}
+	return this[OBSERVERS][evt].map(x => x.apply(this, args))
+}
