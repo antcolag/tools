@@ -1,8 +1,11 @@
 import {
 	pipe,
 	croak,
-	defer
+	defer,
+	DEBUGGING
 } from "./tools.js"
+
+DEBUGGING(true)
 
 export function ASSERT(expr, val) {
 	return val === expr || croak(expr)

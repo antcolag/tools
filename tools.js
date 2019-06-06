@@ -12,10 +12,6 @@ export function no(){
 	return false;
 }
 
-export function applyWithConst(f, value){
-	return (obj) => f(obj, value)
-}
-
 export function delay(t) {
 	return new Promise((resolve)=>setTimeout(resolve, t))
 }
@@ -25,8 +21,22 @@ export async function defer(f, t, ...args) {
 	return f(...args)
 }
 
+export function croak(v){
+	if(!DEBUG){
+		return;
+	}
+	throw v
+}
+
 export function pause() {
+	if(!DEBUG){
+		return;
+	}
 	debugger;
+}
+
+export function applyWithConst(f, value){
+	return (obj) => f(obj, value)
 }
 
 export const compareWhitConst = applyWithConst.bind(null, (obj, value) => obj === value)
@@ -34,10 +44,6 @@ export const isNull = compareWhitConst(null)
 export const isUndefined = compareWhitConst(void 0)
 export const isTrue = compareWhitConst(true)
 export const isFalse = compareWhitConst(false)
-
-export function croak(v){
-	throw v
-}
 
 export function checkProp(name, value = {}){
 	if(!this[name]){
@@ -60,3 +66,9 @@ export function injector(settings, filter = constProp) {
 	}
 	Object.defineProperties(this, handlers)
 }
+
+export function DEBUGGING(v) {
+	DEBUG = v
+}
+
+export var DEBUG = false;
