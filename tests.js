@@ -1,7 +1,6 @@
 import {
 	pipe,
 	croak,
-	defer,
 	DEBUGGING
 } from "./tools.js"
 
@@ -24,34 +23,35 @@ export class Test {
 		this.options = opt;
 		this.description = description;
 		this.handler = handler;
+		this.result = result;
 	}
 
-	run(...args) {
-		var promise = new Promise(resolver.bind(this, args))
-		promise.then(passed.bind(this))
-		promise.catch(failed.bind(this))
-		return promise;
-	}
-
-	async defer(...args) {
-		await defer(this.run.bind(this), 0, ...args)
+	async run(...args) {
+		try {
+			var promise = new Promise(resolver.bind(this, args))
+			promise.then(passed.bind(this))
+			promise.catch(failed.bind(this))
+			return await promise;
+		} catch(e) {
+			return e;
+		}
 	}
 }
 
 export default Test;
 
 function resolver(args, resolve) {
-	return resolve(this.handler.bind(this, ...args))
+	return resolve(this.handler.call(this, ...args))
 }
 
 function passed(o) {
-	console.log(...result `${this.description} PASSED ${o} green`)
+	return this.result `${this.description} PASSED ${o} green`
 }
 
 function failed(e) {
-	console.error(...result `${this.description} FAILED ${e} red`)
+	return this.result `${this.description} FAILED ${e} red`
 }
 
 function result(...args) {
-	return [`${args[1]}:%c${args[0][1]}%c-> ${args[2]}`, `color:${args[0][2]}`, "color:initial"]
+	return console.log(`${args[1]}:%c${args[0][1]}%c-> ${args[2]}`, `color:${args[0][2]}`, "color:initial")
 }
