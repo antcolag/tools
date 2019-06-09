@@ -27,10 +27,10 @@ export class Test {
 	}
 
 	async run(...args) {
+		var promise = new Promise(resolver.bind(this, args))
+		promise.then(passed.bind(this))
+		promise.catch(failed.bind(this))
 		try {
-			var promise = new Promise(resolver.bind(this, args))
-			promise.then(passed.bind(this))
-			promise.catch(failed.bind(this))
 			return await promise;
 		} catch(e) {
 			return e;
