@@ -12,11 +12,11 @@ export const HANDLERS = {
 	fire
 }
 
-export function iObservable() {
+export function iobservable() {
 	injector.call(this, HANDLERS)
 }
 
-export default iObservable;
+export default iobservable;
 
 function check(evt){
 	checkProp.call(this, OBSERVERS)

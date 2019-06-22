@@ -10,63 +10,26 @@
 	<script type="module" src="./observe.js"></script>
 	<script type="module" src="./tools.js"></script>
 	<script type="module" defer>
-		import * as t from "./tests.js";
-		import * as r from "./reactive.js";
-		import * as o from "./observe.js";
-		import * as tt from "./tools.js";
+		import * as test from "./tests.js";
+		import ireactive from "./reactive.js";
+		import iobservable from "./observe.js";
+		import { pipe, croak } from "./tools.js";
 
-		new t.Test("tests shuld work").run(true)
+		new test.Test("tests shuld work", async (arg) => {
+			var obj = {}
+			var tests = new test.Test("reactive and events shuld work", pipe)
+			tests.bind("result", obj)
+			tests.on("PASSED FAILED complete", test.ASSERT.bind(null, obj.result, tests.result))
+			tests.run(true)
 
-		new t.Test("reactive shuld work", (arg) => {
-			var notifier = {};
-			var receiver = {}
-			r.iReactive.call(notifier)
-
-			t.ASSERT_F(notifier.x)
-			t.ASSERT_F(receiver.x)
-
-			notifier.bindable('x')
-			notifier.bind('x', receiver)
-			notifier.x = 1
-
-			t.ASSERT(1, notifier.x)
-			t.ASSERT(1, receiver.x)
+			await async function(){
+				var testing = new test.Test("failing tests shuld work", test.ASSERT_T)
+				.run(new test.Test("I will fail", croak).run(true))
+				testing = await testing
+			}()
 			return arg
 		}).run(true)
 
-
-		new t.Test("observables shuld work", (arg) => {
-			var notifier = {};
-			var receiver = {
-				test1Passed: false,
-				test2Passed: false,
-				test3Passed: 0,
-				test4Passed: 0,
-			}
-			o.iObservable.call(notifier)
-			notifier.on("evt1 evt2", () => {
-				receiver.test1Passed = true
-			}, () => {
-				receiver.test2Passed = true
-			})
-			notifier.once("evt2 evt3", () => {
-				receiver.test3Passed++
-			}, () => {
-				receiver.test4Passed++
-			})
-			t.ASSERT_F(receiver.test1Passed)
-			t.ASSERT_F(receiver.test2Passed)
-			t.ASSERT_F(receiver.test3Passed)
-			t.ASSERT_F(receiver.test4Passed)
-			notifier.fire("evt1 evt2")
-			notifier.fire("evt2")
-			notifier.fire("evt2 evt3")
-			t.ASSERT_T(receiver.test1Passed)
-			t.ASSERT_T(receiver.test2Passed)
-			t.ASSERT(1, receiver.test3Passed)
-			t.ASSERT(1, receiver.test4Passed)
-			return arg
-		}).run(true)
 	</script>
 
 </head>

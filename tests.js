@@ -4,6 +4,10 @@ import {
 	DEBUGGING
 } from "./tools.js"
 
+import iobservable from "./observe.js"
+
+import ireactive from "./reactive.js"
+
 DEBUGGING(true)
 
 export function ASSERT(expr, val) {
@@ -19,39 +23,46 @@ export function ASSERT_F(expr) {
 }
 
 export class Test {
-	constructor(description, handler = pipe, ...opt) {
+	constructor(description, test = pipe, ...opt) {
 		this.options = opt;
 		this.description = description;
-		this.handler = handler;
-		this.result = result;
+		this.test = test;
+		this.print = consolePrinter;
+		this.bindable('result')
 	}
 
 	async run(...args) {
 		var promise = new Promise(resolver.bind(this, args))
-		promise.then(passed.bind(this))
-		promise.catch(failed.bind(this))
+		promise.finally(()=> this.fire("finish", this))
 		try {
-			return await promise;
+			promise = await promise
+			finish.call(this, "PASSED", promise)
+			return promise;
 		} catch(e) {
-			return e;
+			finish.call(this, "FAILED", e)
+			return e
 		}
 	}
 }
 
+iobservable.call(Test.prototype)
+ireactive.call(Test.prototype)
+
 export default Test;
 
 function resolver(args, resolve) {
-	return resolve(this.handler.call(this, ...args))
+	return resolve(this.test.call(this, ...args))
 }
 
-function passed(o) {
-	return this.result `${this.description} PASSED ${o} green`
+function finish(state, result) {
+	this.fire(state, this.result = result)
+	this.print `test end ${state}`
 }
 
-function failed(e) {
-	return this.result `${this.description} FAILED ${e} red`
-}
-
-function result(...args) {
-	return console.log(`${args[1]}:%c${args[0][1]}%c-> ${args[2]}`, `color:${args[0][2]}`, "color:initial")
+function consolePrinter(...args) {
+	var color = "red"
+	if(args[1] == "PASSED") {
+		color = "green"
+	}
+	return console.log(`${this.description}: %c${args[1]}%c -> ${this.result}`, `color:${color}`, "color:initial")
 }
