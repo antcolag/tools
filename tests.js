@@ -27,7 +27,6 @@ export class Test {
 		this.options = opt;
 		this.description = description;
 		this.test = test;
-		this.print = consolePrinter;
 		this.bindable('result')
 	}
 
@@ -44,6 +43,8 @@ export class Test {
 		}
 	}
 }
+
+Test.prototype.print = consolePrinter;
 
 iobservable.call(Test.prototype)
 ireactive.call(Test.prototype)
