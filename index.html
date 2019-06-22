@@ -15,31 +15,16 @@
 		import iobservable from "./observe.js";
 		import { pipe, croak } from "./tools.js";
 
-		new test.Test("tests shuld work", async (arg) => {
-			var obj = {}
+		new test.Test("tests shuld work", async function (arg){
 			var tests = new test.Test("reactive and events shuld work", pipe)
-			tests.bind("result", obj)
-			tests.on("PASSED FAILED complete", test.ASSERT.bind(null, obj.result, tests.result))
+			tests.bind("result", this, "reactiveResult")
+			tests.on("PASSED FAILED complete", test.ASSERT.bind(null, this.reactiveResult, tests.result))
 			tests.run(true)
-
-			await async function(){
-				var testing = new test.Test("failing tests shuld work", test.ASSERT_T)
-				.run(new test.Test("I will fail", croak).run(true))
-				testing = await testing
-			}()
+			new test.Test("failing tests shuld work", test.ASSERT_T).run(new test.Test("I will fail", croak).run(true))
 			return arg
 		}).run(true)
-
 	</script>
-
 </head>
 <body>
-
-	<h1>Test</h1>
-
-	<form action="">
-
-	</form>
-
 </body>
 </html>
