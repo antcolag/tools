@@ -20,7 +20,8 @@
 			tests.bind("result", this, "reactiveResult")
 			tests.on("PASSED FAILED complete", test.ASSERT.bind(null, this.reactiveResult, tests.result))
 			tests.run(true)
-			new test.Test("failing tests shuld work", test.ASSERT_T).run(new test.Test("I will fail", croak).run(true))
+			new test.Test("failing tests shuld work", test.ASSERT_T)
+			.run(new test.Test("I will fail", croak).run(true))
 			return arg
 		}).run(true)
 	</script>
