@@ -27,7 +27,7 @@ export class Test {
 		this.options = opt;
 		this.description = description;
 		this.test = test;
-		this.bindable('result')
+		this.bindable("result")
 	}
 
 	async run(...args) {

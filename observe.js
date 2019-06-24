@@ -3,7 +3,7 @@ import {
 	injectProperties
 } from "./tools.js"
 
-export const OBSERVERS = Symbol('observers')
+export const OBSERVERS = Symbol("observers")
 
 const HANDLERS = {
 	on,
@@ -20,7 +20,7 @@ export default iobservable
 
 function check(evt){
 	buildProperty.call(this, OBSERVERS, {})
-	evt = evt.split(' ')
+	evt = evt.split(" ")
 	evt.forEach(e => this[OBSERVERS][e] = this[OBSERVERS][e] || [])
 	return evt
 }

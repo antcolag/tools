@@ -3,7 +3,7 @@ import {
 	injectProperties
 } from "./tools.js"
 
-export const BINDS = Symbol('binds')
+export const BINDS = Symbol("binds")
 
 const HANDLERS = {
 	bindable,
@@ -32,7 +32,7 @@ const buildBindable = (val, list, build) => {
 			set: setter,
 			get: () => val,
 		},
-		...typeof build == 'function'? build(val, list) : build
+		...typeof build == "function"? build(val, list) : build
 	}
 }
 
@@ -56,7 +56,7 @@ function bind(id, fun, name) {
 	if(!binds[id]){
 		return false
 	}
-	if(typeof fun == 'object'){
+	if(typeof fun == "object"){
 		if(!name){
 			name = id
 		}
