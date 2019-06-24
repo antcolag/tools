@@ -5,7 +5,7 @@ import {
 
 export const OBSERVERS = Symbol('observers')
 
-export const HANDLERS = {
+const HANDLERS = {
 	on,
 	once,
 	off,
