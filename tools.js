@@ -61,8 +61,10 @@ export function buildProperty(name, value, filter = constDefiner){
 }
 
 export function injectProperties(settings, filter = constDefiner) {
-	const handler = (prev, curr) => prev[curr] = filter(settings[curr])
-	Object.defineProperties(this, Object.keys(settings).reduce(handler, {}))
+	Object.defineProperties(this, Object.keys(settings).reduce((prev, curr) => prev = {
+		...prev,
+		[curr]: filter(settings[curr])
+	}, {}))
 }
 
 export function DEBUGGING(v) {
