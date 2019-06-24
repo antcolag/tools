@@ -61,11 +61,8 @@ export function buildProperty(name, value, filter = constDefiner){
 }
 
 export function injectProperties(settings, filter = constDefiner) {
-	var handlers = {}
-	for(var i in settings){
-		handlers[i] = filter(settings[i])
-	}
-	Object.defineProperties(this, handlers)
+	const handler = (prev, curr) => prev[curr] = filter(settings[curr])
+	Object.defineProperties(this, Object.keys(settings).reduce(handler, {}))
 }
 
 export function DEBUGGING(v) {
