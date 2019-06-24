@@ -17,7 +17,7 @@ export function ireactive() {
 
 export default ireactive
 
-const buildBindable = (val, list, build) => {
+function buildBindable (val, list, build) {
 	var recurring = 0
 	var setter = (v) => {
 		if(recurring++){
