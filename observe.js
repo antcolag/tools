@@ -30,7 +30,8 @@ function on(evt, ...f){
 	if(evt.length > 1){
 		return evt.map(x => this.on(x, ...f))
 	}
-	this[OBSERVERS][evt[0]] = this[OBSERVERS][evt[0]].concat(f)
+	evt = evt[0]
+	this[OBSERVERS][evt] = this[OBSERVERS][evt].concat(f)
 	return f
 }
 
@@ -49,7 +50,8 @@ function off(evt, ...f){
 	if(evt.length > 1){
 		return evt.map(x => this.off(x, ...f))
 	}
-	return f.map(h => delete this[OBSERVERS][evt[0]][this[OBSERVERS][evt[0]].indexOf(h)])
+	var list = this[OBSERVERS][evt[0]]
+	return f.map(h => delete list[list.indexOf(h)])
 }
 
 function fire(evt, ...args){

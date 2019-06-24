@@ -60,11 +60,14 @@ export function buildProperty(name, value, filter = constDefiner){
 	}
 }
 
+function pushProperty(name, value) {
+	this[name] = value
+	return this
+}
+
 export function injectProperties(settings, filter = constDefiner) {
-	Object.defineProperties(this, Object.keys(settings).reduce((prev, curr) => prev = {
-		...prev,
-		[curr]: filter(settings[curr])
-	}, {}))
+	var handler = (prev, curr) => pushProperty.call(prev, curr, filter(settings[curr]))
+	Object.defineProperties(this, Object.keys(settings).reduce(handler, {}))
 }
 
 export function DEBUGGING(v) {

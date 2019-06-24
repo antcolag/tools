@@ -19,7 +19,7 @@ export default ireactive
 
 const buildBindable = (val, list, build) => {
 	var recurring = 0
-	const setter = (v) => {
+	var setter = (v) => {
 		if(recurring++){
 			return
 		}
