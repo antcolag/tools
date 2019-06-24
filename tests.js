@@ -31,7 +31,7 @@ export class Test {
 	}
 
 	async run(...args) {
-		var promise = new Promise(resolver.bind(this, args))
+		const promise = new Promise(resolver.bind(this, args))
 		promise.finally(()=> this.fire("complete", this))
 		try {
 			return await promise

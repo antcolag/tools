@@ -50,7 +50,7 @@ function off(evt, ...f){
 	if(evt.length > 1){
 		return evt.map(x => this.off(x, ...f))
 	}
-	var list = this[OBSERVERS][evt[0]]
+	const list = this[OBSERVERS][evt[0]]
 	return f.map(h => delete list[list.indexOf(h)])
 }
 

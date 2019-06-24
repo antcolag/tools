@@ -19,7 +19,7 @@ export default ireactive
 
 function buildBindable (val, list, build) {
 	var recurring = 0
-	var setter = (v) => {
+	const setter = (v) => {
 		if(recurring++){
 			return
 		}
@@ -42,17 +42,17 @@ function check(){
 }
 
 function bindable(id, build) {
-	var binds = check.call(this)
+	const binds = check.call(this)
 	if(binds[id]){
 		return false
 	}
 	binds[id] = []
-	var bindable = buildBindable(this[id], binds[id], build)
+	const bindable = buildBindable(this[id], binds[id], build)
 	return Object.defineProperty(this, id, bindable)
 }
 
 function bind(id, fun, name) {
-	var binds = check.call(this)
+	const binds = check.call(this)
 	if(!binds[id]){
 		return false
 	}
@@ -68,6 +68,6 @@ function bind(id, fun, name) {
 }
 
 function unbind(id, key) {
-	var binds = check.call(this)
+	const binds = check.call(this)
 	binds[id] = binds[id].filter((v)=>v!==key)
 }
