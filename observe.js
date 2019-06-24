@@ -1,9 +1,9 @@
 import {
-	checkProp,
-	injector
+	buildProperty,
+	injectProperties
 } from "./tools.js"
 
-export const OBSERVERS = Symbol('observers');
+export const OBSERVERS = Symbol('observers')
 
 export const HANDLERS = {
 	on,
@@ -13,20 +13,20 @@ export const HANDLERS = {
 }
 
 export function iobservable() {
-	injector.call(this, HANDLERS)
+	injectProperties.call(this, HANDLERS)
 }
 
-export default iobservable;
+export default iobservable
 
 function check(evt){
-	checkProp.call(this, OBSERVERS)
+	buildProperty.call(this, OBSERVERS, {})
 	evt = evt.split(' ')
-	evt.forEach(e => this[OBSERVERS][e] = this[OBSERVERS][e] || []);
-	return evt;
+	evt.forEach(e => this[OBSERVERS][e] = this[OBSERVERS][e] || [])
+	return evt
 }
 
 function on(evt, ...f){
-	evt = check.call(this, evt);
+	evt = check.call(this, evt)
 	if(evt.length > 1){
 		return evt.map(x => this.on(x, ...f))
 	}
@@ -40,12 +40,12 @@ function once(evt, ...f){
 			x.apply(this, arguments)
 			this.off(evt, handler)
 		}
-		return handler;
+		return handler
 	}))
 }
 
 function off(evt, ...f){
-	evt = check.call(this, evt);
+	evt = check.call(this, evt)
 	if(evt.length > 1){
 		return evt.map(x => this.off(x, ...f))
 	}

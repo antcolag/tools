@@ -1,15 +1,15 @@
 export function noop(){}
 
 export function pipe(v){
-	return v;
+	return v
 }
 
 export function yes(){
-	return true;
+	return true
 }
 
 export function no(){
-	return false;
+	return false
 }
 
 export function delay(t) {
@@ -17,49 +17,50 @@ export function delay(t) {
 }
 
 export async function defer(f, t, ...args) {
-	await delay(t);
+	await delay(t)
 	return f(...args)
 }
 
 export function croak(v){
 	if(!DEBUG){
-		return;
+		return
 	}
 	throw v
 }
 
 export function pause() {
 	if(!DEBUG){
-		return;
+		return
 	}
-	debugger;
+	debugger
 }
 
 export function applyWithConst(f, value){
 	return (obj) => f(obj, value)
 }
 
-export const compareWhitConst = applyWithConst.bind(null, (obj, value) => obj === value)
+export const compareWhitConst = applyWithConst.bind(void 0, (obj, value) => obj === value)
+
 export const isNull = compareWhitConst(null)
 export const isUndefined = compareWhitConst(void 0)
 export const isTrue = compareWhitConst(true)
 export const isFalse = compareWhitConst(false)
 
-export function checkProp(name, value = {}){
+export const PropertyDefinitionBuilder = (writable, enumerable, value) => ({
+	writable,
+	enumerable,
+	value
+})
+
+export const constDefiner = PropertyDefinitionBuilder.bind(void 0, false, false)
+
+export function buildProperty(name, value, filter = constDefiner){
 	if(!this[name]){
-		Object.defineProperty(this, name, constProp(value))
+		Object.defineProperty(this, name, filter(value))
 	}
 }
 
-export const defProp = (writable, enumerable, value) => ({
-	writable,
-	enumerable,
-	value,
-})
-
-export const constProp = defProp.bind(null, false, false);
-
-export function injector(settings, filter = constProp) {
+export function injectProperties(settings, filter = constDefiner) {
 	var handlers = {}
 	for(var i in settings){
 		handlers[i] = filter(settings[i])
@@ -71,4 +72,4 @@ export function DEBUGGING(v) {
 	DEBUG = v
 }
 
-export var DEBUG = false;
+export var DEBUG = false

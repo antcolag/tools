@@ -32,13 +32,11 @@ export class Test {
 
 	async run(...args) {
 		var promise = new Promise(resolver.bind(this, args))
-		promise.finally(()=> this.fire("finish", this))
+		promise.finally(()=> this.fire("complete", this))
 		try {
-			promise = await promise
-			finish.call(this, "PASSED", promise)
-			return promise;
+			return await promise
+			.then(finish.bind(this, "PASSED"), finish.bind(this, "FAILED"))
 		} catch(e) {
-			finish.call(this, "FAILED", e)
 			return e
 		}
 	}
@@ -58,6 +56,7 @@ function resolver(args, resolve) {
 function finish(state, result) {
 	this.fire(state, this.result = result)
 	this.print `test end ${state}`
+	return result;
 }
 
 function consolePrinter(...args) {

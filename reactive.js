@@ -1,9 +1,9 @@
 import {
-	checkProp,
-	injector
+	buildProperty,
+	injectProperties
 } from "./tools.js"
 
-export const BINDS = Symbol('binds');
+export const BINDS = Symbol('binds')
 
 const HANDLERS = {
 	bindable,
@@ -12,20 +12,20 @@ const HANDLERS = {
 }
 
 export function ireactive() {
-	injector.call(this, HANDLERS)
+	injectProperties.call(this, HANDLERS)
 }
 
-export default ireactive;
+export default ireactive
 
 const buildBindable = (val, list, build) => {
-	var recurring = 0;
+	var recurring = 0
 	const setter = (v) => {
 		if(recurring++){
-			return;
+			return
 		}
 		list.forEach(f=>f(v))
-		recurring = 0;
-		return val = v;
+		recurring = 0
+		return val = v
 	}
 	return {
 		...{
@@ -37,12 +37,12 @@ const buildBindable = (val, list, build) => {
 }
 
 function check(){
-	checkProp.call(this, BINDS)
-	return this[BINDS];
+	buildProperty.call(this, BINDS, {})
+	return this[BINDS]
 }
 
 function bindable(id, build) {
-	var binds = check.call(this);
+	var binds = check.call(this)
 	if(binds[id]){
 		return false
 	}
@@ -52,7 +52,7 @@ function bindable(id, build) {
 }
 
 function bind(id, fun, name) {
-	var binds = check.call(this);
+	var binds = check.call(this)
 	if(!binds[id]){
 		return false
 	}
@@ -68,6 +68,6 @@ function bind(id, fun, name) {
 }
 
 function unbind(id, key) {
-	var binds = check.call(this);
+	var binds = check.call(this)
 	binds[id] = binds[id].filter((v)=>v!==key)
 }
