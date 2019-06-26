@@ -74,4 +74,4 @@ export function DEBUGGING(v) {
 	DEBUG = v
 }
 
-export var DEBUG = false
+export let DEBUG = false
