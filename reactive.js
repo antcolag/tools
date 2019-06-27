@@ -17,7 +17,7 @@ export function ireactive() {
 
 export default ireactive
 
-function buildBindable (val, list, build) {
+function buildBinder (val, list, build) {
 	var recurring = 0
 	const setter = (v) => {
 		if(recurring++){
@@ -45,8 +45,8 @@ function bindable(id, build) {
 		return false
 	}
 	binds[id] = []
-	const bindable = buildBindable(this[id], binds[id], build)
-	return Object.defineProperty(this, id, bindable)
+	const buildedBinder = buildBinder(this[id], binds[id], build)
+	return Object.defineProperty(this, id, buildedBinder)
 }
 
 function bind(id, fun, name) {
