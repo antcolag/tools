@@ -28,10 +28,8 @@ function buildBindable (val, list, build) {
 		return val = v
 	}
 	return {
-		...{
-			set: setter,
-			get: () => val,
-		},
+		set: setter,
+		get: () => val,
 		...typeof build == "function"? build(val, list) : build
 	}
 }
