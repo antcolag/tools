@@ -15,7 +15,7 @@
 		import iobservable from "./observe.js";
 		import { pipe, croak } from "./tools.js";
 
-		new test.Test("tests shuld work", function (arg){
+		new test.Test("tests shuld work", function (arg) {
 			var tests = new test.Test("reactive and events shuld work", pipe)
 			tests.bind("result", this, "reactiveResult")
 			tests.on("PASSED FAILED complete", test.ASSERT.bind(null, this.reactiveResult, tests.result))

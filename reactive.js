@@ -67,5 +67,5 @@ function bind(id, fun, name) {
 
 function unbind(id, key) {
 	const binds = check.call(this)
-	binds[id] = binds[id].filter((v)=>v!==key)
+	binds[id] = binds[id].filter((v) => v!==key)
 }

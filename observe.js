@@ -18,16 +18,16 @@ export function iobservable() {
 
 export default iobservable
 
-function check(evt){
+function check(evt) {
 	buildProperty.call(this, OBSERVERS, {})
 	evt = evt.split(" ")
 	evt.forEach(e => this[OBSERVERS][e] = this[OBSERVERS][e] || [])
 	return evt
 }
 
-function on(evt, ...f){
+function on(evt, ...f) {
 	evt = check.call(this, evt)
-	if(evt.length > 1){
+	if(evt.length > 1) {
 		return evt.map(x => this.on(x, ...f))
 	}
 	evt = evt[0]
@@ -35,9 +35,9 @@ function on(evt, ...f){
 	return f
 }
 
-function once(evt, ...f){
+function once(evt, ...f) {
 	return this.on(evt, ...f.map(x => {
-		var handler = function(){
+		var handler = function() {
 			x.apply(this, arguments)
 			this.off(evt, handler)
 		}
@@ -45,18 +45,18 @@ function once(evt, ...f){
 	}))
 }
 
-function off(evt, ...f){
+function off(evt, ...f) {
 	evt = check.call(this, evt)
-	if(evt.length > 1){
+	if(evt.length > 1) {
 		return evt.map(x => this.off(x, ...f))
 	}
 	const list = this[OBSERVERS][evt[0]]
 	return f.map(h => delete list[list.indexOf(h)])
 }
 
-function fire(evt, ...args){
+function fire(evt, ...args) {
 	evt = check.call(this, evt)
-	if(evt.length > 1){
+	if(evt.length > 1) {
 		return evt.map(x => this.fire(x, ...args))
 	}
 	return this[OBSERVERS][evt].map(x => x.apply(this, args))
