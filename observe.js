@@ -12,11 +12,11 @@ const HANDLERS = {
 	fire
 }
 
-export function iobservable() {
+export function observable() {
 	injectProperties.call(this, HANDLERS)
 }
 
-export default iobservable
+export default observable
 
 function check(evt){
 	buildProperty.call(this, OBSERVERS, {})

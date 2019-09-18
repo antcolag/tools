@@ -11,11 +11,11 @@ const HANDLERS = {
 	unbind
 }
 
-export function ireactive() {
+export function reactive() {
 	injectProperties.call(this, HANDLERS)
 }
 
-export default ireactive
+export default reactive
 
 function buildBinder (val, list, build) {
 	var recurring = 0

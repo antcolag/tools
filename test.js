@@ -5,9 +5,9 @@ import {
 	DEBUGGING
 } from "./debug.js"
 
-import iobservable from "./observe.js"
+import observable from "./observe.js"
 
-import ireactive from "./reactive.js"
+import reactive from "./reactive.js"
 
 DEBUGGING(true)
 
@@ -42,8 +42,8 @@ export class Test {
 
 Test.prototype.print = consolePrinter;
 
-iobservable.call(Test.prototype)
-ireactive.call(Test.prototype)
+observable.call(Test.prototype)
+reactive.call(Test.prototype)
 
 export default Test;
 
