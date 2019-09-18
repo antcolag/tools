@@ -26,7 +26,11 @@ export function applyWithConst(f, value){
 	return (obj) => f(obj, value)
 }
 
-export const compareWhitConst = applyWithConst.bind(void 0, (obj, value) => obj === value)
+export function equals(obj, value){
+	return obj === value
+}
+
+export const compareWhitConst = applyWithConst.bind(void 0, equals)
 
 export const isNull = compareWhitConst(null)
 export const isUndefined = compareWhitConst(void 0)
