@@ -33,7 +33,6 @@ export class Test {
 
 	async run(...args) {
 		const promise = new Promise(resolver.bind(this, args))
-		promise.catch(pipe)
 		promise.finally(()=> this.fire("complete", this))
 		return await promise
 		.then(finish.bind(this, "PASSED"), finish.bind(this, "FAILED"))
