@@ -109,7 +109,7 @@ I think that the ```observable``` and the ```reactive``` interfaces deserve a mo
 > // to a new Test instance
 > // arguments will be forwarder from run to the testCase function
 > new test.Test("test descriptrion", testCase ).run('arguments')
-> // if all goes right a gree message will be shown in the console
+> // if all goes right a green message will be shown in the console
 >
 > new test.Test("test descriptrion", testCase ).run()
 > // otherwise a red message will be printed
