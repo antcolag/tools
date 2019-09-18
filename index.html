@@ -13,7 +13,8 @@
 		import * as test from "./tests.js";
 		import ireactive from "./reactive.js";
 		import iobservable from "./observe.js";
-		import { pipe, croak } from "./tools.js";
+		import { pipe } from "./utils.js";
+		import { croak } from "./debug.js";
 
 		new test.Test("tests shuld work", async function (arg){
 			var tests = new test.Test("reactive and events shuld work", pipe)
