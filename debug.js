@@ -1,19 +1,19 @@
 export function croak(v){
-	if(!DEBUG){
+	if(!DEBUGGING){
 		return
 	}
 	throw v
 }
 
 export function pause() {
-	if(!DEBUG){
+	if(!DEBUGGING){
 		return
 	}
 	debugger
 }
 
-export function DEBUGGING(v) {
-	DEBUG = v
+export function DEBUG(v) {
+	DEBUGGING = v
 }
 
-export let DEBUG = false
+export let DEBUGGING = false

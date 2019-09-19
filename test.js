@@ -2,14 +2,14 @@ import { pipe } from "./utils.js"
 
 import {
 	croak,
-	DEBUGGING
+	DEBUG
 } from "./debug.js"
 
 import observable from "./observe.js"
 
 import reactive from "./reactive.js"
 
-DEBUGGING(true)
+DEBUG(true)
 
 export function ASSERT(expr, val) {
 	return val === expr || croak(expr)
@@ -35,7 +35,10 @@ export class Test {
 		const promise = new Promise(resolver.bind(this, args))
 		promise.finally(()=> this.fire("complete", this))
 		return await promise
-		.then(finish.bind(this, "PASSED"), finish.bind(this, "FAILED"))
+		.then(
+			finish.bind(this, "PASSED"),
+			finish.bind(this, "FAILED")
+		)
 	}
 }
 
@@ -61,5 +64,8 @@ function consolePrinter(...args) {
 	if(args[1] == "PASSED") {
 		color = "green"
 	}
-	return console.log(`${this.description}: %c${args[1]}%c -> ${this.result}`, `color:${color}`, "color:initial")
+	return console.log(
+		`${this.description}: %c${args[1]}%c -> ${this.result}`,
+		`color:${color}`, "color:initial"
+	)
 }
