@@ -5,8 +5,17 @@ export function croak(v){
 	throw v
 }
 
-export function crap(value, test) {
-	return value.constructor === test || croak(test)
+export function crap(value, ...tests) {
+	return tests.some((test) => {
+			switch(true) {
+			case typeof test == "string":
+				return typeof value == test;
+			case value instanceof test :
+			case value.constructor === test:
+				return true
+			}
+		}
+	) || croak(value.constructor)
 }
 
 export function pause() {
