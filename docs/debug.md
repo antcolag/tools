@@ -11,14 +11,13 @@ compare two values vith strict equal operator, if they are not equal, will [croa
 ```javascript
 import { ASSERT } from './debug.js'
 
-var myvalue1 = false
-var myvalue2 = true
+var myvalue = true
 
 // ok
-ASSERT(myvalue1, false)
+ASSERT(myvalue, true)
 
-// ko, will throw true
-ASSERT(myvalue2, false)
+// ko, will throw false
+ASSERT(myvalue, false)
 ```
 ---
 
