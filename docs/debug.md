@@ -6,7 +6,7 @@ Most of the debugging functionality are skipped
 when the ```DEBUGGING``` member of the module is falsy
 
 
-DEBUGGING
+DEBUG
 ---
 Userfull to check the debugging status
 ```javascript
@@ -20,7 +20,7 @@ else {
 ```
 ---
 
-DEBUG
+DEBUGGING
 ---
 Sets the debugging status
 ```javascript
