@@ -1,12 +1,13 @@
+import { pipe } from "./utils.js"
+
 import {
-	pipe,
 	croak,
 	DEBUGGING
-} from "./tools.js"
+} from "./debug.js"
 
-import iobservable from "./observe.js"
+import observable from "./observe.js"
 
-import ireactive from "./reactive.js"
+import reactive from "./reactive.js"
 
 DEBUGGING(true)
 
@@ -33,24 +34,20 @@ export class Test {
 	async run(...args) {
 		const promise = new Promise(resolver.bind(this, args))
 		promise.finally(()=> this.fire("complete", this))
-		try {
-			return await promise
-			.then(finish.bind(this, "PASSED"), finish.bind(this, "FAILED"))
-		} catch(e) {
-			return e
-		}
+		return await promise
+		.then(finish.bind(this, "PASSED"), finish.bind(this, "FAILED"))
 	}
 }
 
 Test.prototype.print = consolePrinter;
 
-iobservable.call(Test.prototype)
-ireactive.call(Test.prototype)
+observable.call(Test.prototype)
+reactive.call(Test.prototype)
 
 export default Test;
 
 function resolver(args, resolve) {
-	return resolve(this.test.call(this, ...args))
+	return resolve(this.test.apply(this, args))
 }
 
 function finish(state, result) {
