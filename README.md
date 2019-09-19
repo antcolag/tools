@@ -12,7 +12,7 @@ In this library you can find utilities for
 * a mini test suite -> test.js
 * debuging handlers -> debug.js
 
-*documentation reference can be found [here](doc/index.md)*
+*documentation reference can be found [here](docs/index.md)*
 
 Examples
 ---
