@@ -19,5 +19,5 @@ function pushProperty(name, value) {
 
 export function injectProperties(settings, filter = constDefiner) {
 	const handler = (prev, curr) => pushProperty.call(prev, curr, filter(settings[curr]))
-	Object.defineProperties(this, Object.keys(settings).reduce(handler, {}))
+	return Object.defineProperties(this, Object.keys(settings).reduce(handler, {}))
 }

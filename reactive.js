@@ -12,7 +12,7 @@ const HANDLERS = {
 }
 
 export function reactive() {
-	injectProperties.call(this, HANDLERS)
+	return injectProperties.call(this, HANDLERS)
 }
 
 export default reactive

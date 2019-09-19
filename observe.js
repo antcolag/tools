@@ -13,7 +13,7 @@ const HANDLERS = {
 }
 
 export function observable() {
-	injectProperties.call(this, HANDLERS)
+	return injectProperties.call(this, HANDLERS)
 }
 
 export default observable
