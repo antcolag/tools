@@ -10,19 +10,32 @@
 	<script type="module" src="./tools.js"></script>
 	<script type="module" src="./test.js"></script>
 	<script type="module" defer>
-		import * as test from "./test.js";
+		import Test from "./test.js";
 		import reactive from "./reactive.js";
 		import observable from "./observe.js";
 		import { pipe } from "./utils.js";
-		import { croak } from "./debug.js";
+		import {
+			croak,
+			ASSERT,
+			ASSERT_T,
+			ASSERT_F,
+		} from "./debug.js";
 
-		new test.Test("tests shuld work", function (arg) {
-			var tests = new test.Test("reactive and events shuld work", pipe)
-			tests.bind("result", this, "reactiveResult")
-			tests.on("PASSED FAILED complete", test.ASSERT.bind(null, this.reactiveResult, tests.result))
+		new Test("tests shuld work", function (arg) {
+			var tests = new Test("reactive and events shuld work", pipe)
+
+			tests
+			.bind("result", this, "reactiveResult")
+
+			tests.on(
+				"PASSED FAILED complete",
+				ASSERT.bind(null, this.reactiveResult, tests.result)
+			)
+
 			tests.run(true)
-			new test.Test("failing tests shuld work", test.ASSERT_T)
-			.run(new test.Test("I will fail", croak).run(true))
+			new Test("failing tests shuld work", ASSERT_T)
+			.run(new Test("I will fail", croak).run(true))
+
 			return arg
 		}).run(true)
 	</script>

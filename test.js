@@ -1,7 +1,6 @@
 import { pipe } from "./utils.js"
 
 import {
-	croak,
 	DEBUG
 } from "./debug.js"
 
@@ -10,18 +9,6 @@ import observable from "./observe.js"
 import reactive from "./reactive.js"
 
 DEBUG(true)
-
-export function ASSERT(expr, val) {
-	return val === expr || croak(expr)
-}
-
-export function ASSERT_T(expr) {
-	return ASSERT(true, !!expr)
-}
-
-export function ASSERT_F(expr) {
-	return ASSERT(false, !!expr)
-}
 
 export class Test {
 	constructor(description, test = pipe, ...opt) {
