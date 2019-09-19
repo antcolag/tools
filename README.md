@@ -94,6 +94,7 @@ I think that the ```observable``` and the ```reactive``` interfaces deserve a mo
 > // and you can surely use it with functions
 > myReactiveInstance
 > .bind('magicProperty', console.log.bind(console))
+>
 > // now we will also print the magicProperty value
 > // in console when the magicProperty change
 > myReactiveInstance.magicProperty = 'woooow!!'
@@ -102,17 +103,17 @@ I think that the ```observable``` and the ```reactive``` interfaces deserve a mo
 > ```javascript
 > // the mini test suite is super easy to use and have
 > // all the essential function that a test suite shuld have
-> import * as test from "./test.js";
->
-> // given a test case function
-> let testCase = (arg) => test.ASSERT_T(arg)
+> import Test from "./test.js";
+> import {
+> 	ASSERT_T, // read docs/debug.md for ASSERT_T function
+> } from "./debug.js";
 >
 > // you can test it by passing its reference
 > // to a new Test instance
 > // arguments will be forwarder from run to the testCase function
-> new test.Test("test descriptrion", testCase ).run('arguments')
+> new Test("test descriptrion", ASSERT_T ).run('arguments')
 > // if all goes right a green message will be shown in the console
 >
-> new test.Test("test descriptrion", testCase ).run()
+> new Test("test descriptrion", ASSERT_T ).run()
 > // otherwise a red message will be printed
 > ```
