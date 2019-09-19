@@ -12,6 +12,8 @@ In this library you can find utilities for
 * a mini test suite -> test.js
 * debuging handlers -> debug.js
 
+*documentation reference can be found [here](doc/index.md)*
+
 Examples
 ---
 I think that the ```observable``` and the ```reactive``` interfaces deserve a more in depth view
