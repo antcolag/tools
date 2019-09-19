@@ -63,6 +63,9 @@ myObj.bindable("property")
 var yourObj = {}
 myObj.bind("property", yourObj)
 
+// works with objects as well as with functions
+myObj.bind("property", console.log.bind(console))
+
 // this statement will update yourObj as well
 myObj.property = 'new value'
 
@@ -75,6 +78,7 @@ myObj.unbind("property", yourObj)
 Note
 ---
 It explots getters and setters for properties you want to share, so it cannot export property that already use getters or setters like the magic properties of the built in object of the browsers (ie you cannot make innerHTML on an HTMLElement bindable, but you can bind the innerHTML property of an HTMLElement to an object you build)
+
 ```javascript
 // will not work
 document.querySelector("a").bindable("innerHTML")

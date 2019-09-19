@@ -5,13 +5,63 @@ Debugging utilities wrapped in hendlers.
 Most of the debugging functionality are skipped
 when the ```DEBUGGING``` member of the module is falsy
 
+ASSERT
+---
+compare two values vith strict equal operator, if they are not equal, will [croak](debug.md#croak) an exception
+```javascript
+import { ASSERT } from './debug.js'
+
+var myvalue1 = false
+var myvalue2 = true
+
+// ok
+ASSERT(myvalue1, false)
+
+// ko, will throw true
+ASSERT(myvalue2, false)
+```
+---
+
+ASSERT_T
+---
+Assert true but not strictly, if you pass a falsy value will throw that value
+```javascript
+import { ASSERT_T } from from './debug.js'
+
+var myvalue1 = 1
+var myvalue2 = NaN
+
+// ok
+ASSERT_T(myvalue1)
+
+// ko, will throw NaN
+ASSERT_T(myvalue2)
+```
+---
+
+ASSERT_F
+---
+Assert false but not strictly, if you pass a truthy value will throw that value
+```javascript
+import { ASSERT_F } from from './debug.js'
+
+var myvalue1 = NaN
+var myvalue2 = 1
+
+// ok
+ASSERT_F(myvalue1)
+
+// ko, will throw 1
+ASSERT_F(myvalue2)
+```
+---
 
 DEBUGGING
 ---
 Userfull to check the debugging status
 ```javascript
-import * as debug from './debug.js'
-if(debug.DEBUGGING){
+import { DEBUGGING } from './debug.js'
+if(DEBUGGING){
 	console.warn('debugging mode')
 }
 else {
@@ -20,26 +70,13 @@ else {
 ```
 ---
 
-DEBUG
----
-Sets the debugging status
-```javascript
-import * as debug from './debug.js'
-const check = () => console.log('debugging?', debug.DEBUGGING)
-debug.DEBUG(false)
-check()
-debug.DEBUG(true)
-check()
-```
----
-
 croak
 ---
 Functional wrapper for ```throw```
 ```javascript
-import * as debug from './debug.js'
+import { croak } from './debug.js'
 // will throw the string 'wrong value'
-debug.croak('wrong value')
+croak('wrong value')
 ```
 ---
 
@@ -47,7 +84,20 @@ pause
 ---
 Functional wrapper for ```debugger``` directive
 ```javascript
-import * as debug from './debug.js'
+import { pause } from './debug.js'
 // will stop the execution and start the debugger
-debug.pause()
+pause()
 ```
+---
+
+DEBUG
+---
+Sets the debugging status
+```javascript
+import { DEBUG } from './debug.js'
+DEBUG(false)
+console.log('debugging?', debug.DEBUGGING)
+DEBUG(true)
+console.log('debugging?', debug.DEBUGGING)
+```
+---
