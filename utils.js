@@ -21,9 +21,12 @@ export async function defer(f, t, ...args) {
 	return f(...args)
 }
 
+export function apply(f, ...args) {
+	return f(...args)
+}
 
-export function applyWithConst(f, value){
-	return (obj) => f(obj, value)
+export function applyWithConst(f, ...values){
+	return (obj) => f(obj, ...values)
 }
 
 export function equals(obj, value){
