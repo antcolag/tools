@@ -23,7 +23,7 @@ export async function defer(f, t, ...args) {
 
 export function debounce(f, t = 100) {
 	var last, self
-	return async function debouncing (...args){
+	return function debouncing (...args){
 		self = this
 		if(last){
 			last = args
