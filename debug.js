@@ -5,7 +5,7 @@ export function croak(v){
 	throw v
 }
 
-export function type_check(result, value, ...tests) {
+function type_check(result, value, ...tests) {
 	return tests.some((test) => {
 			switch(true) {
 			case typeof test == 'string':
@@ -17,17 +17,15 @@ export function type_check(result, value, ...tests) {
 				return result
 			}
 		}
-	)
+	) || croak(value.constructor)
 }
 
-export function good(value, ...tests) {
+export function good(...tests) {
 	return type_check(true, ...tests)
-	|| croak(value.constructor)
 }
 
-export function crap(value, ...tests) {
+export function crap(...tests) {
 	return type_check(false, ...tests)
-	|| croak(value.constructor)
 }
 
 export function pause() {
