@@ -68,9 +68,9 @@ async function resolver(args, ok, ko, resolve) {
 		result = await ok(this.test.apply(this, args))
 	} catch(e) {
 		result = ko(e)
-	} finally {
-		resolve(result)
 	}
+	resolve(result)
+	return result;
 }
 
 function finish(state, result) {
