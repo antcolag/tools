@@ -5,15 +5,18 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Tests</title>
-	<script type="module" src="./reactive.js"></script>
-	<script type="module" src="./observe.js"></script>
-	<script type="module" src="./tools.js"></script>
-	<script type="module" src="./test.js"></script>
+	<script type="module" async src="./reactive.js"></script>
+	<script type="module" async src="./observe.js"></script>
+	<script type="module" async src="./tools.js"></script>
+	<script type="module" async src="./test.js"></script>
+	<script type="module" async src="./utils.js"></script>
 	<script type="module" defer>
 		import Test from "./test.js";
-		import reactive from "./reactive.js";
-		import observable from "./observe.js";
-		import { pipe } from "./utils.js";
+		import {
+			apply,
+			pipe,
+			yes
+		} from "./utils.js";
 		import {
 			croak,
 			ASSERT,
@@ -22,7 +25,11 @@
 		} from "./debug.js";
 
 		new Test("tests shuld work", function (arg) {
-			var tests = new Test("reactive and events shuld work", pipe)
+
+			var tests = new Test(
+				"reactive and events shuld work",
+				pipe
+			)
 
 			tests
 			.bind("result", this, "reactiveResult")
@@ -31,11 +38,17 @@
 				"PASSED FAILED complete",
 				ASSERT.bind(null, this.reactiveResult, tests.result)
 			)
-
 			tests.run(true)
-			new Test("failing tests shuld work", ASSERT_T)
-			.run(new Test("I will fail", croak).run(true))
 
+			new Test(
+				"failing tests shuld work",
+				croak
+			).die(true)
+
+			new Test(
+				"shuld fail if description is not a String",
+				() => new Test(-1).run()
+			).die()
 			return arg
 		}).run(true)
 	</script>

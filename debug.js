@@ -5,17 +5,29 @@ export function croak(v){
 	throw v
 }
 
-export function crap(value, ...tests) {
+export function type_check(result, value, ...tests) {
 	return tests.some((test) => {
 			switch(true) {
-			case typeof test == "string":
-				return typeof value == test;
-			case value instanceof test :
-			case value.constructor === test:
-				return true
+			case typeof test == 'string':
+				return result
+				? test == value
+				: tests != value;
+			case (value instanceof test):
+			case value.constructor == test:
+				return result
 			}
 		}
-	) || croak(value.constructor)
+	)
+}
+
+export function good(value, ...tests) {
+	return type_check(true, ...tests)
+	|| croak(value.constructor)
+}
+
+export function crap(value, ...tests) {
+	return type_check(false, ...tests)
+	|| croak(value.constructor)
 }
 
 export function pause() {
