@@ -21,7 +21,23 @@ export async function defer(f, t, ...args) {
 	return f(...args)
 }
 
-export function apply(f, ...args) {
+export function debounce(f, t = 100) {
+	var last, self
+	return async function debouncing (...args){
+		self = this
+		if(last){
+			last = args
+			return
+		}
+		last = args
+		defer(() => {
+			f.apply(self, last)
+			last = void 0
+		}, t)
+	}
+}
+
+export function apply(f, last) {
 	return f(...args)
 }
 
