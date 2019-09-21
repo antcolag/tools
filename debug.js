@@ -20,13 +20,8 @@ function type_check(result, value, ...tests) {
 	) || croak(value.constructor)
 }
 
-export function good(...tests) {
-	return type_check(true, ...tests)
-}
-
-export function crap(...tests) {
-	return type_check(false, ...tests)
-}
+export const good = type_check.bind(void 0, true);
+export const crap = type_check.bind(void 0, false);
 
 export function pause() {
 	if(!DEBUGGING){
