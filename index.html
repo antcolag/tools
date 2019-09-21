@@ -24,7 +24,7 @@
 			ASSERT_F,
 		} from "./debug.js";
 
-		new Test("tests shuld work", function (arg) {
+		new Test("tests shuld work", async function (arg) {
 
 			var tests = new Test(
 				"reactive and events shuld work",
@@ -38,14 +38,14 @@
 				"PASSED FAILED complete",
 				ASSERT.bind(null, this.reactiveResult, tests.result)
 			)
-			tests.run(true)
+			await tests.run(true)
 
-			new Test(
+			await new Test(
 				"failing tests shuld work",
 				croak
 			).die(true)
 
-			new Test(
+			await new Test(
 				"shuld fail if description is not a String",
 				() => new Test(-1).run()
 			).die()
