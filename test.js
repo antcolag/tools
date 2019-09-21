@@ -35,11 +35,8 @@ export class Test {
 			finish.bind(this, "PASSED"),
 			finish.bind(this, "FAILED")
 		));
-		return Promise.all([
-			promise,
-			promise
-			.then(()=> this.fire("complete", this))
-		])[0]
+		promise.finally((x)=> this.fire("complete", x))
+		return promise
 	}
 
 	die(...args) {
@@ -66,11 +63,11 @@ reactive.call(Test.prototype)
 
 export default Test;
 
-async function resolver(args, resolve, reject) {
+async function resolver(args, ok, ko, resolve, reject) {
 	try {
-		return resolve(await this.test.apply(this, args))
+		return ok(resolve(await this.test.apply(this, args)))
 	} catch(e) {
-		return reject(e)
+		return ko(resolve(e))
 	}
 }
 
