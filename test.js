@@ -39,17 +39,18 @@ export class Test {
 		return promise
 	}
 
-	die(...args) {
+	async die(...args) {
 		var fail = new Test("", this.test)
 		COUNTER--
 		fail.print = noop
 		this.test = ASSERT_T
 		this.print = this.print.bind(this, 'die test')
+
 		try {
-			return Promise.all([
+			return (await Promise.all([
 				fail.run(...args),
 				this.run(fail.state == "FAILED")
-			])[0]
+			]))[0]
 		} finally {
 			this.print = this.constructor.prototype.print
 		}
