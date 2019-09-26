@@ -25,15 +25,11 @@
 		} from "./debug.js";
 
 		new Test("tests shuld work", async function (arg) {
-
 			var tests = new Test(
 				"reactive and events shuld work",
 				pipe
 			)
-
-			tests
-			.bind("result", this, "reactiveResult")
-
+			tests.bind("result", this, "reactiveResult")
 			tests.on(
 				"PASSED FAILED complete",
 				ASSERT.bind(null, this.reactiveResult, tests.result)
@@ -44,6 +40,7 @@
 				"failing tests shuld work",
 				croak
 			).die(true)
+
 			await new Test(
 				"shuld fail if description is not a String",
 				() => new Test(-1).run()

@@ -1,4 +1,10 @@
-export const PropertyDefinitionBuilder = (writable, enumerable, value) => ({
+/**
+ * Object extension tools.
+ * @module tools
+ * @see module:utils
+ */
+
+ export const PropertyDefinitionBuilder = (writable, enumerable, value) => ({
 	writable,
 	enumerable,
 	value
