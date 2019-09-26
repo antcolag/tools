@@ -40,17 +40,14 @@ export class Test {
 	}
 
 	async die(...args) {
-		var fail = new Test("", this.test)
+		const fail = new Test("", this.test)
 		COUNTER--
 		fail.print = noop
-		this.test = ASSERT_T
 		this.print = this.print.bind(this, 'die test')
-
+		this.test = failtester
 		try {
-			return (await Promise.all([
-				fail.run(...args),
-				this.run(fail.state == "FAILED")
-			]))[0]
+			const result = await fail.run(...args)
+			return await this.run(result, fail.state == "FAILED");
 		} finally {
 			this.print = this.constructor.prototype.print
 		}
@@ -64,11 +61,11 @@ reactive.call(Test.prototype)
 
 export default Test;
 
-async function resolver(args, ok, ko, resolve, reject) {
+async function resolver(args, ok, ko, resolve) {
 	try {
-		return ok(resolve(await this.test.apply(this, args)))
+		return resolve(ok(await this.test.apply(this, args)))
 	} catch(e) {
-		return ko(resolve(e))
+		return resolve(ko(e))
 	}
 }
 
@@ -93,4 +90,9 @@ function consolePrinter(...args) {
 		`%c${status}%c -> ${this.result}: ${logmsg}`,
 		`color:${color}`, "color:initial"
 	)
+}
+
+function failtester (r, v) {
+	ASSERT_T(v)
+	return r
 }
