@@ -25,13 +25,15 @@ export const PropertyDefinitionBuilder = (writable, enumerable, value) => ({
 export const constDefiner = PropertyDefinitionBuilder.bind(void 0, false, false)
 
 /**
- * add property
+ * add property if
  * @param {*} name 
  * @param {*} value 
  * @param {*} filter 
  */
 export function buildProperty(name, value, filter = constDefiner){
-	Object.defineProperty(this, name, filter(value))
+	if(!this[name]){
+		Object.defineProperty(this, name, filter(value))
+	}
 }
 
 function pushProperty(name, value) {
