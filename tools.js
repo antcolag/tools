@@ -25,7 +25,7 @@ export const PropertyDefinitionBuilder = (writable, enumerable, value) => ({
 export const constDefiner = PropertyDefinitionBuilder.bind(void 0, false, false)
 
 /**
- * add property if
+ * add property if is falsy
  * @param {*} name 
  * @param {*} value 
  * @param {*} filter 
