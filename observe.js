@@ -57,14 +57,14 @@ function check(events) {
 
 /**
  * Append one or more handlers to one or more events
- * @param {string} events - space separated events
+ * @param {string} event - one or more space separated events
  * @param {...function} handlers - space separated events
  * @function
  */
-function on(events, ...handlers) {
-	events = check.call(this, events)
-	if(events.length > 1) {
-		return events.map(x => this.on(x, ...handlers))
+function on(event, ...handlers) {
+	event = check.call(this, event)
+	if(event.length > 1) {
+		return event.map(x => this.on(x, ...handlers))
 	}
 	event = event[0]
 	this[OBSERVERS][event] = this[OBSERVERS][event].concat(handlers)
