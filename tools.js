@@ -4,18 +4,34 @@
  * @see module:utils
  */
 
- export const PropertyDefinitionBuilder = (writable, enumerable, value) => ({
+/**
+ * build the argument for Object.defineProperty
+ * for non getter/setters
+ * @param {bool} writable 
+ * @param {bool} enumerable 
+ * @param {*} value 
+ */
+export const PropertyDefinitionBuilder = (writable, enumerable, value) => ({
 	writable,
 	enumerable,
 	value
 })
 
+/**
+ * make the argument for Object.defineProperty for build prototype-like property
+ * @function
+ * @param {*} value
+ */
 export const constDefiner = PropertyDefinitionBuilder.bind(void 0, false, false)
 
+/**
+ * add property
+ * @param {*} name 
+ * @param {*} value 
+ * @param {*} filter 
+ */
 export function buildProperty(name, value, filter = constDefiner){
-	if(!this[name]){
-		Object.defineProperty(this, name, filter(value))
-	}
+	Object.defineProperty(this, name, filter(value))
 }
 
 function pushProperty(name, value) {
