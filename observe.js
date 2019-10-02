@@ -16,7 +16,7 @@ export const OBSERVERS = Symbol("observers")
 
 /**
  * Interface definition
- * @interface observabled
+ * @interface observable
  */
 const HANDLERS = {
 	on,
