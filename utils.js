@@ -121,7 +121,26 @@ export function equals(obj, value){
  */
 export const compareWhitConst = applyWithConst.bind(void 0, equals)
 
+/**
+ * @function
+ * @param {any} value
+ */
 export const isNull = compareWhitConst(null)
+
+/**
+ * @function
+ * @param {any} value
+ */
 export const isUndefined = compareWhitConst(void 0)
+
+/**
+ * @function
+ * @param {any} value
+ */
 export const isTrue = compareWhitConst(true)
+
+/**
+ * @function
+ * @param {any} value
+ */
 export const isFalse = compareWhitConst(false)
