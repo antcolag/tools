@@ -89,6 +89,5 @@ document.querySelector("a").bindable("innerHTML")
 var o = new reactive()
 o.bindable("innerHTML")
 o.bind("innerHTML", document.querySelector("a"))
-
 o.innerHTML = "hello reactive!"
 ```
