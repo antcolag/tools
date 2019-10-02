@@ -3,19 +3,16 @@
  * @module
  * @see module:tools
  */
-
  import {
 	buildProperty,
 	injectProperties
 } from "./tools.js"
-
 
 /**
  * Name of the property for storing event handlers
  * @constant
  */
 export const OBSERVERS = Symbol("observers")
-
 
 /**
  * Interface definition
@@ -28,7 +25,6 @@ const HANDLERS = {
 	fire
 }
 
-
 /**
  * Interface definition
  * @lends observable
@@ -37,9 +33,7 @@ const HANDLERS = {
 export function observable() {
 	return injectProperties.call(this, HANDLERS)
 }
-
 export default observable
-
 
 /**
  * Builds the event list if not exist
@@ -53,7 +47,6 @@ function check(events) {
 	events.forEach(e => this[OBSERVERS][e] = this[OBSERVERS][e] || [])
 	return events
 }
-
 
 /**
  * Append one or more handlers to one or more events
@@ -71,7 +64,6 @@ function on(event, ...handlers) {
 	return handlers
 }
 
-
 /**
  * Append one shot handlers to one or more events
  * @param {string} events - space separated events
@@ -88,7 +80,6 @@ function once(events, ...handlers) {
 	}))
 }
 
-
 /**
  * Remove handlers from one or more events
  * @param {string} events - space separated events
@@ -103,7 +94,6 @@ function off(events, ...f) {
 	const list = this[OBSERVERS][events[0]]
 	return f.map(h => delete list[list.indexOf(h)])
 }
-
 
 /**
  * Fire events passing args arguments

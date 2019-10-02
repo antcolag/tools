@@ -1,6 +1,6 @@
 /**
  * Object extension tools.
- * @module tools
+ * @module
  * @see module:utils
  */
 

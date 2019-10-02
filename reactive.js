@@ -1,4 +1,10 @@
-import {
+/**
+ * Object extension tools.
+ * @module
+ * @see module:tools
+ */
+
+ import {
 	buildProperty,
 	injectProperties
 } from "./tools.js"

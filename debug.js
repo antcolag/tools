@@ -5,7 +5,6 @@
  * @module
  */
 
-
 /**
  * Throws the parameter
  * 
@@ -20,7 +19,6 @@ export function croak(value){
 	throw value
 }
 
-
 /**
  * Check if value is an instance of a given type
  * @function
@@ -30,8 +28,6 @@ export function croak(value){
  */
 export const good = type_check.bind(void 0, true);
 
-
-
 /**
  * Check if value is not an instance of a given type
  * @function
@@ -40,8 +36,6 @@ export const good = type_check.bind(void 0, true);
  * @throws {any} - croaks the value type if check fails
  */
 export const crap = type_check.bind(void 0, false);
-
-
 
 /**
  * pause the execution and start debugging
@@ -54,7 +48,6 @@ export function pause() {
 	debugger
 }
 
-
 /**
  * Enable/disable debugging
  * @function
@@ -63,7 +56,6 @@ export function pause() {
 export function DEBUG(v) {
 	DEBUGGING = v
 }
-
 
 /**
  * throws expr if is not strictly equal to val
@@ -75,7 +67,6 @@ export function DEBUG(v) {
 export function ASSERT(expr, val) {
 	return val === expr || croak(expr)
 }
-
 
 /**
  * Assert expr is truthy
@@ -97,13 +88,10 @@ export function ASSERT_F(expr) {
 	return ASSERT(!!expr, false)
 }
 
-
-
 /**
  * current debugging state
  */
 export var DEBUGGING = false
-
 
 /**
  * Checks if the type the value is compatible

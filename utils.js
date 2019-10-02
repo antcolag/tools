@@ -1,14 +1,12 @@
 /**
  * Object extension tools.
- * @module utils
+ * @module
  */
-
 
 /**
  * do nothing
  */
 export function noop(){}
-
 
 /**
  * Pipes value
@@ -18,7 +16,6 @@ export function pipe(v){
 	return v
 }
 
-
 /**
  * returns true
  */
@@ -26,14 +23,12 @@ export function yes(){
 	return true
 }
 
-
 /**
  * returns false
  */
 export function no(){
 	return false
 }
-
 
 /**
  * continue the execution after t milliseconds
@@ -43,7 +38,6 @@ export function no(){
 export function delay(t) {
 	return new Promise((resolve)=>setTimeout(resolve, t))
 }
-
 
 /**
  * defer a function
@@ -56,7 +50,6 @@ export async function defer(f, t, ...args) {
 	await delay(t)
 	return f(...args)
 }
-
 
 /**
  * Debunce an handler
@@ -79,7 +72,6 @@ export function debounce(f, t = 100) {
 	}
 }
 
-
 /**
  * apply a function to arguments
  * @
@@ -89,7 +81,6 @@ export function debounce(f, t = 100) {
 export function apply(f, args) {
 	return f(...args)
 }
-
 
 /**
  * return a function that apply a handler to arguments
@@ -101,7 +92,6 @@ export function applyWithConst(f, ...values){
 	return (obj) => f(obj, ...values)
 }
 
-
 /**
  * performs a strict equal comparison
  * @
@@ -111,7 +101,6 @@ export function applyWithConst(f, ...values){
 export function equals(obj, value){
 	return obj === value
 }
-
 
 /**
  * generator for comparison functions with constant values

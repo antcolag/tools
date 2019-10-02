@@ -1,3 +1,11 @@
+/**
+ * Object extension tools.
+ * @module
+ * @see module:tools
+ * @see module:reactive
+ * @see module:observe
+ */
+
 import {
 	noop,
 	pipe
