@@ -54,6 +54,7 @@ I think that the ```observable``` and the ```reactive``` interfaces deserve a mo
 > myObservableInstance
 > .doStuff('some', 'other', 'buisnes')
 > ```
+
 > ## Reactive
 > ```javascript
 > import reactive from "./reactive.js"
@@ -99,6 +100,7 @@ I think that the ```observable``` and the ```reactive``` interfaces deserve a mo
 > // in console when the magicProperty change
 > myReactiveInstance.magicProperty = 'woooow!!'
 > ```
+
 > ## Test
 > ```javascript
 > // the mini test suite is super easy to use and have
