@@ -9,14 +9,14 @@
 } from "./tools.js"
 
 /**
- * Name of the property for storing event handlers
+ * Identifier the property for storing event handlers
  * @constant
  */
 export const OBSERVERS = Symbol("observers")
 
 /**
  * Interface definition
- * @interface
+ * @interface observabled
  */
 const HANDLERS = {
 	on,
@@ -28,7 +28,6 @@ const HANDLERS = {
 /**
  * Interface definition
  * @lends observable
- * @constructs
  */
 export function observable() {
 	return injectProperties.call(this, HANDLERS)
