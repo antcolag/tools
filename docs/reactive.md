@@ -80,12 +80,15 @@ Note
 It explots getters and setters for properties you want to share, so it cannot export property that already use getters or setters like the magic properties of the built in object of the browsers (ie you cannot make innerHTML on an HTMLElement bindable, but you can bind the innerHTML property of an HTMLElement to an object you build)
 
 ```javascript
-// will not work
+// this will not work
 document.querySelector("a").bindable("innerHTML")
 
-// will auto update the innerHTML of the first
-// HTMLAnchorElement in the document
-var o = new reactive
+// this will auto update the innerHTML of the first
+// HTMLAnchorElement in the document when o.innerHTML
+// changes
+var o = new reactive()
 o.bindable("innerHTML")
 o.bind("innerHTML", document.querySelector("a"))
+
+o.innerHTML = "hello reactive!"
 ```
