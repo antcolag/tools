@@ -94,9 +94,9 @@ function consolePrinter(...args) {
 	args.pop()
 	var par = args[args.length - 1]
 	args.pop()
-	var logmsg = args.length? '[' + args.join("][") + ']' : ''
+	var logmsg = args.length? ' [' + args.join("][") + ']' : ''
 	return console.log(
-		`\t${this.id}) %c${status}%c -> ${this.description}:%c ${this.result} %c${logmsg} {${par}}`,
+		`\t${this.id}) %c${status}%c -> ${this.description}:%c ${this.result}%c${logmsg} {${par}}`,
 		`color:${color}`, "color:initial;font-style: oblique",
 		"color:blue;text-transform: none", "color:initial"
 	)
