@@ -32,8 +32,8 @@ export class Test {
 		var promise = new Promise(resolver.bind(
 			this,
 			args,
-			finish.bind(this, "PASSED"),
-			finish.bind(this, "FAILED")
+			finish.bind(this, "PASSED", args),
+			finish.bind(this, "FAILED", args)
 		));
 		promise.finally((x)=> this.fire("complete", x))
 		return promise
@@ -43,11 +43,11 @@ export class Test {
 		const fail = new Test("", this.test)
 		COUNTER--
 		fail.print = noop
-		this.print = this.print.bind(this, 'die test')
-		this.test = failtester
+		this.test = ASSERT_T
 		try {
 			const result = await fail.run(...args)
-			return await this.run(result, fail.state == "FAILED");
+			this.print = this.print.bind(this, `die: ${result}`)
+			return await this.run(fail.state == "FAILED");
 		} finally {
 			this.print = this.constructor.prototype.print
 		}
@@ -69,10 +69,10 @@ async function resolver(args, ok, ko, resolve) {
 	}
 }
 
-function finish(state, result) {
+function finish(state, args, result) {
 	this.state = state;
 	this.fire(state, this.result = result)
-	this.print `test end ${state}`
+	this.print.bind(this, args) `${state}`
 	return result;
 }
 
@@ -84,15 +84,13 @@ function consolePrinter(...args) {
 	}
 	args.pop()
 	args.pop()
+	var par = args[args.length - 1]
+	args.pop()
 	var logmsg = args.length? '[' + args.join("][") + ']' : ''
-	logmsg = `${this.description} [test ${this.id}]${logmsg}`
+	logmsg += `[test ${this.id}] {${par}}`
 	return console.log(
-		`%c${status}%c -> ${this.result}: ${logmsg}`,
-		`color:${color}`, "color:initial"
+		`%c${status}%c -> ${this.description}:%c ${this.result} %c${logmsg}`,
+		`color:${color}`, "color:initial;font-style: oblique",
+		"color:blue;text-transform: none", "color:initial"
 	)
-}
-
-function failtester (r, v) {
-	ASSERT_T(v)
-	return r
 }
