@@ -54,9 +54,9 @@
 				console.log(`...${++i}`)
 			}, 1000)
 			await new Test(
-				"readable shuld work (10 sec timer)",
+				"readable shuld work (5 sec timer)",
 				pipe
-			).run(await console.read(10000))
+			).run(await console.read(5000))
 			clearInterval(timer)
 
 			return arg
