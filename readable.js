@@ -23,7 +23,7 @@ export default function readable() {
 
 function send(...args){
 	this[BROADCAST] && this[BROADCAST](args)
-	init.call(this);
+	init.call(this)
 }
 
 async function read(){
@@ -41,5 +41,5 @@ async function read(){
 }
 
 function init(){
-	this[WAIT] = new Promise(property.bind(this, WAIT))
+	this[WAIT] = new Promise(property.bind(this, BROADCAST))
 }
