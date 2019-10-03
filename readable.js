@@ -10,7 +10,7 @@ import {
 } from "./utils.js"
 
 const WAIT = Symbol('wait')
-const READ = Symbol('read')
+const BROADCAST = Symbol('broadcast')
 
 const HANDLERS = {
 	read,
@@ -22,7 +22,8 @@ export default function readable() {
 }
 
 function send(...args){
-	return fulfill.apply(this, args)
+	this[BROADCAST] && this[BROADCAST](args)
+	init.call(this);
 }
 
 async function read(){
@@ -37,11 +38,6 @@ async function read(){
 			)
 		)
 	]) : this[WAIT])
-}
-
-function fulfill(...args) {
-	this[READ] && this[READ](args)
-	init.call(this);
 }
 
 function init(){
