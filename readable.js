@@ -1,9 +1,11 @@
- import { injectProperties } from "./tools.js"
+import {
+	injectProperties
+} from "./tools.js"
+
 import {
 	defer,
 	applyWithConst,
 	apply,
-	noop,
 	property
 } from "./utils.js"
 
@@ -23,14 +25,14 @@ function send(...args){
 	return fulfill.apply(this, args)
 }
 
-async function read(timer){
+async function read(){
 	this[WAIT] || init.call(this);
-	return await Promise.race([
+	return await (arguments[0] ? Promise.race([
 		this[WAIT],
-		new Promise( defer.bind( void 0, timer,
-			timer? applyWithConst(apply) : noop
+		new Promise(
+			defer.bind(void 0, arguments[0], applyWithConst(apply)
 		))
-	])
+	]) : this[WAIT])
 }
 
 function fulfill(...args) {
