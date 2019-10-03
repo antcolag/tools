@@ -10,8 +10,10 @@
 	<script type="module" async src="./tools.js"></script>
 	<script type="module" async src="./test.js"></script>
 	<script type="module" async src="./utils.js"></script>
+	<script type="module" async src="./readable.js"></script>
 	<script type="module" defer>
 		import Test from "./test.js";
+		import readable from "./readable.js";
 		import {
 			apply,
 			pipe,
@@ -45,6 +47,18 @@
 				"shuld fail if description is not a String",
 				() => new Test(-1).run()
 			).die(true)
+
+			readable.call(console)
+			var i = 0;
+			var timer = setInterval(()=>{
+				console.log(`...${++i}`)
+			}, 1000)
+			await new Test(
+				"readable shuld work (10 sec timer)",
+				pipe
+			).run(await console.read(10000))
+			clearInterval(timer)
+
 			return arg
 		}).run(true)
 	</script>
