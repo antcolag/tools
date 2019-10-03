@@ -46,7 +46,7 @@ export function delay(t) {
  * @param {...any} args
  * @returns {Promise}
  */
-export async function defer(f, t, ...args) {
+export async function defer(t, f, ...args) {
 	await delay(t)
 	return f(...args)
 }
@@ -65,10 +65,10 @@ export function debounce(f, t = 100) {
 			return
 		}
 		last = args
-		defer(() => {
+		defer(t, () => {
 			f.apply(self, last)
 			last = void 0
-		}, t)
+		})
 	}
 }
 
@@ -78,7 +78,7 @@ export function debounce(f, t = 100) {
  * @param {function} f
  * @param {...any} args
  */
-export function apply(f, args) {
+export function apply(f, ...args) {
 	return f(...args)
 }
 
@@ -133,3 +133,14 @@ export const isTrue = compareWhitConst(true)
  * @param {any} value
  */
 export const isFalse = compareWhitConst(false)
+
+/**
+ * add a property to an object functionaly
+ * @param {*} name 
+ * @param {*} value 
+ * @param {*} filter 
+ */
+export function property(name, value) {
+	this[name] = value
+	return this
+}

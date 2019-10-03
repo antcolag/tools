@@ -4,6 +4,8 @@
  * @see module:utils
  */
 
+import { property } from "./utils.js"
+
 /**
  * build the argument for Object.defineProperty
  * for non getter/setters
@@ -37,23 +39,12 @@ export function buildProperty(name, value, filter = constDefiner){
 }
 
 /**
- * add a property to an object functionaly
- * @param {*} name 
- * @param {*} value 
- * @param {*} filter 
- */
-function pushProperty(name, value) {
-	this[name] = value
-	return this
-}
-
-/**
  * inject properties to an object
  * @param {*} name 
  * @param {*} value 
  * @param {*} filter 
  */
 export function injectProperties(settings, filter = constDefiner) {
-	const handler = (prev, curr) => pushProperty.call(prev, curr, filter(settings[curr]))
+	const handler = (prev, curr) => property.call(prev, curr, filter(settings[curr]))
 	return Object.defineProperties(this, Object.keys(settings).reduce(handler, {}))
 }
