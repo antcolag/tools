@@ -30,8 +30,8 @@ async function read(){
 	return await (arguments[0] ? Promise.race([
 		this[WAIT],
 		new Promise(
-			defer.bind(void 0, arguments[0], applyWithConst(apply)
-		))
+			defer.bind(void 0, arguments[0], applyWithConst(apply))
+		)
 	]) : this[WAIT])
 }
 
