@@ -33,7 +33,7 @@ async function read(){
 		return Promise.resolve(this[BUFFER])
 	}
 	this[WAIT] || init.call(this);
-	return await (arguments[0] ? Promise.race([
+	return await (arguments.length ? Promise.race([
 		this[WAIT],
 		new Promise(
 			defer.bind(
