@@ -99,5 +99,3 @@ export const lisperato = new Proxy({
 		throw new TypeError(`Write on a ${namespace} instance is not allowed`)
 	}
 })
-
-window.lisperato = lisperato
