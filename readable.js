@@ -35,7 +35,7 @@ function send(...args){
 
 async function read(){
 	if(arguments[0] < 0){
-		return Promise.resolve(this[BUFFER])
+		return this[BUFFER]
 	}
 	if(!this[WAIT]){
 		init.call(this)
