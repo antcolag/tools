@@ -48,3 +48,44 @@ export function injectProperties(settings, filter = constDefiner) {
 	const handler = (prev, curr) => property.call(prev, curr, filter(settings[curr]))
 	return Object.defineProperties(this, Object.keys(settings).reduce(handler, {}))
 }
+
+export const lisperato = (function(){
+
+	const l = (x, ...args) => {
+		return cons(x, args[0] && l(...args))
+	}
+
+	const cons = (_car, _cdr) => {
+		return (f) => {
+			return f(_car, _cdr);
+		}
+	}
+
+	const car = (_cons) => {
+		return _cons((_car, _cdr) => _car)
+	}
+
+	const cdr = (_cons) => {
+		return _cons((_car, _cdr) => _cdr)
+	}
+
+	const namespace = {
+		l,
+		cons,
+		car,
+		cdr,
+	}
+
+	return new Proxy({}, {
+		get: function detect(target, name) {
+			if(name in namespace) {
+				return namespace[name]
+			}
+			var multi = name.match(/^c([ad]).*r$/) || []
+
+			if(multi[1]){
+				return (x) => detect(void 0, name.replace(new RegExp(multi[1]), ''))(namespace[`c${multi[1]}r`](x))
+			}
+		}
+	})
+})()
