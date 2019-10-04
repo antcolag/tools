@@ -14,6 +14,7 @@ import {
 	property
 } from "./utils.js"
 
+const BUFFER = Symbol('buffer')
 const WAIT = Symbol('wait')
 const BROADCAST = Symbol('broadcast')
 
@@ -28,12 +29,18 @@ export default function readable() {
 
 function send(...args){
 	this[BROADCAST] && this[BROADCAST](args)
-	init.call(this);
+	init.call(this)
+	this[BUFFER] = args
 }
 
 async function read(){
-	this[WAIT] || init.call(this);
-	return await (arguments[0] ? Promise.race([
+	if(arguments[0] < 0){
+		return Promise.resolve(this[BUFFER])
+	}
+	if(!this[WAIT]){
+		init.call(this)
+	}
+	return await (arguments.length ? Promise.race([
 		this[WAIT],
 		new Promise(
 			defer.bind(
@@ -46,5 +53,5 @@ async function read(){
 }
 
 function init(){
-	this[WAIT] = new Promise(property.bind(this, WAIT))
+	this[WAIT] = new Promise(property.bind(this, BROADCAST))
 }
