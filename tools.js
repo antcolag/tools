@@ -50,8 +50,6 @@ export function injectProperties(settings, filter = constDefiner) {
 }
 
 export const lisperato = (function(){
-
-
 	return new Proxy({
 		l (x, ...args){
 			return this.cons(x, args[0] && this.l(...args))
