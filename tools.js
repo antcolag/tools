@@ -70,6 +70,19 @@ export const lisperato = (function(){
 				return this.exec(this.cdr(p), this.car(p)(s))
 			}
 			return this.car(p)(s)
+		},
+		[Symbol.toPrimitive](hint){
+			switch (hint){
+			case "number":
+				return 0;
+			case "string":
+				return '[Object ' + this.toString() + ']'
+			default:
+			}
+			return this
+		},
+		toString() {
+			return "lisperato!"
 		}
 	}, {
 		get(namespace, name) {
@@ -83,6 +96,9 @@ export const lisperato = (function(){
 					name.replace(new RegExp(multi[1]), '')
 				)(namespace[`c${multi[1]}r`](x))
 			}
+		},
+		set(namespace){
+			throw new TypeError(`Write on a ${namespace} instance is not allowed`)
 		}
 	})
 })()
