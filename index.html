@@ -14,6 +14,7 @@
 	<script type="module" defer>
 		import Test from "./test.js";
 		import readable from "./readable.js";
+		import {lisperato} from "./tools.js";
 		import {
 			apply,
 			pipe,
@@ -27,6 +28,13 @@
 		} from "./debug.js";
 
 		new Test("tests shuld work", async function (arg) {
+			await new Test(
+				"lisper...",
+				(x, finder , ...[first, second]) => lisperato.exec(lisperato.l(
+					(s)=> lisperato.l(lisperato.l(first, lisperato.l(second, x))),
+					(s)=> lisperato[finder](s)
+				)) == x
+			).run(Infinity, 'cadadar', 1,2)
 			var tests = new Test(
 				"reactive and events shuld work",
 				pipe
@@ -58,6 +66,7 @@
 				pipe
 			).run(await console.read(5000))
 			clearInterval(timer)
+
 
 			return arg
 		}).run(true)
