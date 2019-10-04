@@ -7,7 +7,6 @@
 
 /**
  * Throws the parameter
- * 
  * @function
  * @param {any} value
  * @throws {any}
@@ -17,6 +16,13 @@ export function croak(value){
 		return
 	}
 	throw value
+}
+
+/**
+ * Throws a type error when called
+ */
+export function Abstract() {
+	croak(new TypeError('not implemented'))
 }
 
 /**
