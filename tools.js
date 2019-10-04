@@ -78,7 +78,10 @@ export const lisperato = (function(){
 			}
 			var multi = name.match(/^c([ad]).*r$/) || []
 			if(multi[1]){ // abra cadadr-a
-				return (x) => this.get(namespace, name.replace(new RegExp(multi[1]), ''))(namespace[`c${multi[1]}r`](x))
+				return (x) => this.get(
+					namespace,
+					name.replace(new RegExp(multi[1]), '')
+				)(namespace[`c${multi[1]}r`](x))
 			}
 		}
 	})
