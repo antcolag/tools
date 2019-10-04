@@ -50,13 +50,7 @@ export function injectProperties(settings, filter = constDefiner) {
 }
 
 export const lisperato = (function(){
-	const exec = (p, s = {}) => {
-		if(car(p)){
-			car(p)(s)
-			exec(cdr(p))
-		}
-		return s
-	}
+
 
 	return new Proxy({
 		l (x, ...args){
@@ -73,6 +67,13 @@ export const lisperato = (function(){
 		cdr (_cons){
 			return _cons((_car, _cdr) => _cdr)
 		},
+		exec (p, s = {}) {
+			this.car(p)(s)
+			if(this.cdr(p)){
+				this.exec(this.cdr(p), s)
+			}
+			return s
+		}
 	}, {
 		get: function detect(namespace, name) {
 			if(name in namespace) {
