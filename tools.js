@@ -65,12 +65,11 @@ export const lisperato = (function(){
 		cdr (_cons){
 			return _cons((_car, _cdr) => _cdr)
 		},
-		exec (p, s = {}) {
-			this.car(p)(s)
+		exec (p, s) {
 			if(this.cdr(p)){
-				this.exec(this.cdr(p), s)
+				return this.exec(this.cdr(p), this.car(p)(s))
 			}
-			return s
+			return this.car(p)(s)
 		}
 	}, {
 		get(namespace, name) {
@@ -85,4 +84,4 @@ export const lisperato = (function(){
 	})
 })()
 
-window.lisp = lisperato
+window.lisperato = lisperato
