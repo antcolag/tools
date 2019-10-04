@@ -66,10 +66,9 @@ export const lisperato = (function(){
 			return _cons((_car, _cdr) => _cdr)
 		},
 		exec (p, s) {
-			if(this.cdr(p)){
-				return this.exec(this.cdr(p), this.car(p)(s))
-			}
-			return this.car(p)(s)
+			return this.cdr(p)
+			? this.exec(this.cdr(p), this.car(p)(s))
+			: this.car(p)(s)
 		},
 		[Symbol.toPrimitive](hint){
 			switch (hint){
