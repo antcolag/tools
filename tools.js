@@ -75,14 +75,14 @@ export const lisperato = (function(){
 			return s
 		}
 	}, {
-		get: function detect(namespace, name) {
+		get(namespace, name) {
 			if(name in namespace) {
 				return namespace[name]
 			}
 			var multi = name.match(/^c([ad]).*r$/) || []
 
 			if(multi[1]){
-				return (x) => detect(namespace, name.replace(new RegExp(multi[1]), ''))(namespace[`c${multi[1]}r`](x))
+				return (x) => this.get(namespace, name.replace(new RegExp(multi[1]), ''))(namespace[`c${multi[1]}r`](x))
 			}
 		}
 	})
