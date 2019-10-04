@@ -7,7 +7,6 @@
 
 /**
  * Throws the parameter
- *
  * @function
  * @param {any} value
  * @throws {any}
