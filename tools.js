@@ -50,42 +50,41 @@ export function injectProperties(settings, filter = constDefiner) {
 }
 
 export const lisperato = (function(){
-
-	const l = (x, ...args) => {
-		return cons(x, args[0] && l(...args))
-	}
-
-	const cons = (_car, _cdr) => {
-		return (f) => {
-			return f(_car, _cdr);
+	const exec = (p, s = {}) => {
+		if(car(p)){
+			car(p)(s)
+			exec(cdr(p))
 		}
+		return s
 	}
 
-	const car = (_cons) => {
-		return _cons((_car, _cdr) => _car)
-	}
-
-	const cdr = (_cons) => {
-		return _cons((_car, _cdr) => _cdr)
-	}
-
-	const namespace = {
-		l,
-		cons,
-		car,
-		cdr,
-	}
-
-	return new Proxy({}, {
-		get: function detect(target, name) {
+	return new Proxy({
+		l (x, ...args){
+			return this.cons(x, args[0] && this.l(...args))
+		},
+		cons(_car, _cdr){
+			return (f) => {
+				return f(_car, _cdr);
+			}
+		},
+		car (_cons){
+			return _cons((_car, _cdr) => _car)
+		},
+		cdr (_cons){
+			return _cons((_car, _cdr) => _cdr)
+		},
+	}, {
+		get: function detect(namespace, name) {
 			if(name in namespace) {
 				return namespace[name]
 			}
 			var multi = name.match(/^c([ad]).*r$/) || []
 
 			if(multi[1]){
-				return (x) => detect(void 0, name.replace(new RegExp(multi[1]), ''))(namespace[`c${multi[1]}r`](x))
+				return (x) => detect(namespace, name.replace(new RegExp(multi[1]), ''))(namespace[`c${multi[1]}r`](x))
 			}
 		}
 	})
 })()
+
+window.lisp = lisperato
