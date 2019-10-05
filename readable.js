@@ -11,7 +11,7 @@ import {
 	defer,
 	applyWithConst,
 	apply,
-	property
+	Semaphore
 } from "./utils.js"
 
 export const BUFFER = Symbol('buffer')
@@ -21,7 +21,8 @@ export const CLEAR = Symbol('clear')
 
 export const HANDLERS = {
 	read,
-	broadcast
+	broadcast,
+	detach
 }
 
 export default function readable(
@@ -49,7 +50,7 @@ async function read(){
 		init.call(this)
 	}
 	return await (arguments.length ? Promise.race([
-		this[WAIT],
+		this[WAIT].promise,
 		new Promise(
 			defer.bind(
 				void 0,
@@ -57,25 +58,21 @@ async function read(){
 				applyWithConst(apply)
 			)
 		)
-	]) : this[WAIT])
+	]) : this[WAIT].promise)
 }
 
 function init(){
-	this[WAIT] = new Promise((resolve, reject) => {
-		this[BROADCAST] = resolve;
-		this[CLEAR] = reject
-	})
-	this[WAIT].catch( e => {
+	this[WAIT] = new Semaphore()
+	this[WAIT].promise.catch( e => {
 		this[BUFFER] = e
 	})
 }
 
 
 function flush(){
-	this[BROADCAST] && this[BROADCAST](this[BUFFER])
+	this[WAIT].resolve && this[WAIT].resolve(this[BUFFER])
 }
 
 function detach() {
 	flush.call(this);
-
 }
