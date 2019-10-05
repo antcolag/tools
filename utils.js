@@ -136,11 +136,30 @@ export const isFalse = compareWhitConst(false)
 
 /**
  * add a property to an object functionaly
- * @param {*} name 
- * @param {*} value 
- * @param {*} filter 
+ * @param {*} name
+ * @param {*} value
+ * @param {*} filter
  */
-export function property(name, value) {
+export function property(name, value, ...args) {
 	this[name] = value
-	return this
+	return args.length? property.apply(this, args) : this
+}
+
+const UNLOCK = Symbol('unlock')
+const DIE = Symbol('DIE')
+export class Semaphore {
+	lock(){
+		return new Promise((resolve, reject)=>{
+			this[UNLOCK] = resolve
+			this[DIE] = reject
+		})
+	}
+
+	unlock(...args){
+		return this[UNLOCK](...args)
+	}
+
+	die(...args){
+		return this[DIE](...args)
+	}
 }
