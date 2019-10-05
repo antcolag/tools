@@ -145,21 +145,11 @@ export function property(name, value, ...args) {
 	return args.length? property.apply(this, args) : this
 }
 
-const UNLOCK = Symbol('unlock')
-const DIE = Symbol('DIE')
 export class Semaphore {
-	lock(){
-		return new Promise((resolve, reject)=>{
-			this[UNLOCK] = resolve
-			this[DIE] = reject
+	constructor() {
+		this.promise = new Promise((resolve, reject)=>{
+			this.resolve = resolve
+			this.reject = reject
 		})
-	}
-
-	unlock(...args){
-		return this[UNLOCK](...args)
-	}
-
-	die(...args){
-		return this[DIE](...args)
 	}
 }
