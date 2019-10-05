@@ -20,14 +20,14 @@ const BROADCAST = Symbol('broadcast')
 
 const HANDLERS = {
 	read,
-	send
+	broadcast
 }
 
 export default function readable() {
 	return injectProperties.call(this, HANDLERS)
 }
 
-function send(...args){
+function broadcast(...args){
 	this[BROADCAST] && this[BROADCAST](args)
 	init.call(this)
 	this[BUFFER] = args
