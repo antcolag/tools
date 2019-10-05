@@ -14,23 +14,31 @@ import {
 	property
 } from "./utils.js"
 
-const BUFFER = Symbol('buffer')
-const WAIT = Symbol('wait')
-const BROADCAST = Symbol('broadcast')
+export const BUFFER = Symbol('buffer')
+export const WAIT = Symbol('wait')
+export const BROADCAST = Symbol('broadcast')
+export const CLEAR = Symbol('clear')
 
-const HANDLERS = {
+export const HANDLERS = {
 	read,
 	broadcast
 }
 
-export default function readable() {
-	return injectProperties.call(this, HANDLERS)
+export default function readable(
+		broadcast = HANDLERS.broadcast,
+		read = HANDLERS.read
+	) {
+	var opt = {
+		broadcast: broadcast,
+		read: read
+	}
+	return injectProperties.call(this, opt)
 }
 
-function broadcast(...args){
-	this[BROADCAST] && this[BROADCAST](args)
+function broadcast(){
+	this[BUFFER] = arguments
+	flush.apply(this, arguments)
 	init.call(this)
-	this[BUFFER] = args
 }
 
 async function read(){
@@ -53,5 +61,21 @@ async function read(){
 }
 
 function init(){
-	this[WAIT] = new Promise(property.bind(this, BROADCAST))
+	this[WAIT] = new Promise((resolve, reject) => {
+		this[BROADCAST] = resolve;
+		this[CLEAR] = reject
+	})
+	this[WAIT].catch( e => {
+		this[BUFFER] = e
+	})
+}
+
+
+function flush(){
+	this[BROADCAST] && this[BROADCAST](this[BUFFER])
+}
+
+function detach() {
+	flush.call(this);
+
 }
