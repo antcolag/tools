@@ -74,5 +74,5 @@ function flush(){
 }
 
 function detach() {
-	flush.call(this);
+	this[WAIT].reject && this[WAIT].reject(this[BUFFER])
 }
