@@ -11,8 +11,10 @@
 	<script type="module" async src="./test.js"></script>
 	<script type="module" async src="./utils.js"></script>
 	<script type="module" async src="./readable.js"></script>
+	<script type="module" async src="./dom.js"></script>
 	<script type="module" defer>
 		import Test from "./test.js";
+		import * as dom from "./dom.js";
 		import readable from "./readable.js";
 		import {lisperato} from "./tools.js";
 		import {
@@ -28,45 +30,53 @@
 		} from "./debug.js";
 
 		new Test("tests shuld work", async function (arg) {
-			await new Test(
-				"lisper...",
-				(x, finder , ...[first, second]) => lisperato.exec(lisperato.l(
-					(s)=> lisperato.l(lisperato.l(first, lisperato.l(second, x))),
-					(s)=> lisperato[finder](s)
-				)) == x
-			).run(Infinity, 'cadadar', 1,2)
-			var tests = new Test(
-				"reactive and events shuld work",
-				pipe
-			)
-			tests.bind("result", this, "reactiveResult")
-			tests.on(
-				"PASSED FAILED complete",
-				ASSERT.bind(null, this.reactiveResult, tests.result)
-			)
-			await tests.run(true)
+			//await new Test(
+			//	"lisper...",
+			//	(x, finder , ...[first, second]) => lisperato.exec(lisperato.l(
+			//		(s)=> lisperato.l(lisperato.l(first, lisperato.l(second, x))),
+			//		(s)=> lisperato[finder](s)
+			//	)) == x
+			//).run(Infinity, 'cadadar', 1,2)
+			//var tests = new Test(
+			//	"reactive and events shuld work",
+			//	pipe
+			//)
+			//tests.bind("result", this, "reactiveResult")
+			//tests.on(
+			//	"PASSED FAILED complete",
+			//	ASSERT.bind(null, this.reactiveResult, tests.result)
+			//)
+			//await tests.run(true)
+//
+			//await new Test(
+			//	"failing tests shuld work",
+			//	croak
+			//).die(true)
+//
+			//await new Test(
+			//	"shuld fail if description is not a String",
+			//	() => new Test(-1).run()
+			//).die(true)
 
-			await new Test(
-				"failing tests shuld work",
-				croak
-			).die(true)
-
-			await new Test(
-				"shuld fail if description is not a String",
-				() => new Test(-1).run()
-			).die(true)
-
-			readable.call(console)
-			var i = 0;
-			var timer = setInterval(()=>{
-				console.log(`...${++i}`)
-			}, 1000)
-			await new Test(
-				"readable shuld work (5 sec timer)",
-				pipe
-			).run(await console.read(5000))
-			clearInterval(timer)
-
+			// readable.call(console)
+			// var i = 0;
+			// var timer = setInterval(()=>{
+			// 	console.log(`...${++i}`)
+			// }, 1000)
+			// await new Test(
+			// 	"readable shuld work (5 sec timer)",
+			// 	pipe
+			// ).run(await console.read(2000))
+			//clearInterval(timer)
+			;
+			([
+				[`a#ciao[bella="ola"]>bella.pe#tutti+#e+.pure*5>(agli#altri+mhu#ah.ua[sdfd="dsf"]+ha)`],
+				[`h$[title="item$"]{Header $}*3`],
+				[`ul>li.item$@3*5`],
+				[`ul>li.item$@-*5`],
+				[`a>{ci{a}o}^pippo`],
+			]).map(dom.emmet)
+			;
 
 			return arg
 		}).run(true)
@@ -75,5 +85,8 @@
 <body>
 	<h1>Tests</h1>
 	<p>open the console</p>
+
+	
+
 </body>
 </html>
