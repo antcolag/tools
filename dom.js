@@ -211,11 +211,56 @@ class StringStream {
 	}
 }
 
+class Tag {
+	constructor(...args){
+		this.tagName = args.find(x => x instanceof TagName) || new TagName('div')
+		this.atributes = args.filter(x => x instanceof Attribute)
+		this.text = args.filter(x => x instanceof TextBlock)
+		this.multiplier = args.find(x => x instanceof Multiplier)
+	}
+}
+
 class TagTokenStream {
 	constructor(stream){
-		while(stream.pick()){
-			console.log(stream.next())
+		this.stream = stream
+		while(this.pick()){
+			console.log(this.next())
 		}
+	}
+
+	pick(){
+		if(this.current){
+			return this.current;
+		}
+		var picked = this.stream.pick()
+		if(!picked){
+			return;
+		}
+		const tagParts = () => {
+			switch(true){
+			case picked instanceof Attribute:
+			case picked instanceof TagName:
+			case picked instanceof TextBlock:
+			case picked instanceof Multiplier:
+			return true
+			}
+		}
+		if(!tagParts()){
+			return this.current = this.stream.next()
+		}
+		var args = []
+		while(tagParts()){
+			args.push(this.stream.next())
+			picked = this.stream.pick()
+		}
+		this.current = new Tag(...args)
+		return this.current
+	}
+
+	next() {
+		var current = this.pick();
+		this.current = undefined;
+		return current;
 	}
 }
 
