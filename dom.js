@@ -111,9 +111,7 @@ class Multiplier extends Token {
 Multiplier.strategies = [
 	class Normal {
 		static detect(modifier){
-			if(!modifier || /[0-9]+/.test(modifier)){
-				return true;
-			}
+			return !modifier || /[0-9]+/.test(modifier)
 		}
 		constructor(modifier, value){
 			this.start = parseInt(modifier || '1')
@@ -134,14 +132,12 @@ Multiplier.strategies = [
 	},
 
 	class Negative {
-		static detect(modifier, value){
-			if(/-/.test(modifier)){
-				return new this(value)
-			}
+		static detect(modifier){
+			return /-/.test(modifier)
 		}
-		constructor(value){
-			this.start = 0;
-			this.min = parseInt(value)
+		constructor(modifier, value){
+			this.start = parseInt(value);
+			this.min = 0
 			this.init();
 		}
 		init(){
@@ -153,7 +149,7 @@ Multiplier.strategies = [
 		}
 
 		check(){
-			this.value >= this.min;
+			return this.value > this.min;
 		}
 	}
 ]
@@ -371,9 +367,9 @@ class Tag extends TagGroup {
 			result += `<${
 				this.tagName.value.replace('$', i)
 			}${
-				this.attributes.map(x => new Attribute(x.value.replace('$', i))).map(x => x.render())
+				this.attributes.map(x => new Attribute(x.value.replace('$', i))).map(x => x.render()).join('')
 			}>${
-				this.content.map(x => x instanceof TextBlock? new TextBlock(x.value.replace('$', i)) : x).map(item => item.render(m))
+				this.content.map(x => x instanceof TextBlock? new TextBlock(x.value.replace('$', i)) : x).map(item => item.render(m)).join('')
 			}</${
 				this.tagName.value.replace('$', i)
 			}>`
