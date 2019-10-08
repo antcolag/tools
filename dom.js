@@ -378,7 +378,7 @@ class Tag extends TagGroup {
 
 	static findHint(tagName) {
 		const hints = {
-			'li': ['ul'],
+			'li': ['ul', 'ol'],
 			'span': ['a','p']
 		}
 
