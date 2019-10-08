@@ -71,8 +71,8 @@ class Attribute extends Token {
 	}
 
 	render(){
-		var pair = this.value.match(/^\[(.+)(="(.+)")?\]$/)
-		return ` ${pair[1]}=${pair[3]}`
+		var pair = this.value.match(/^\[(.+)\]$/)
+		return ` ${pair[1]}`
 	}
 }
 
@@ -349,7 +349,7 @@ class Tag extends TagGroup {
 	constructor(...args){
 		super();
 		this.tagName = args.find(x => x instanceof TagName) || new TagName()
-		this.atributes = args.filter(x => x instanceof Attribute)
+		this.attributes = args.filter(x => x instanceof Attribute)
 		var text = args.filter(x => x instanceof TextBlock)
 		this.content.splice(this.content.length, 0, ...text)
 		this.multiplier = args.find(x => x instanceof Multiplier)
@@ -371,7 +371,7 @@ class Tag extends TagGroup {
 			result += `<${
 				this.tagName.value.replace('$', i)
 			}${
-				this.atributes.map(x => new Attribute(x.value.replace('$', i))).map(x => x.render())
+				this.attributes.map(x => new Attribute(x.value.replace('$', i))).map(x => x.render())
 			}>${
 				this.content.map(x => x instanceof TextBlock? new TextBlock(x.value.replace('$', i)) : x).map(item => item.render(m))
 			}</${
