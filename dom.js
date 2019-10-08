@@ -316,7 +316,6 @@ class TagGroup {
 					if(!top) {
 						return;
 					}
-					stream.next();
 				case next.value == '+':
 					continue;
 				}
