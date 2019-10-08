@@ -1,5 +1,12 @@
 import { croak } from "./debug.js"
 
+export default function auto(strings, ...args){
+	if(typeof strings == "array"){
+		return (/</.test(strings.join(''))? html : emmet)(...arguments)
+	}
+	return auto([strings], ...args)
+}
+
 export function html() {
 	return buildDom(
 		randomAttr(),
