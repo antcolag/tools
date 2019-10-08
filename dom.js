@@ -249,7 +249,7 @@ class TokenStream {
 	}
 
 	readStringIdentifier(){
-		return this.stream.read(s => /[0-9a-zA-Z$-]/.test(s))
+		return this.stream.read(s => /[_0-9a-zA-Z$-]/.test(s))
 	}
 
 	readStringAttribute(){
@@ -355,7 +355,7 @@ class Tag extends TagGroup {
 
 		this.content.forEach(item => {
 			if(!item.hint){
-				item.hint = this.hint;
+				item.hint = Tag.findHint(this.tagName);
 			}
 		})
 		var result = "";
@@ -374,6 +374,19 @@ class Tag extends TagGroup {
 			}>`
 		}
 		return result;
+	}
+
+	static findHint(tagName) {
+		const hints = {
+			'li': ['ul'],
+			'span': ['a','p']
+		}
+
+		for(let i in hints){
+			if(hints[i].some(x => x == tagName.value)){
+				return i;
+			}
+		}
 	}
 }
 
