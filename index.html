@@ -78,7 +78,9 @@
 				[`a>{ci{          a}o}^^^          ^^pippo`],
 			]).map(x => console.log( dom.emmet([x])))
 
-			console.log(dom.emmet `(div>dl+${document.querySelector('h1')}>(dt+dd)*3)+footer>p`);
+			var emmet = dom.emmet `section>div>pre{emmet geterated}^${document.querySelector('h1')}+p{with fun}`
+			console.log(emmet);
+			document.body.appendChild(emmet)
 
 			return arg
 		}).run(true)
