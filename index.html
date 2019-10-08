@@ -73,7 +73,7 @@
 
 			var emmet1 = dom.emmet `a#ciao[bella="ola"]>bella.pe#tutti+
 				#e+.pure*2>(agli#altri+mhu#ah.ua[sdfd="dsf"]>{text}+ha)*3^^ ^^ ^   ^^(O_o)^^  ^ ^^^ale`
-			var emmet2 = dom.emmet `section>div>pre{emmet geterated}^${document.querySelector('h1')}+p{with fun}+ul>.azz*3`
+			var emmet2 = dom.emmet `section>div>pre{emmet geterated}^(${document.querySelector('h1')}[data-pippo="99"]>span{!!!})+p{with fun}+ul>.azz*3`
 			window.aa = emmet1
 			window.ab = emmet2
 			console.log(emmet1);
@@ -81,6 +81,8 @@
 
 			return arg
 		}).run(true)
+
+		window.dom = dom
 	</script>
 </head>
 <body>

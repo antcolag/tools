@@ -27,9 +27,14 @@ function buildDom(random, strings, ...data) {
 		var element = elements[
 			elements.length - (i + 1)
 		]
-		var content = element.childNodes
 		element.replaceWith(node)
-		node.append(...content)
+		node.append(...element.childNodes)
+		Array.prototype.forEach.call(element.attributes, item => {
+			if(item.nodeName == random) {
+				return;
+			}
+			node.setAttributeNode(item.cloneNode())
+		})
 	})
 	return result
 }
