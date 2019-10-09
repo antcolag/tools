@@ -28,13 +28,6 @@
 		} from "./debug.js";
 
 		new Test("tests shuld work", async function (arg) {
-			await new Test(
-				"lisper...",
-				(x, finder , ...[first, second]) => lisperato.exec(lisperato.l(
-					(s)=> lisperato.l(lisperato.l(first, lisperato.l(second, x))),
-					(s)=> lisperato[finder](s)
-				)) == x
-			).run(Infinity, 'cadadar', 1,2)
 			var tests = new Test(
 				"reactive and events shuld work",
 				pipe
@@ -57,18 +50,45 @@
 			).die(true)
 
 			readable.call(console)
+
 			var i = 0;
 			var timer = setInterval(()=>{
 				console.log(`...${++i}`)
-			}, 1000)
+			}, 100)
 			await new Test(
-				"readable shuld work (5 sec timer)",
+				"timed readable shuld work (.5 sec timer)",
 				pipe
-			).run(await console.read(5000))
+			).run(await console.read(500))
 			clearInterval(timer)
 
 
-			return arg
+			i = 0;
+			timer = setInterval(()=>{
+				console.log(`...${++i}`)
+			}, 100)
+
+			var timer2 = setTimeout(()=> {
+				console.broadcast('ok')
+			}, 200)
+			await new Test(
+				"readable shuld work (.5 sec timer)",
+				pipe
+			).run(await console.read(500))
+			clearInterval(timer)
+			clearInterval(timer2)
+
+
+			try {
+				return arg
+			} finally {
+				await new Test(
+					"easter egg",
+					(x, finder , ...[first, second]) => lisperato.car(lisperato.exec(lisperato.l(
+						(s)=> lisperato.l(lisperato.l(first, lisperato.l(second, x))),
+						(s)=> lisperato[finder](s)
+					)))
+				).run('abra', 'cadadr', 1,2)
+			}
 		}).run(true)
 	</script>
 </head>
