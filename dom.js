@@ -1,7 +1,7 @@
 import { croak } from "./debug.js"
 
 export default function auto(strings, ...args){
-	if(typeof strings == "array"){
+	if(strings instanceof Array){
 		return (/</.test(strings.join(''))? html : emmet)(...arguments)
 	}
 	return auto([strings], ...args)
