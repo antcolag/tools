@@ -27,9 +27,14 @@ function buildDom(random, strings, ...data) {
 		var element = elements[
 			elements.length - (i + 1)
 		]
-		var content = element.childNodes
 		element.replaceWith(node)
-		node.append(...content)
+		node.append(...element.childNodes)
+		Array.prototype.forEach.call(element.attributes, item => {
+			if(item.nodeName == random) {
+				return;
+			}
+			node.setAttributeNode(item.cloneNode())
+		})
 	})
 	return result
 }
@@ -122,7 +127,7 @@ Multiplier.strategies = [
 		}
 		constructor(modifier, value){
 			this.start = parseInt(modifier || '1')
-			this.max = parseInt(value)
+			this.max = parseInt(value) + this.start
 			this.init();
 		}
 		init(){
@@ -134,7 +139,7 @@ Multiplier.strategies = [
 		}
 
 		check(){
-			return this.value <= this.max;
+			return this.value < this.max;
 		}
 	},
 
@@ -247,7 +252,7 @@ class TokenStream {
 		while(text += this.stream.read(test)) {
 			text += this.stream.next()
 			var picked = this.stream.pick()
-			if(!picked || /[\^+)*]/.test(picked)) {
+			if(!picked || /[\^+)*@]/.test(picked)) {
 				return text
 			} else {
 				text += this.stream.next()
