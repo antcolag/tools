@@ -4,7 +4,7 @@
  * @see module:tools
  */
 
- import {
+import {
 	buildProperty,
 	injectProperties
 } from "./tools.js"
