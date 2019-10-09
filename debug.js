@@ -119,14 +119,13 @@ export var DEBUGGING = false
  */
 function type_check(proper, value, ...types) {
 	return types.some((type) => {
-			switch(true) {
-			case typeof type == 'string':
-				return proper ?
-				type == value : type != value;
-			case (value instanceof type):
-			case value.constructor == type:
-				return proper
-			}
+		switch(true) {
+		case typeof type == 'string':
+			return proper ?
+			type == value : type != value;
+		case (value instanceof type):
+		case value.constructor == type:
+			return proper
 		}
-	) || croak(value.constructor)
+	}) || croak(value.constructor)
 }
