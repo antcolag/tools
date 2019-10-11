@@ -67,13 +67,13 @@ export const lisperato = new Proxy({
 			return f(_car, _cdr);
 		}
 	},
-	car (_cons){
+	car(_cons){
 		return _cons((_car, _cdr) => _car)
 	},
-	cdr (_cons){
+	cdr(_cons){
 		return _cons((_car, _cdr) => _cdr)
 	},
-	exec (p, s) {
+	exec(p, s) {
 		return this.cdr(p)
 		? this.exec(this.cdr(p), this.car(p)(s))
 		: this.car(p)(s)
