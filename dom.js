@@ -22,10 +22,7 @@ export default function auto(strings, ...args){
  * @param {...Node} args
  */
 export function html() {
-	return buildDom(
-		randomAttr(),
-		...arguments
-	)
+	return new DomPrinter(this.builder).html(...arguments)
 }
 
 /**
@@ -33,24 +30,44 @@ export function html() {
  * @param {string[]} template
  * @param {...Node} args
  */
-export function emmet(strings, ...data){
-	var random = randomAttr();
-	var emmetTempString = strings.join( `emmet[${random}]` )
-	var stream = new TokenStream(
-		new StringStream(emmetTempString)
-	)
-	var tokenString = new TagTokenStream(stream)
-	return buildDom(random, [
-		new TagGroup(tokenString, true).toString()
-	], ...data);
+export function emmet(){
+	return new DomPrinter(this.builder).emmet(...arguments)
 }
 
-function buildDom(random, strings, ...data) {
-	var result = document
-	.createRange()
-	.createContextualFragment(
-		strings.join( `<a ${random}></a>` )
-	)
+
+export class DomPrinter {
+	constructor(builder = createFragment) {
+		this.builder = builder
+	}
+
+	html() {
+		return buildDom(
+			this.builder,
+			randomAttr(),
+			...arguments
+		)
+	}
+
+	emmet(strings, ...data){
+		var random = randomAttr();
+		var emmetTempString = strings.join( `emmet[${random}]` )
+		var stream = new TokenStream(
+			new StringStream(emmetTempString)
+		)
+		var tokenString = new TagTokenStream(stream)
+		return buildDom(this.builder, random, [
+			new TagGroup(tokenString, true).toString()
+		], ...data);
+	}
+	
+}
+
+function createFragment(string) {
+	return document.createRange().createContextualFragment( string )
+}
+
+function buildDom(builder, random, strings, ...data) {
+	var result = builder(strings.join( `<a ${random}></a>` ))
 	var elements = result.querySelectorAll(
 		`[${random}]`
 	)
