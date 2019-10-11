@@ -238,7 +238,7 @@ class TokenStream {
 	readText(){
 		var text = ""
 		const test = s => {
-			if((/}/).test(s)){
+			if(/}/.test(s)){
 				return
 			}
 			return true
