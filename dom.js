@@ -22,7 +22,7 @@ export default function auto(strings, ...args){
  * @param {...Node} args
  */
 export function html() {
-	return new DomPrinter(this.builder).html(...arguments)
+	return new DomPrinter().html(...arguments)
 }
 
 /**
@@ -31,7 +31,7 @@ export function html() {
  * @param {...Node} args
  */
 export function emmet(){
-	return new DomPrinter(this.builder).emmet(...arguments)
+	return new DomPrinter().emmet(...arguments)
 }
 
 
