@@ -9,9 +9,9 @@ import { property } from "./utils.js"
 /**
  * build the argument for Object.defineProperty
  * for non getter/setters
- * @param {bool} writable 
- * @param {bool} enumerable 
- * @param {*} value 
+ * @param {bool} writable
+ * @param {bool} enumerable
+ * @param {*} value
  */
 export const PropertyDefinitionBuilder = (writable, enumerable, value) => ({
 	writable,
@@ -20,17 +20,24 @@ export const PropertyDefinitionBuilder = (writable, enumerable, value) => ({
 })
 
 /**
- * make the argument for Object.defineProperty for build prototype-like property
+ * makes the argument for Object.defineProperty for build a constant property
  * @function
  * @param {*} value
  */
 export const constDefiner = PropertyDefinitionBuilder.bind(void 0, false, false)
 
 /**
+ * makes the argument for Object.defineProperty for build a variable property
+ * @function
+ * @param {*} value
+ */
+export const variableDefiner = PropertyDefinitionBuilder.bind(void 0, false, false)
+
+/**
  * add property if there isn't
- * @param {*} name 
- * @param {*} value 
- * @param {*} filter 
+ * @param {*} name
+ * @param {*} value
+ * @param {*} filter
  */
 export function buildProperty(name, value, filter = constDefiner){
 	if(!(name in this)){
@@ -40,15 +47,17 @@ export function buildProperty(name, value, filter = constDefiner){
 
 /**
  * inject properties to an object
- * @param {*} name 
- * @param {*} value 
- * @param {*} filter 
+ * @param {*} name
+ * @param {*} value
+ * @param {*} filter
  */
-export function injectProperties(settings, filter = constDefiner) {
+export function injectProperties(settings, filter = variableDefiner) {
 	const handler = (prev, curr) => property.call(prev, curr, filter(settings[curr]))
 	return Object.defineProperties(this, Object.keys(settings).reduce(handler, {}))
 }
 
+
+/* just for joke */
 export const lisperato = new Proxy({
 	l (x, ...args){
 		return this.cons(x, args[0] && this.l(...args))
