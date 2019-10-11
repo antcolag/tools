@@ -56,7 +56,7 @@ export function emmet(strings, ...data){
 		new StringStream(emmetTempString)
 	)
 	var tokenString = new TagTokenStream(stream)
-	return buildDom(random, [new TagGroup(tokenString, true).render()], ...data);
+	return buildDom(random, [new TagGroup(tokenString, true).toString()], ...data);
 }
 
 class Token {
@@ -82,7 +82,7 @@ class Attribute extends Token {
 		return new this(`[${value}"]`)
 	}
 
-	render(){
+	toString(){
 		var pair = this.value.match(/^\[(.+)\]$/)
 		return ` ${pair[1]}`
 	}
@@ -95,80 +95,45 @@ class Group extends Token {}
 class Relationship extends Token {}
 
 class Multiplier extends Token {
-	constructor(value){
+	constructor(value = '*1'){
 		super(value)
-		this.strategy = Multiplier.detect(value)
 	}
 
 	check(){
-		return this.strategy.check(...arguments)
+		return this.current < this.end
 	}
 
 	init(){
-		return this.strategy.init(...arguments)
+		this.current = 0;
+		this.end = parseInt(this.value.match(/^\*([0-9]+)$/)[1])
 	}
 	next(){
-		return this.strategy.next(...arguments)
-	}
-	current(){
-		return this.strategy.value
+		return ++this.current
 	}
 
-	static detect(value = ''){
-		var regex = value.match(/^(@([0-9]+|-))?\*([0-9]+)$/) || []
-		return new (this.strategies.find( x => x.detect(regex[2])))(regex[2], regex[3] || 1)
+	detect(value){
+		var matched = value.match(Multiplier.regex)
+		return matched? value.replace(Multiplier.regex, new MulValue(matched[1].length, matched[3] || 1, this)) : value
 	}
 }
 
-Multiplier.strategies = [
-	class Normal {
-		static detect(modifier){
-			return !modifier || /[0-9]+/.test(modifier)
-		}
-		constructor(modifier, value){
-			this.start = parseInt(modifier || '1')
-			this.max = parseInt(value) + this.start
-			this.init();
-		}
-		init(){
-			return this.value = this.start;
-		}
+Multiplier.regex = /(\$+)(@([0-9\-]+))?/
 
-		next(){
-			return ++this.value;
-		}
-
-		check(){
-			return this.value < this.max;
-		}
-	},
-
-	class Negative {
-		static detect(modifier){
-			return /-/.test(modifier)
-		}
-		constructor(modifier, value){
-			this.start = parseInt(value);
-			this.min = 0
-			this.init();
-		}
-		init(){
-			return this.value = this.start;
-		}
-
-		next(){
-			return --this.value;
-		}
-
-		check(){
-			return this.value > this.min;
-		}
+class MulValue {
+	constructor(size, value, multiplier){
+		this.start = parseInt(value);
+		this.size = size
+		this.multiplier = multiplier
 	}
-]
 
+	toString(){
+		var sign = this.start > 0 ? 1 : -1
+		return ((this.start + this.multiplier.current) * sign + '').padStart(this.size, '0')
+	}
+}
 
 class TextBlock extends Token {
-	render(){
+	toString(){
 		return this.value.replace(/^\{(.*)\}$/, '$1');
 	}
 }
@@ -210,7 +175,7 @@ class TokenStream {
 					this.readStringIdentifier()
 				)
 
-			case /[[]/.test(next):
+			case /\[/.test(next):
 				return new Attribute(
 					this.readStringAttribute()
 				)
@@ -220,18 +185,18 @@ class TokenStream {
 					this.stream.next()
 				)
 
-			case /[*@]/.test(next):
+			case /\*/.test(next):
 				return new Multiplier(
-					this.stream.read(s => /[@*\-0-9]/.test(s))
+					this.stream.read(s => /[*\-0-9]/.test(s))
 				)
 
-			case /[{]/.test(next):
+			case /\{/.test(next):
 				return new TextBlock(
 					this.readText()
 				)
 
-			case /[(]/.test(next):
-			case /[)]/.test(next):
+			case /\(/.test(next):
+			case /\)/.test(next):
 				return new Group(
 					this.stream.next()
 				)
@@ -336,8 +301,7 @@ class TagGroup {
 		}
 	}
 
-	render(){
-
+	toString(){
 		this.content.forEach(item => {
 			if(!item.hint){
 				item.hint = this.hint;
@@ -346,7 +310,7 @@ class TagGroup {
 		var result = "";
 		var m = this.multiplier || new Multiplier();
 		for(var i = m.init(); m.check(i); i = m.next(i)){
-			result += this.content.map(item => item.render()).join('')
+			result += this.content.map(item => item.toString()).join('')
 		}
 		return result;
 	}
@@ -362,7 +326,7 @@ class Tag extends TagGroup {
 		this.multiplier = args.find(x => x instanceof Multiplier)
 	}
 
-	render(){
+	toString(){
 		this.tagName.value = this.tagName.value || this.hint || 'div'
 
 		this.content.forEach(item => {
@@ -374,15 +338,15 @@ class Tag extends TagGroup {
 		var m = this.multiplier || new Multiplier();
 
 		var result;
-		for(var i = m.init(); m.check(i); i = m.next(i)){
+		for(m.init(); m.check(); m.next()){
 			result += `<${
-				this.tagName.value.replace('$', i)
+				m.detect(this.tagName.value)
 			}${
-				this.attributes.map(x => new Attribute(x.value.replace('$', i))).map(x => x.render()).join('')
+				this.attributes.map(x => new Attribute(m.detect(x.value))).join('')
 			}>${
-				this.content.map(x => x instanceof TextBlock? new TextBlock(x.value.replace('$', i)) : x).map(item => item.render(m)).join('')
+				this.content.map(x => x instanceof TextBlock? new TextBlock(x.value.match(/(.*?\$+@?-?[0-9]*|.*$)/g).map( y =>  m.detect(y)).join('')) : x).join('')
 			}</${
-				this.tagName.value.replace('$', i)
+				m.detect(this.tagName.value)
 			}>`
 		}
 		return result;
