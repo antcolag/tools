@@ -313,19 +313,19 @@ class TagGroup {
 			stream.next();
 
 			if(next instanceof Relationship){
-				switch(true){
-				case next.value == '>':
+				switch(next.value){
+				case '>':
 					next = new TagGroup(stream)
 					this.content[
 						this.content.length - 1
 					].content.push(next)
 
 				continue;
-				case next.value == '^':
+				case '^':
 					if(!top) {
 						return;
 					}
-				case next.value == '+':
+				case '+':
 					continue;
 				}
 			}
