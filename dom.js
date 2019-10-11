@@ -1,5 +1,14 @@
+/**
+ * This module provide the functionality for creating HTML fragments
+ * from template strings
+ * @module
+ */
+
 import { croak } from "./debug.js"
 
+/**
+ * Autodetect if the input string is Emmet or HTML, then parse
+ */
 export default function auto(strings, ...args){
 	if(strings instanceof Array){
 		return (/</.test(strings.join(''))? html : emmet)(...arguments)
@@ -7,11 +16,33 @@ export default function auto(strings, ...args){
 	return auto([strings], ...args)
 }
 
+/**
+ * parse an HTML template string and return a document fragment
+ * @param {string[]} template
+ * @param {...Node} args
+ */
 export function html() {
 	return buildDom(
 		randomAttr(),
 		...arguments
 	)
+}
+
+/**
+ * parse an Emmet template string and return a document fragment
+ * @param {string[]} template
+ * @param {...Node} args
+ */
+export function emmet(strings, ...data){
+	var random = randomAttr();
+	var emmetTempString = strings.join( `emmet[${random}]` )
+	var stream = new TokenStream(
+		new StringStream(emmetTempString)
+	)
+	var tokenString = new TagTokenStream(stream)
+	return buildDom(random, [
+		new TagGroup(tokenString, true).toString()
+	], ...data);
 }
 
 function buildDom(random, strings, ...data) {
@@ -47,18 +78,6 @@ function randomInt(){
 	return Math.floor(
 		Math.random() * Number.MAX_SAFE_INTEGER
 	)
-}
-
-export function emmet(strings, ...data){
-	var random = randomAttr();
-	var emmetTempString = strings.join( `emmet[${random}]` )
-	var stream = new TokenStream(
-		new StringStream(emmetTempString)
-	)
-	var tokenString = new TagTokenStream(stream)
-	return buildDom(random, [
-		new TagGroup(tokenString, true).toString()
-	], ...data);
 }
 
 class Token {
