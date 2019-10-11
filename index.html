@@ -30,14 +30,6 @@
 		} from "./debug.js";
 
 		new Test("tests shuld work", async function (arg) {
-
-			await new Test(
-				"lisper...",
-				(x, finder , ...[first, second]) => lisperato.exec(lisperato.l(
-					(s)=> lisperato.l(lisperato.l(first, lisperato.l(second, x))),
-					(s)=> lisperato[finder](s)
-				)) == x
-			).run(Infinity, 'cadadar', 1,2)
 			var tests = new Test(
 				"reactive and events shuld work",
 				pipe
