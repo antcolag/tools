@@ -87,10 +87,22 @@
 			} finally {
 				await new Test(
 					"easter egg",
-					(x, finder , ...[first, second]) => lisperato.car(lisperato.exec(lisperato.l(
-						(s)=> lisperato.l(lisperato.l(first, lisperato.l(second, x))),
-						(s)=> lisperato[finder](s)
-					)))
+					(x, finder , ...[first, second]) => lisperato.car(
+						lisperato.exec(
+							lisperato.l(
+								(s)=> lisperato.l(
+									lisperato.l(
+										first,
+										lisperato.l(
+											second,
+											x
+										)
+									)
+								),
+								(s)=> lisperato[finder](s)
+							)
+						)
+					)
 				).run('abra', 'cadadr', 1,2)
 			}
 		}).run(true)
