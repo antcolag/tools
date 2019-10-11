@@ -113,7 +113,10 @@ class Multiplier extends Token {
 
 	detect(value){
 		var matched = value.match(Multiplier.regex)
-		return matched? value.replace(Multiplier.regex, new MulValue(matched[1].length, matched[3] || 1, this)) : value
+		return matched? value.replace(
+			Multiplier.regex,
+			new MulValue(matched[1].length, matched[3] || 1, this)
+		) : value
 	}
 }
 
@@ -310,7 +313,7 @@ class TagGroup {
 		var result = "";
 		var m = this.multiplier || new Multiplier();
 		for(var i = m.init(); m.check(i); i = m.next(i)){
-			result += this.content.map(item => item.toString()).join('')
+			result += this.content.map(item => item.toString(this.multiplier)).join('')
 		}
 		return result;
 	}
@@ -326,7 +329,7 @@ class Tag extends TagGroup {
 		this.multiplier = args.find(x => x instanceof Multiplier)
 	}
 
-	toString(){
+	toString(supermul){
 		this.tagName.value = this.tagName.value || this.hint || 'div'
 
 		this.content.forEach(item => {
@@ -344,7 +347,16 @@ class Tag extends TagGroup {
 			}${
 				this.attributes.map(x => new Attribute(m.detect(x.value))).join('')
 			}>${
-				this.content.map(x => x instanceof TextBlock? new TextBlock(x.value.match(/(.*?\$+@?-?[0-9]*|.*$)/g).map( y =>  m.detect(y)).join('')) : x).join('')
+				this.content.map(x => {
+					if(x instanceof TextBlock) {
+						return new TextBlock(
+							x.value.match(/(.*?\$+@?-?[0-9]*|.*$)/g)
+							.map( y => (supermul || m).detect(y)).join('')
+						)
+					} else {
+						return x.toString(supermul || m)
+					}
+				}).join('')
 			}</${
 				m.detect(this.tagName.value)
 			}>`
