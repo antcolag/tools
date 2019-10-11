@@ -11,8 +11,10 @@
 	<script type="module" async src="./test.js"></script>
 	<script type="module" async src="./utils.js"></script>
 	<script type="module" async src="./readable.js"></script>
+	<script type="module" async src="./dom.js"></script>
 	<script type="module" defer>
 		import Test from "./test.js";
+		import * as dom from "./dom.js";
 		import readable from "./readable.js";
 		import {lisperato} from "./tools.js";
 		import {
@@ -50,33 +52,35 @@
 			).die(true)
 
 			readable.call(console)
-
 			var i = 0;
 			var timer = setInterval(()=>{
 				console.log(`...${++i}`)
-			}, 100)
+			}, 1000)
 			await new Test(
-				"timed readable shuld work (.5 sec timer)",
+				"readable shuld work (5 sec timer)",
 				pipe
-			).run(await console.read(500))
+			).run(await console.read(2000))
+			;
 			clearInterval(timer)
+			;
 
-
-			i = 0;
-			timer = setInterval(()=>{
-				console.log(`...${++i}`)
-			}, 100)
-
-			var timer2 = setTimeout(()=> {
-				console.broadcast('ok')
-			}, 200)
 			await new Test(
-				"readable shuld work (.5 sec timer)",
-				pipe
-			).run(await console.read(500))
-			clearInterval(timer)
-			clearInterval(timer2)
+				"emmet shuld work",
+				() => {
+				document.body.appendChild(dom.emmet `a#ciao[bella="ola"]>
+					bella.pe#tutti+#e+.pure*2>
+						(agli#altri+mhu#ah.ua[sdfd="dsf$$"]+ha{$$$@-5})*3
+					^^ ^^ ^
+					ale+section>
+						div>
+							pre{emmet generated}^
+							${document.querySelector('h1')}+p{with fun}+ul>
+							.azz*3`
+				)
+				document.body.appendChild(dom.emmet `div$$.c-\${$$$@3chiaro?$$@-8!!!}*3`)
 
+				ASSERT_T(document.querySelector('agli#altri'))
+			}).run()
 
 			try {
 				return arg
@@ -90,6 +94,8 @@
 				).run('abra', 'cadadr', 1,2)
 			}
 		}).run(true)
+
+		window.dom = dom
 	</script>
 </head>
 <body>
