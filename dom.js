@@ -56,7 +56,9 @@ export function emmet(strings, ...data){
 		new StringStream(emmetTempString)
 	)
 	var tokenString = new TagTokenStream(stream)
-	return buildDom(random, [new TagGroup(tokenString, true).toString()], ...data);
+	return buildDom(random, [
+		new TagGroup(tokenString, true).toString()
+	], ...data);
 }
 
 class Token {
@@ -131,7 +133,8 @@ class MulValue {
 
 	toString(){
 		var sign = this.start > 0 ? 1 : -1
-		return ((this.start + this.multiplier.current) * sign + '').padStart(this.size, '0')
+		return ((this.start + this.multiplier.current) * sign + '')
+		.padStart(this.size, '0')
 	}
 }
 
@@ -204,7 +207,12 @@ class TokenStream {
 					this.stream.next()
 				)
 			default:
-				croak('Error parsing ' + next + ' ' + this.stream.current)
+				croak(
+					'Error parsing '
+					+ next
+					+ ' '
+					+ this.stream.current
+				)
 		}
 	}
 
@@ -289,7 +297,9 @@ class TagGroup {
 				switch(true){
 				case next.value == '>':
 					next = new TagGroup(stream)
-					this.content[this.content.length -1].content.push(next)
+					this.content[
+						this.content.length - 1
+					].content.push(next)
 
 				continue;
 				case next.value == '^':
@@ -313,7 +323,9 @@ class TagGroup {
 		var result = "";
 		var m = this.multiplier || new Multiplier();
 		for(var i = m.init(); m.check(i); i = m.next(i)){
-			result += this.content.map(item => item.toString(this.multiplier)).join('')
+			result += this.content.map(
+				item => item.toString(this.multiplier)
+			).join('')
 		}
 		return result;
 	}
@@ -322,7 +334,9 @@ class TagGroup {
 class Tag extends TagGroup {
 	constructor(...args){
 		super();
-		this.tagName = args.find(x => x instanceof TagName) || new TagName()
+		this.tagName = args.find(
+			x => x instanceof TagName
+		) || new TagName()
 		this.attributes = args.filter(x => x instanceof Attribute)
 		var text = args.filter(x => x instanceof TextBlock)
 		this.content.splice(this.content.length, 0, ...text)
@@ -345,7 +359,9 @@ class Tag extends TagGroup {
 			result += `<${
 				m.detect(this.tagName.value)
 			}${
-				this.attributes.map(x => new Attribute(m.detect(x.value))).join('')
+				this.attributes.map(
+					x => new Attribute(m.detect(x.value))
+				).join('')
 			}>${
 				this.content.map(x => {
 					if(x instanceof TextBlock) {
@@ -445,4 +461,3 @@ class TagTokenStream {
 		}
 	}
 }
-
