@@ -55,14 +55,30 @@
 			var i = 0;
 			var timer = setInterval(()=>{
 				console.log(`...${++i}`)
-			}, 1000)
+			}, 100)
 			await new Test(
-				"readable shuld work (5 sec timer)",
+				"readable shuld work (.2 sec timer)",
 				pipe
-			).run(await console.read(2000))
+			).run(await console.read(200))
 			;
 			clearInterval(timer)
 			;
+
+			timer = setInterval(()=>{
+				console.log(`...${++i}`)
+			}, 100)
+
+			var timer2 = setInterval(()=>{
+				console.broadcast('foo', 'bar')
+			}, 200)
+
+			await new Test(
+				"readable shuld work (no timer)",
+				pipe
+			).run(await console.read())
+
+
+			clearInterval(timer)
 
 			await new Test(
 				"emmet shuld work",
@@ -79,7 +95,7 @@
 				)
 				document.body.appendChild(dom.emmet `div$$.c-\${$$$@3chiaro?$$@-8!!!}*3`)
 
-				ASSERT_T(document.querySelector('agli#altri'))
+				return ASSERT_T(document.querySelector('agli#altri'))
 			}).run()
 
 			try {

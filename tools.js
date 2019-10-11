@@ -59,7 +59,7 @@ export function injectProperties(settings, filter = variableDefiner) {
 
 /* just for joke */
 export const lisperato = new Proxy({
-	l (x, ...args){
+	l(x, ...args){
 		return this.cons(x, args[0] && this.l(...args))
 	},
 	cons(_car, _cdr){

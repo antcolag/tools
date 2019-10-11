@@ -34,7 +34,10 @@ export function emmet(){
 	return new DomPrinter().emmet(...arguments)
 }
 
-
+/**
+ * this class provides the functions for build
+ * a dom with a custom html interpreter
+ */
 export class DomPrinter {
 	constructor(builder = createFragment) {
 		this.builder = builder
