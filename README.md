@@ -5,18 +5,94 @@ userfull es6 mini library
 ## What it does provide
 
 In this library you can find utilities for
-* generic purpuse -> utils.js
-* generator for object conposition -> tools.js
-* observer pattern interface -> observe.js
-* reactive pattern interface -> reactive.js
-* a mini test suite -> test.js
-* debuging handlers -> debug.js
-
-*documentation reference can be found [here](doc/index.md)*
+* generic purpuse -> *[utils.js](doc/utils.md)*
+* generator for object conposition -> *[tools.js](doc/tools.md)*
+* observer pattern interface -> *[observe.js](doc/observe.md)*
+* reactive pattern interface -> *[reactive.js](doc/reactive.md)*
+* a mini test suite -> *[test.js](doc/test.md)*
+* debuging handlers -> *[debug.js](doc/debug.md)*
+* dom printing -> *[dom.js](doc/dom.md)*
 
 # Examples
 
-I think that the ```observable``` and the ```reactive``` interfaces deserve a more in depth view
+I think that the test suite, the dom utilities, and the ```observable``` and ```reactive``` interfaces deserve quick but in depth view
+
+Test suite
+---
+
+This mini test class is super easy to use but work super well!
+
+you can define your test scenario and if something goes wrong (ie if something is thrown, like an unhandled runtime error), then the test will ***fail*** and a **fail** message will be printed the console. Otherwise it will ***pass*** and a **passed** message in console will be printed.
+```javascript
+import Test from "./test.js";
+// ASSERT will throw an error if strict equal comparison fails
+import { ASSERT } from "./debug.js"; 
+
+// the function to be tested
+const sum = (...arg) => {
+	// ...
+	// if something goes wrong
+	// throw it with no mercy!!
+	if(!arg.length){
+		throw new Error("no arguments!");
+	}
+	// simply sum the arguments
+	return arg.reduce((prev, curr) => {
+		return curr + prev
+	}, 0)
+}
+
+// define your test
+const test = new Test("2 + 2 shuld return 4", (N) => {
+	ASSERT(sum(2, 2), 4)
+
+	// test the 1 + 2 + 3 + ... + N serie
+	var args = []
+	for(var i = 1; i <= N; i++) {
+		args.push(i)
+	}
+	ASSERT(sum.apply(this, args), N * (N + 1) / 2 )
+})
+
+// run it!
+test.run(100)
+```
+
+Dom utilities
+---
+
+A set of a fiew userfull utilities for building user interfaces
+
+```javascript
+// import the library
+import * from dom from "./dom.js";
+
+// you can use your own elements
+const myTitle = document.createElement('h2')
+
+// print a dom fragment in the body
+document.body.appendChild(dom.html `
+	<article>
+		${myTitle}
+	</article>
+`)
+
+// of course you can handle your element after it has been printed 
+myTitle.innerHTML = 'hello world'
+```
+And it work with an ***emmet-like*** sintax too!
+
+```javascript
+const myTitle2 = document.createElement('h2')
+
+// print a dom fragment in the body... in emmet dialect!
+document.body.appendChild(
+	dom.emmet `article>${myTitle2}.title>span{hello }`
+)
+
+// of course you can still handle your element after
+myTitle2.innerHTML += 'emmet!'
+```
 
 Observer
 ---
@@ -129,23 +205,4 @@ myReactiveInstance.bind(
 // now we will also print the magicProperty value
 // in console when the magicProperty change
 myReactiveInstance.magicProperty = 'woooow!!'
-```
-
-Test
----
-
-This mini test suite is super easy to and but work super well!
-
-you can define your test scenario and if something goes wrong you can throw it, then the test will ***fail*** and a **fail** message will be printed the console. Otherwise it will ***pass*** and a **passed** message in console will be printed.
-```javascript
-import Test from "./test.js";
-
-// create a test scenario
-const testScenario = (...something) => {
-	// ...
-	// if something goes wrong
-	// throw it with no mercy!!
-	throw something;
-}
-new Test("My test description", testScenario).run(1,2,3)
 ```
