@@ -70,7 +70,9 @@ function init(){
 
 
 function flush(){
-	this[WAIT].resolve && this[WAIT].resolve(this[BUFFER])
+	this[WAIT]
+	&& this[WAIT].resolve
+	&& this[WAIT].resolve(this[BUFFER])
 }
 
 function detach() {
