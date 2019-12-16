@@ -8,6 +8,9 @@ import {
 	buildProperty,
 	injectProperties
 } from "./tools.js"
+import {
+	pipe
+} from "./utils.js"
 
 export const BINDS = Symbol("binds")
 
@@ -33,11 +36,10 @@ function buildBinder (val, list, build) {
 		recurring = 0
 		return val = v
 	}
-	return {
+	return build({
 		set: setter,
-		get: () => val,
-		...typeof build == "function"? build(val, list) : build
-	}
+		get: () => val
+	})
 }
 
 function check(){
@@ -45,7 +47,7 @@ function check(){
 	return this[BINDS]
 }
 
-function bindable(id, build) {
+function bindable(id, build = pipe) {
 	const binds = check.call(this)
 	if(binds[id]){
 		return false
