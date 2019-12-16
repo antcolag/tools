@@ -98,27 +98,6 @@
 				return ASSERT_T(document.querySelector('agli#altri'))
 			}).run()
 
-			const sum = (...arg) => {
-				if(!arg.length){
-					throw new Error("no arguments!");
-				}
-				return arg.reduce((prev, curr) => {
-					return curr + prev
-				}, 0)
-			}
-
-			const test = new Test("2 + 2 shuld return 4", (N) => {
-				ASSERT(sum(2, 2), 4)
-				var args = []
-				for(var i = 1; i <= N; i++) {
-					args.push(i)
-				}
-				ASSERT(sum.apply(this, args), N * (N + 1) / 2 )
-				return true
-			})
-			test.run(100)
-
-			
 			const myTitle = document.createElement('h2')
 			document.body.appendChild(dom.html `
 				<article>
@@ -138,23 +117,15 @@
 			} finally {
 				await new Test(
 					"easter egg",
-					(x, finder , ...[first, second]) => lisperato.car(
+					(x, finder , ...args) => lisperato.car(
 						lisperato.exec(
 							lisperato.l(
-								(s)=> lisperato.l(
-									lisperato.l(
-										first,
-										lisperato.l(
-											second,
-											x
-										)
-									)
-								),
+								(s)=> lisperato.cons(lisperato.cons(lisperato.cons(lisperato.cons(x)))),
 								(s)=> lisperato[finder](s)
 							)
 						)
 					)
-				).run('abra', 'cadadr', 1,2)
+				).run('super', 'caaar')
 			}
 		}).run(true)
 
