@@ -62,7 +62,6 @@ export class DomPrinter {
 			new TagGroup(tokenString, true).toString()
 		], ...data);
 	}
-	
 }
 
 function createFragment(string) {
