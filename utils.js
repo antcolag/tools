@@ -11,9 +11,19 @@ export function noop(){}
 /**
  * Pipes value
  * @param {any} v
+ * @returns {any} the same value in input
  */
 export function pipe(v){
 	return v
+}
+
+/**
+ * Pipes the arguments array
+ * @param {...any} v
+ * @returns {...any}
+ */
+export function fullpipe(){
+	return arguments
 }
 
 /**
