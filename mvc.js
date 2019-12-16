@@ -8,6 +8,9 @@ import observe from "./observe.js"
 import {
 	good
 } from "./debug.js"
+import {
+	fullpipe
+} from "./utils.js"
 
 export const NAME = Symbol('name')
 class Unit {
@@ -17,8 +20,13 @@ class Unit {
 }
 export class Model {
 	constructor(...props){
-		props.forEach( id =>{
-			this.bindable(id)
+		props.forEach( id => {
+			if(typeof id == "function") {
+				id = id.apply(this)
+			}
+			if(void 0 != id) {
+				this.bindable(id)
+			}
 		})
 	}
 
@@ -58,8 +66,9 @@ export class View extends Unit {
 observe.call(View.prototype)
 
 export class Controller extends Unit {
-	constructor(model, name){
+	constructor(model, name, handler = fullpipe){
 		super(name)
+		this.handler = handler
 		if(model){
 			this.model = model
 		}
@@ -68,24 +77,28 @@ export class Controller extends Unit {
 	set model(model){
 		good(model, Model)
 		this.read(-1)
-		.then((data) => {
-			if(data){
-				model
-				.update(...data)
-			}
-			loop.call(this, model)
-		})
+		.then(loop.bind(this, model))
 	}
 }
 readable.call(Controller.prototype)
 
-async function loop(model) {
+async function loop(model, data) {
+	if(data){
+		update.call(this, model, ...data)
+	}
 	while(true){
 		try {
-			model
-			.update(...await this.read())
+			update.call(
+				this,
+				model,
+				...await this.read()
+			)
 		} catch(e) {
 			break
 		}
 	}
+}
+
+function update(model, ...args) {
+	model.update(...this.handler(...args))
 }
