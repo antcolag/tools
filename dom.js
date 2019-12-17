@@ -282,20 +282,27 @@ class TokenStream {
 
 	readText(){
 		var text = ""
+		var escaped = false
 		const test = s => {
-			if(/}/.test(s)){
+			if(!escaped && /}/.test(s)){
 				return
 			}
-			return true
+			escaped = false
+			if(/\\/.test(s)){
+				escaped = true
+				return
+			}
+			return s
 		}
 
 		while(text += this.stream.read(test)) {
-			text += this.stream.next()
 			var picked = this.stream.pick()
-			if(!picked || /[\s\^+)*@]/.test(picked)) {
+			if(!escaped){
+				text += picked
+			}
+			this.stream.next()
+			if(picked && !escaped && /}/.test(picked)) {
 				return text
-			} else {
-				text += this.stream.next()
 			}
 		}
 	}
