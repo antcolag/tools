@@ -287,11 +287,11 @@ class TokenStream {
 			if(!escaped && /}/.test(s)){
 				return
 			}
-			escaped = false
-			if(/\\/.test(s)){
+			if(!escaped && /\\/.test(s)){
 				escaped = true
 				return
 			}
+			escaped = false
 			return s
 		}
 
