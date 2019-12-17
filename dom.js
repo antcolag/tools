@@ -43,15 +43,17 @@ export class DomPrinter {
 		this.builder = builder
 	}
 
-	html() {
+	html(strings, ...data) {
+		[strings, data] = filter(strings, data);
 		return buildDom(
 			this.builder,
 			randomAttr(),
-			...arguments
+			...[strings, ...data]
 		)
 	}
 
 	emmet(strings, ...data){
+		[strings, data] = filter(strings, data);
 		var random = randomAttr();
 		var emmetTempString = strings.join( `emmet[${random}]` )
 		var stream = new TokenStream(
@@ -62,6 +64,20 @@ export class DomPrinter {
 			new TagGroup(tokenString, true).toString()
 		], ...data);
 	}
+}
+
+function filter(strings, data){
+	var result = []
+	for(var i = 0; i < data.length; i++){
+		if(Node && data[i] instanceof Node) {
+			result.push(strings[i]);
+			continue;
+		}
+		result.push(`${strings[i]}${data[i]}${strings[i + 1]}`)
+		data.shift();
+	}
+	result.push(strings[i]);
+	return [result, data]
 }
 
 function createFragment(string) {
