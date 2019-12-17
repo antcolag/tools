@@ -67,17 +67,27 @@ export class DomPrinter {
 }
 
 function filter(strings, data){
-	var result = []
-	for(var i = 0; i < data.length; i++){
-		if(Node && data[i] instanceof Node) {
-			result.push(strings[i]);
-			continue;
+	var resultString = []
+	var resultData = []
+	var resultStringIndex = 0
+	for(var i = 0; i < strings.length - 1; i++){
+		if(Node && !(data[i] instanceof Node)){
+			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + `${strings[i]}${data[i]}`
+
+		} else {
+			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + strings[i]
+			resultStringIndex++
+			resultData.push(data[i])
 		}
-		result.push(`${strings[i]}${data[i]}${strings[i + 1]}`)
-		data.shift();
 	}
-	result.push(strings[i]);
-	return [result, data]
+	if(strings[i]){
+		if(resultString[resultStringIndex]){
+			resultString[resultStringIndex] += strings[i]
+		} else {
+			resultString.push(strings[i])
+		}
+	}
+	return [resultString, resultData]
 }
 
 function createFragment(string) {
@@ -282,7 +292,7 @@ class TokenStream {
 		while(text += this.stream.read(test)) {
 			text += this.stream.next()
 			var picked = this.stream.pick()
-			if(!picked || /[\^+)*@]/.test(picked)) {
+			if(!picked || /[\s\^+)*@]/.test(picked)) {
 				return text
 			} else {
 				text += this.stream.next()
