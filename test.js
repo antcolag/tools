@@ -25,6 +25,11 @@ DEBUG(true)
 
 var COUNTER = 0
 
+export const states = {
+	FAILED: "FAILED",
+	PASSED: "PASSED"
+}
+
 export class Test {
 	constructor(description, test = pipe, ...opt) {
 		good(description, String)
@@ -40,8 +45,8 @@ export class Test {
 		var promise = new Promise(resolver.bind(
 			this,
 			args,
-			finish.bind(this, "PASSED", args),
-			finish.bind(this, "FAILED", args)
+			finish.bind(this, states.PASSED, args),
+			finish.bind(this, states.FAILED, args)
 		));
 		promise.finally((x)=> this.fire("complete", x))
 		return promise
@@ -87,7 +92,7 @@ function finish(state, args, result) {
 function consolePrinter(...args) {
 	var color = "red"
 	var status = args[args.length - 1]
-	if(status == "PASSED") {
+	if(status == states.PASSED) {
 		color = "green"
 	}
 	args.pop()
@@ -95,7 +100,12 @@ function consolePrinter(...args) {
 	var par = args[args.length - 1]
 	args.pop()
 	var logmsg = args.length? ' [' + args.join("][") + ']' : ''
-	return console.log(
+	var handler = "log";
+	switch (status) {
+		case states.FAILED:
+			handler = "error"
+	}
+	return console[handler](
 		`\t${this.id}) %c${status}%c -> ${this.description}:%c ${this.result}%c${logmsg} {${par}}`,
 		`color:${color}`, "color:initial;font-style: oblique",
 		"color:blue;text-transform: none", "color:initial"
