@@ -96,6 +96,9 @@ function createFragment(string) {
 
 function buildDom(builder, random, strings, ...data) {
 	var result = builder(strings.join( `<a ${random}></a>` ))
+	if(data.length <= 0) {
+		return result
+	}
 	var elements = result.querySelectorAll(
 		`[${random}]`
 	)
