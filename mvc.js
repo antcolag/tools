@@ -24,7 +24,9 @@ class Unit {
 		this[NAME] = name
 	}
 }
-export class Model {
+observe.call(Unit.prototype)
+
+export class Model extends Unit {
 	constructor(...props){
 		props.forEach( id => {
 			if(typeof id == "function") {
@@ -69,7 +71,6 @@ export class View extends Unit {
 		return this[MODEL]
 	}
 }
-observe.call(View.prototype)
 injectProperties.call(View.prototype, {
 	print: new DomPrinter()
 })
