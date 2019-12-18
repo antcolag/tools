@@ -11,6 +11,12 @@ import {
 import {
 	fullpipe
 } from "./utils.js"
+import {
+	injectProperties
+} from "./tools.js"
+import {
+	DomPrinter
+} from "./dom.js"
 
 export const NAME = Symbol('name')
 class Unit {
@@ -64,6 +70,9 @@ export class View extends Unit {
 	}
 }
 observe.call(View.prototype)
+injectProperties.call(View.prototype, {
+	print: new DomPrinter()
+})
 
 export class Controller extends Unit {
 	constructor(model, name, handler = fullpipe){
