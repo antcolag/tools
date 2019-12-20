@@ -72,7 +72,10 @@ export class View extends Unit {
 	}
 }
 injectProperties.call(View.prototype, {
-	print: new DomPrinter()
+	print: new DomPrinter((str, data) => [
+		str,
+		data instanceof View ? data.render() : data
+	])
 })
 
 export class Controller extends Unit {

@@ -5,6 +5,7 @@
  */
 
 import { croak } from "./debug.js"
+import { fullpipe } from "./utils.js"
 
 /**
  * Autodetect if the input string is Emmet or HTML, then parse
@@ -39,12 +40,13 @@ export function emmet(){
  * a dom with a custom html interpreter
  */
 export class DomPrinter {
-	constructor(builder = createFragment) {
+	constructor(pipe = fullpipe, builder = createFragment) {
 		this.builder = builder
+		this.pipe = pipe
 	}
 
 	html(strings, ...data) {
-		[strings, data] = filter(strings, data);
+		[strings, data] = filter(strings, data, this.pipe);
 		return buildDom(
 			this.builder,
 			randomAttr(),
@@ -53,7 +55,7 @@ export class DomPrinter {
 	}
 
 	emmet(strings, ...data){
-		[strings, data] = filter(strings, data);
+		[strings, data] = filter(strings, data, this.pipe);
 		var random = randomAttr();
 		var emmetTempString = strings.join( `emmet[${random}]` )
 		var stream = new TokenStream(
@@ -66,18 +68,19 @@ export class DomPrinter {
 	}
 }
 
-function filter(strings, data){
+function filter(strings, data, pipe){
 	var resultString = []
 	var resultData = []
 	var resultStringIndex = 0
 	for(var i = 0; i < strings.length - 1; i++){
-		if(Node && !(data[i] instanceof Node)){
-			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + `${strings[i]}${data[i]}`
+		var [currentString, currentData] = pipe(strings[i], data[i])
+		if(Node && !(currentData instanceof Node)){
+			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + `${currentString}${currentData}`
 
 		} else {
-			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + strings[i]
+			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + currentString
 			resultStringIndex++
-			resultData.push(data[i])
+			resultData.push(currentData)
 		}
 	}
 	if(strings[i]){
