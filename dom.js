@@ -37,7 +37,12 @@ export function emmet(){
 
 /**
  * this class provides the functions for build
- * a dom with a custom html interpreter
+ * a dom tree.
+ * you can set a pipe for tranform the Nth [string, any], tuple
+ * and a builder that is an handler for the strings, the
+ * default is a wrapper Range.createContextualFragment()
+ * @param {function(string: str, any: data): [string, any]} pipe
+ * @param {function(string: html)} builder
  */
 export class DomPrinter {
 	constructor(pipe = fullpipe, builder = createFragment) {
@@ -74,9 +79,8 @@ function filter(strings, data, pipe){
 	var resultStringIndex = 0
 	for(var i = 0; i < strings.length - 1; i++){
 		var [currentString, currentData] = pipe(strings[i], data[i])
-		if(Node && !(currentData instanceof Node)){
+		if(typeof Node !== "undefined" && !(currentData instanceof Node)){
 			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + `${currentString}${currentData}`
-
 		} else {
 			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + currentString
 			resultStringIndex++

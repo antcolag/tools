@@ -18,6 +18,10 @@ import {
 	DomPrinter
 } from "./dom.js"
 
+/**
+ * Base class for controller and Views
+ * @param {string} name
+ */
 export const NAME = Symbol('name')
 class Unit {
 	constructor(name){
@@ -25,6 +29,13 @@ class Unit {
 	}
 }
 
+/**
+ * it handle the data logic of the app
+ * it takes an array of names that will be
+ * expoted by reactive's bindable,
+ * functions will be executed
+ * @param {...any} props
+ */
 export class Model {
 	constructor(...props){
 		props.forEach( id => {
@@ -47,6 +58,13 @@ export class Model {
 }
 reactive.call(Model.prototype)
 
+/**
+ * it hanlde the rendering of the data
+ * it takes the render function, that
+ * should return the rendered data,
+ * possibly takes a model and a name
+ * @param {function} render
+ */
 const MODEL = Symbol('model')
 export class View extends Unit {
 	constructor(render, model, name){
@@ -80,6 +98,16 @@ injectProperties.call(View.prototype, {
 
 observe.call(Unit.prototype)
 
+
+/**
+ * it hanlde the communication and data
+ * transition in the application context
+ * it takes a model, a name and an hanlder
+ * that controlls the data transmition
+ * @param {Model} model
+ * @param {String} name
+ * @param {function} handler
+ */
 export class Controller extends Unit {
 	constructor(model, name, handler = fullpipe){
 		super(name)
