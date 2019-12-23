@@ -100,14 +100,8 @@ function consolePrinter(...args) {
 	var par = args[args.length - 1]
 	args.pop()
 	var logmsg = args.length? ' [' + args.join("][") + ']' : ''
-	var handler = "log";
-	switch (status) {
-		case states.FAILED:
-			handler = "error"
-	}
-	return console[handler](
-		`\t${this.id}) %c${status}%c -> ${this.description}:%c ${this.result}%c${logmsg} {${par}}`,
-		`color:${color}`, "color:initial;font-style: oblique",
-		"color:blue;text-transform: none", "color:initial"
+	console.log(
+		`\t${this.id}) %c${status}%c -> ${this.description}:%c${logmsg} {${par}}`,
+		`color:${color}`, "color:initial;font-style: oblique", "color:initial", this.result
 	)
 }
