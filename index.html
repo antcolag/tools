@@ -112,21 +112,7 @@
 			)
 			myTitle2.innerHTML += 'emmet!'
 
-			try {
-				return arg
-			} finally {
-				await new Test(
-					"easter egg",
-					(x, finder , ...args) => lisperato.car(
-						lisperato.exec(
-							lisperato.l(
-								(s)=> lisperato.cons(lisperato.cons(lisperato.cons(lisperato.cons(x)))),
-								(s)=> lisperato[finder](s)
-							)
-						)
-					)
-				).run('super', 'caaar')
-			}
+			return arg
 		}).run(true)
 
 		window.dom = dom
