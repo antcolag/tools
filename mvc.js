@@ -70,8 +70,9 @@ export class View extends Unit {
 	constructor(render, model, name){
 		super(name)
 		if(render){
-			good(render, 'function')
-			this.render = render
+			if(good(render, 'function')) {
+				this.render = render
+			}
 		}
 
 		if(model){
@@ -80,8 +81,9 @@ export class View extends Unit {
 	}
 
 	set model(model){
-		good(model, Model)
-		this[MODEL] = model
+		if(good(model, Model)){
+			this[MODEL] = model
+		}
 	}
 
 	get model(){
@@ -118,9 +120,10 @@ export class Controller extends Unit {
 	}
 
 	set model(model){
-		good(model, Model)
-		this.read(-1)
-		.then(loop.bind(this, model))
+		if(good(model, Model)){
+			this.read(-1)
+			.then(loop.bind(this, model))
+		}
 	}
 }
 readable.call(Controller.prototype)
