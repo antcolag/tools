@@ -96,7 +96,7 @@ injectProperties.call(View.prototype, {
 	])
 })
 
-observe.call(Unit.prototype)
+observe.call(View.prototype)
 
 
 /**
