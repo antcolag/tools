@@ -50,8 +50,8 @@ export class Model {
 		})
 	}
 
-	async update(...args){
-		args = await this[FILTER](...args)
+	update(...args){
+		args = this[FILTER](...args)
 		Object
 		.keys(this[BINDS])
 		.forEach( (id, i) =>{
