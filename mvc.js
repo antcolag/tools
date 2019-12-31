@@ -36,11 +36,13 @@ class Unit {
  * functions will be executed
  * @param {...any} props
  */
+const FILTER = Symbol('name')
 export class Model {
 	constructor(...props){
 		props.forEach( id => {
 			if(typeof id == "function") {
-				id = id.apply(this)
+				this[FILTER] = id;
+				return;
 			}
 			if(void 0 != id) {
 				this.bindable(id)
@@ -48,7 +50,8 @@ export class Model {
 		})
 	}
 
-	update(...args){
+	async update(...args){
+		args = await this[FILTER](...args)
 		Object
 		.keys(this[BINDS])
 		.forEach( (id, i) =>{
@@ -57,6 +60,8 @@ export class Model {
 	}
 }
 reactive.call(Model.prototype)
+
+Model.prototype[FILTER] = fullpipe;
 
 /**
  * it hanlde the rendering of the data
