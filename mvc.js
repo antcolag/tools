@@ -51,14 +51,19 @@ export class Model {
 	}
 
 	update(...args){
-		args = this[FILTER](...args)
-		Object
-		.keys(this[BINDS])
-		.forEach( (id, i) =>{
-			this[id] = args[i]
-		})
+		update.apply(this, args)
 	}
 }
+
+async function update(...args) {
+	args = await this[FILTER](...args)
+	Object
+	.keys(this[BINDS])
+	.forEach( (id, i) =>{
+		this[id] = args[i]
+	})
+}
+
 reactive.call(Model.prototype)
 
 Model.prototype[FILTER] = fullpipe;
@@ -128,25 +133,20 @@ export class Controller extends Unit {
 		.then(loop.bind(this, model))
 	}
 }
+
 readable.call(Controller.prototype)
 
 async function loop(model, data) {
 	if(data){
-		update.call(this, model, ...data)
+		model.update(...data);
 	}
 	while(true){
 		try {
-			update.call(
-				this,
-				model,
+			model.update(
 				...await this.read()
 			)
 		} catch(e) {
 			break
 		}
 	}
-}
-
-function update(model, ...args) {
-	model.update(...this.handler(...args))
 }
