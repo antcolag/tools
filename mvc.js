@@ -128,6 +128,15 @@ export class Controller extends Unit {
 		this.read(-1)
 		.then(loop.bind(this, model))
 	}
+
+	async broadcast(...args){
+		args = await this.handler(...args)
+		if(!args[Symbol.iterator]){
+			args = [args];
+		}
+		this.fire('broadcast', ...args)
+		return super.broadcast(...arg)
+	}
 }
 
 readable.call(Controller.prototype)
