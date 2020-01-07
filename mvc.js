@@ -29,6 +29,8 @@ class Unit {
 	}
 }
 
+observe.call(Unit.prototype)
+
 /**
  * it handle the data logic of the app
  * it takes an array of names that will be
@@ -36,12 +38,11 @@ class Unit {
  * functions will be executed
  * @param {...any} props
  */
-const FILTER = Symbol('name')
 export class Model {
 	constructor(...props){
 		props.forEach( id => {
 			if(typeof id == "function") {
-				this[FILTER] = id;
+				this.assign = id;
 				return;
 			}
 			if(void 0 != id) {
@@ -50,23 +51,20 @@ export class Model {
 		})
 	}
 
-	update(...args){
-		update.apply(this, args)
+	async update(...args){
+		this.fire('update', await this.assign(...args));
+	}
+
+	assign(...args){
+		return Object
+		.keys(this[BINDS])
+		.forEach( (id, i) =>{
+			this[id] = args[i]
+		})
 	}
 }
 
-async function update(...args) {
-	args = await this[FILTER](...args)
-	Object
-	.keys(this[BINDS])
-	.forEach( (id, i) =>{
-		this[id] = args[i]
-	})
-}
-
 reactive.call(Model.prototype)
-
-Model.prototype[FILTER] = fullpipe;
 
 /**
  * it hanlde the rendering of the data
@@ -105,8 +103,6 @@ injectProperties.call(View.prototype, {
 		data instanceof View ? data.render() : data
 	])
 })
-
-observe.call(View.prototype)
 
 
 /**
