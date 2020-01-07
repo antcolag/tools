@@ -45,26 +45,35 @@ export class Model {
 				this.assign = id;
 				return;
 			}
-			if(void 0 != id) {
-				this.bindable(id)
-			}
+			this.bindable(id)
 		})
+		if(!this.assign){
+			this.assign = Model.progressive
+		}
 	}
 
 	async update(...args){
 		this.fire('update', await this.assign(...args));
 	}
+}
 
+reactive.call(Model.prototype)
+
+injectProperties.call(Model, {
 	assign(...args){
-		return Object
+		good(this, Model);
+		return Object.assign(this, ...args)
+	},
+	progressive(...args){
+		good(this, Model);
+		Object
 		.keys(this[BINDS])
 		.forEach( (id, i) =>{
 			this[id] = args[i]
 		})
+		return this
 	}
-}
-
-reactive.call(Model.prototype)
+})
 
 /**
  * it hanlde the rendering of the data
