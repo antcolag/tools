@@ -29,6 +29,8 @@ class Unit {
 	}
 }
 
+observe.call(Unit.prototype)
+
 /**
  * it handle the data logic of the app
  * it takes an array of names that will be
@@ -40,23 +42,38 @@ export class Model {
 	constructor(...props){
 		props.forEach( id => {
 			if(typeof id == "function") {
-				id = id.apply(this)
+				this.assign = id;
+				return;
 			}
-			if(void 0 != id) {
-				this.bindable(id)
-			}
+			this.bindable(id)
 		})
+		if(!this.assign){
+			this.assign = Model.progressive
+		}
 	}
 
-	update(...args){
+	async update(...args){
+		this.fire('update', await this.assign(...args));
+	}
+}
+
+reactive.call(Model.prototype)
+
+injectProperties.call(Model, {
+	assign(...args){
+		good(this, Model);
+		return Object.assign(this, ...args)
+	},
+	progressive(...args){
+		good(this, Model);
 		Object
 		.keys(this[BINDS])
 		.forEach( (id, i) =>{
 			this[id] = args[i]
 		})
+		return this
 	}
-}
-reactive.call(Model.prototype)
+})
 
 /**
  * it hanlde the rendering of the data
@@ -93,8 +110,6 @@ injectProperties.call(View.prototype, {
 	print: new DomPrinter()
 })
 
-observe.call(Unit.prototype)
-
 
 /**
  * it hanlde the communication and data
@@ -119,26 +134,30 @@ export class Controller extends Unit {
 		this.read(-1)
 		.then(loop.bind(this, model))
 	}
+
+	async broadcast(...args){
+		args = await this.handler(...args)
+		if(!args[Symbol.iterator]){
+			args = [args];
+		}
+		this.fire('broadcast', ...args)
+		return super.broadcast(...arg)
+	}
 }
+
 readable.call(Controller.prototype)
 
 async function loop(model, data) {
 	if(data){
-		update.call(this, model, ...data)
+		model.update(...data);
 	}
 	while(true){
 		try {
-			update.call(
-				this,
-				model,
+			model.update(
 				...await this.read()
 			)
 		} catch(e) {
 			break
 		}
 	}
-}
-
-function update(model, ...args) {
-	model.update(...this.handler(...args))
 }

@@ -19,19 +19,6 @@ export function croak(value){
 }
 
 /**
- * Throws a type error when called
- */
-export function Abstract(name) {
-	croak(new TypeError(`${
-		name ? `${name} ` : ''
-	}not implemented${
-		this ? ` in ${
-			this.constructor.name
-		}` : ''
-	}`))
-}
-
-/**
  * Check if value is an instance of a given type
  * @function
  * @param {any} value - value to check
