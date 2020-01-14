@@ -19,16 +19,10 @@ import {
 } from "./dom.js"
 
 /**
- * Base class for controller and Views
+ * Base class for Models, Controller and Views
  * @param {string} name
  */
-export const NAME = Symbol('name')
-class Unit {
-	constructor(name){
-		this[NAME] = name
-	}
-}
-
+class Unit {}
 observe.call(Unit.prototype)
 
 /**
@@ -38,7 +32,7 @@ observe.call(Unit.prototype)
  * functions will be executed
  * @param {...any} props
  */
-export class Model {
+export class Model extends Unit {
 	constructor(...props){
 		props.forEach( id => {
 			if(typeof id == "function") {
@@ -79,13 +73,13 @@ injectProperties.call(Model, {
  * it hanlde the rendering of the data
  * it takes the render function, that
  * should return the rendered data,
- * possibly takes a model and a name
+ * possibly takes a model
  * @param {function} render
  */
 const MODEL = Symbol('model')
 export class View extends Unit {
-	constructor(render, model, name){
-		super(name)
+	constructor(render, model){
+		super()
 		if(render){
 			good(render, 'function')
 			this.render = render
@@ -121,8 +115,8 @@ injectProperties.call(View.prototype, {
  * @param {function} handler
  */
 export class Controller extends Unit {
-	constructor(model, name, handler = fullpipe){
-		super(name)
+	constructor(model, handler = fullpipe){
+		super()
 		this.handler = handler
 		if(model){
 			this.model = model
