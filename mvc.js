@@ -90,10 +90,7 @@ export class View extends Unit {
 }
 
 injectProperties.call(View.prototype, {
-	print: new DomPrinter((str, data) => [
-		str,
-		data instanceof View ? data.render() : data
-	])
+	print: new DomPrinter()
 })
 
 observe.call(Unit.prototype)

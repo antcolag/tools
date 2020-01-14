@@ -45,7 +45,7 @@ export function emmet(){
  * @param {function(string: html)} builder
  */
 export class DomPrinter {
-	constructor(pipe = fullpipe, builder = createFragment) {
+	constructor(builder = createFragment, pipe = fullpipe) {
 		this.builder = builder
 		this.pipe = pipe
 	}
