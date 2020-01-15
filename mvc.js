@@ -100,7 +100,7 @@ export class View extends Unit {
 		return this[MODEL]
 	}
 
-	static builder(hanlder) {
+	static set builder(hanlder) {
 		this.prototype.print.builder = hanlder
 	}
 }
