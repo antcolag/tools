@@ -99,6 +99,10 @@ export class View extends Unit {
 	get model(){
 		return this[MODEL]
 	}
+
+	static builder(hanlder) {
+		this.prototype.print.builder = hanlder
+	}
 }
 
 injectProperties.call(View.prototype, {
