@@ -34,6 +34,7 @@ observe.call(Unit.prototype)
  */
 export class Model extends Unit {
 	constructor(...props){
+		super()
 		props.forEach( id => {
 			if(typeof id == "function") {
 				this.assign = id;
