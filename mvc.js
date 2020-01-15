@@ -105,9 +105,9 @@ export class View extends Unit {
 	}
 }
 
-[View.prototype, View].forEach(i => injectProperties.call(i, {
+injectProperties.call(View.prototype, {
 	print: new DomPrinter()
-}))
+})
 
 
 
