@@ -10,11 +10,8 @@ import { fullpipe } from "./utils.js"
 /**
  * Autodetect if the input string is Emmet or HTML, then parse
  */
-export default function auto(strings, ...args){
-	if(strings instanceof Array){
-		return (/</.test(strings.join(''))? html : emmet)(...arguments)
-	}
-	return auto([strings], ...args)
+export default function auto(){
+	return new DomPrinter().auto(...arguments)
 }
 
 /**
@@ -70,6 +67,10 @@ export class DomPrinter {
 		return buildDom(this.builder, random, [
 			new TagGroup(tokenString, true).toString()
 		], ...data);
+	}
+
+	auto(strings) {
+		return (/^</.test(strings[0])? this.html : this.emmet)(...arguments)
 	}
 }
 
