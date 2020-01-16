@@ -4,8 +4,12 @@
  * @module
  */
 
-import { croak } from "./debug.js"
-import { fullpipe } from "./utils.js"
+import {
+	croak
+} from "./debug.js"
+import {
+	fullpipe
+} from "./utils.js"
 
 /**
  * Autodetect if the input string is Emmet or HTML, then parse
@@ -80,7 +84,7 @@ function filter(strings, data, pipe){
 	var resultStringIndex = 0
 	for(var i = 0; i < strings.length - 1; i++){
 		var [currentString, currentData] = pipe(strings[i], data[i])
-		if(typeof Node !== "undefined" && !(currentData instanceof Node)){
+		if(typeof Node == "undefined" || !(currentData instanceof Node)){
 			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + `${currentString}${currentData}`
 		} else {
 			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + currentString
