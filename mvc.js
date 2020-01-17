@@ -44,7 +44,7 @@ export class Model extends Unit {
 			this.bindable(id)
 		})
 		if(!this.assign){
-			this.assign = Model.progressive
+			this.assign = Model.simple
 		}
 	}
 
@@ -52,12 +52,12 @@ export class Model extends Unit {
 		this.fire('update', await this.assign(...args));
 	}
 
-	static assign(...args){
+	static struct(...args){
 		good(this, Model);
 		return Object.assign(this, ...args)
 	}
 
-	static progressive(...args){
+	static simple(...args){
 		good(this, Model);
 		Object
 		.keys(this[BINDS])
