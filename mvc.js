@@ -51,16 +51,13 @@ export class Model extends Unit {
 	async update(...args){
 		this.fire('update', await this.assign(...args));
 	}
-}
 
-reactive.call(Model.prototype)
-
-injectProperties.call(Model, {
-	assign(...args){
+	static assign(...args){
 		good(this, Model);
 		return Object.assign(this, ...args)
-	},
-	progressive(...args){
+	}
+
+	static progressive(...args){
 		good(this, Model);
 		Object
 		.keys(this[BINDS])
@@ -69,7 +66,9 @@ injectProperties.call(Model, {
 		})
 		return this
 	}
-})
+}
+
+reactive.call(Model.prototype)
 
 /**
  * it hanlde the rendering of the data
