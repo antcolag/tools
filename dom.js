@@ -4,17 +4,18 @@
  * @module
  */
 
-import { croak } from "./debug.js"
-import { fullpipe } from "./utils.js"
+import {
+	croak
+} from "./debug.js"
+import {
+	fullpipe
+} from "./utils.js"
 
 /**
  * Autodetect if the input string is Emmet or HTML, then parse
  */
-export default function auto(strings, ...args){
-	if(strings instanceof Array){
-		return (/</.test(strings.join(''))? html : emmet)(...arguments)
-	}
-	return auto([strings], ...args)
+export default function auto(){
+	return new DomPrinter().auto(...arguments)
 }
 
 /**
@@ -45,7 +46,7 @@ export function emmet(){
  * @param {function(string: html)} builder
  */
 export class DomPrinter {
-	constructor(pipe = fullpipe, builder = createFragment) {
+	constructor(builder = createFragment, pipe = fullpipe) {
 		this.builder = builder
 		this.pipe = pipe
 	}
@@ -71,6 +72,10 @@ export class DomPrinter {
 			new TagGroup(tokenString, true).toString()
 		], ...data);
 	}
+
+	auto(strings) {
+		return (/^\s*</.test(strings[0])? this.html : this.emmet)(...arguments)
+	}
 }
 
 function filter(strings, data, pipe){
@@ -79,7 +84,7 @@ function filter(strings, data, pipe){
 	var resultStringIndex = 0
 	for(var i = 0; i < strings.length - 1; i++){
 		var [currentString, currentData] = pipe(strings[i], data[i])
-		if(typeof Node !== "undefined" && !(currentData instanceof Node)){
+		if(typeof Node == "undefined" || !(currentData instanceof Node)){
 			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + `${currentString}${currentData}`
 		} else {
 			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + currentString

@@ -35,7 +35,7 @@ observe.call(Unit.prototype)
  */
 export class Model extends Unit {
 	constructor(...props){
-		super();
+		super()
 		props.forEach( id => {
 			if(typeof id == "function") {
 				this.assign = id;
@@ -75,7 +75,7 @@ injectProperties.call(Model, {
  * it hanlde the rendering of the data
  * it takes the render function, that
  * should return the rendered data,
- * possibly takes a model and a name
+ * possibly takes a model
  * @param {function} render
  */
 const MODEL = Symbol('model')
@@ -100,14 +100,16 @@ export class View extends Unit {
 	get model(){
 		return this[MODEL]
 	}
+
+	static set builder(hanlder) {
+		this.prototype.print.builder = hanlder
+	}
 }
 
 injectProperties.call(View.prototype, {
-	print: new DomPrinter((str, data) => [
-		str,
-		data instanceof View ? data.render() : data
-	])
+	print: new DomPrinter()
 })
+
 
 
 /**
