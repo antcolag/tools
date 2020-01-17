@@ -145,14 +145,20 @@ export const isTrue = compareWhitConst(true)
 export const isFalse = compareWhitConst(false)
 
 /**
- * add a property to an object functionaly
+ * it sets one or more copule of key value pair
+ * passed plain to a function
+ * ie
+ * var o = {}
+ * properties.call(o, 'foo', true, 'bar', false)
+ * console.log(o) -> {foo:true, bar:false}
+ *
  * @param {*} name
  * @param {*} value
  * @param {*} filter
  */
-export function property(name, value, ...args) {
+export function properties(name, value, ...args) {
 	this[name] = value
-	return args.length? property.apply(this, args) : this
+	return args.length? properties.apply(this, args) : this
 }
 
 export class Semaphore {

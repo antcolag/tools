@@ -4,7 +4,7 @@
  * @see module:utils
  */
 
-import { property } from "./utils.js"
+import { properties } from "./utils.js"
 
 /**
  * build the argument for Object.defineProperty
@@ -52,10 +52,9 @@ export function buildProperty(name, value, filter = constDefiner){
  * @param {*} filter
  */
 export function injectProperties(settings, filter = variableDefiner) {
-	const handler = (prev, curr) => property.call(prev, curr, filter(settings[curr]))
+	const handler = (prev, curr) => properties.call(prev, curr, filter(settings[curr]))
 	return Object.defineProperties(this, Object.keys(settings).reduce(handler, {}))
 }
-
 
 /* just for joke */
 export const lisperato = new Proxy({
