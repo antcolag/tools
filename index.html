@@ -16,6 +16,7 @@
 		import Test from "./test.js";
 		import * as dom from "./dom.js";
 		import readable from "./readable.js";
+		import reactive from "./reactive.js";
 		import {lisperato} from "./tools.js";
 		import {
 			apply,
@@ -32,7 +33,19 @@
 		new Test("tests shuld work", async function (arg) {
 			var tests = new Test(
 				"reactive and events shuld work",
-				pipe
+				() => {
+					var r = new reactive()
+					r.bindable('foo')
+					r.bindable('bar');
+					var o = {}
+					r.bind('foo', o)
+					r.bind('bar', o)
+					r.bind('foo', (x) => document.body.appendChild(dom.emmet `p{updating foo ${x}}`))
+					r.bind('bar', (x) => document.body.appendChild(dom.emmet `p{updating bar ${x}}`))
+
+					Object.assign(r, {foo:1,bar:2})
+					return ASSERT_T(o.foo == r.foo && o.bar == r.bar)
+				}
 			)
 			tests.bind("result", this, "reactiveResult")
 			tests.on(

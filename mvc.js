@@ -9,7 +9,8 @@ import {
 	good
 } from "./debug.js"
 import {
-	fullpipe
+	fullpipe,
+	isUndefined
 } from "./utils.js"
 import {
 	injectProperties
@@ -131,8 +132,7 @@ export class Controller extends Unit {
 
 	set model(model){
 		good(model, Model)
-		this.read(-1)
-		.then(loop.bind(this, model))
+		loop.call(this, model, this.read(-1))
 	}
 
 	async broadcast(...args){
@@ -148,7 +148,7 @@ export class Controller extends Unit {
 readable.call(Controller.prototype)
 
 async function loop(model, data) {
-	if(data){
+	if(!isUndefined(data)){
 		model.update(...data);
 	}
 	while(true){

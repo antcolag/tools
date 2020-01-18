@@ -20,11 +20,9 @@ const HANDLERS = {
 	unbind
 }
 
-export function reactive() {
+export default function reactive() {
 	return injectProperties.call(this, HANDLERS)
 }
-
-export default reactive
 
 function buildBinder (val, list, build) {
 	var recurring = 0

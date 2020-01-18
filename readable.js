@@ -9,9 +9,8 @@
 
 import {
 	defer,
-	applyWithConst,
-	apply,
-	Semaphore
+	Semaphore,
+	noop
 } from "./utils.js"
 
 export const BUFFER = Symbol('buffer')
@@ -51,13 +50,7 @@ async function read(){
 	}
 	return await (arguments.length ? Promise.race([
 		this[WAIT].promise,
-		new Promise(
-			defer.bind(
-				void 0,
-				arguments[0],
-				applyWithConst(apply)
-			)
-		)
+		defer(arguments[0], noop)
 	]) : this[WAIT].promise)
 }
 
