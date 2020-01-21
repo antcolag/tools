@@ -113,6 +113,8 @@ function type_check(proper, value, ...types) {
 		case (value instanceof type):
 		case value.constructor == type:
 			return proper
+		default:
+			return !proper
 		}
 	}) || croak(value.constructor)
 }

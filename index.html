@@ -56,13 +56,18 @@
 			)
 			await tests.run(true)
 
-			if(good(1, Boolean, Number)){
-				console.log('ok')
-			}
+			good(1, Boolean, Number)
+
+			crap(1, Boolean, Object)
 
 			await new Test(
-				"failing tests shuld work",
-				croak
+				"good should die if not pass",
+				good.bind(null, 1, Boolean)
+			).die(true)
+
+			await new Test(
+				"crap should die if not pass",
+				crap.bind(null, 1, Number)
 			).die(true)
 
 			await new Test(
