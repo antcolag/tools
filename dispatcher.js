@@ -1,7 +1,8 @@
 import {
 	pipe,
 	noop,
-	apply
+	apply,
+	properties
 } from "./utils.js"
 
 class Handler {
@@ -12,23 +13,16 @@ class Handler {
 	}
 
 	match(path) {
-		var m = this.id.exec(path);
-		if(!m){
-			return null;
-		}
-		var result = {}
-		for(var i in this.names) {
-			result[this.names[i]] = m[i+1]
-		}
-		return result
+		var opt = this.id.exec(path);
+		return opt && ['string', ...this.names].reduce(
+			(prev, curr, i) => properties.call(prev, curr, opt[i]),
+			{}
+		)
 	}
 
 	call(path, ...args) {
 		var opt = this.match(path);
-		if(!opt){
-			return;
-		}
-		return this.handler(opt, path, ...args)
+		return opt && this.handler(opt, ...args)
 	}
 }
 
@@ -61,14 +55,14 @@ export class Resource {
 
 	invoke(opt, path, ...args) {
 		return new Proxy(this[METHODS], {
-			get: getter.bind(this, opt, path, args),
+			get: getter.bind(this, opt, args),
 			set: noop
 		})
 	}
 }
 
-function getter(opt, path, args, self, p) {
+function getter(opt, args, self, p) {
 	return this.filter(
-		self[p].bind(this, opt, path, ...args)
+		self[p].bind(this, opt, ...args)
 	)
 }
