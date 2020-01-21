@@ -24,6 +24,8 @@
 			yes
 		} from "./utils.js";
 		import {
+			good,
+			crap,
 			croak,
 			ASSERT,
 			ASSERT_T,
@@ -53,6 +55,10 @@
 				ASSERT.bind(null, this.reactiveResult, tests.result)
 			)
 			await tests.run(true)
+
+			if(good(1, Boolean, Number)){
+				console.log('ok')
+			}
 
 			await new Test(
 				"failing tests shuld work",
