@@ -138,6 +138,9 @@ export class Controller extends Unit {
 					...await this.read()
 				)
 			} catch(e) {
+				if(e instanceof Model && e !== model) {
+					continue
+				}
 				break
 			}
 		}
