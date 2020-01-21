@@ -50,7 +50,13 @@ export class Model extends Unit {
 	}
 
 	async update(...args){
-		this.fire('update', await this.assign(...args));
+		try {
+			return this.fire('update', await this.assign(...args));
+		} catch (e){
+			return this.fire('reject', e)
+		} finally {
+			this.fire('done', ...args)
+		}
 	}
 
 	static struct(...args){
@@ -78,7 +84,6 @@ reactive.call(Model.prototype)
  * possibly takes a model
  * @param {function} render
  */
-const MODEL = Symbol('model')
 export class View extends Unit {
 	constructor(render, model){
 		super()
@@ -90,15 +95,6 @@ export class View extends Unit {
 		if(model){
 			this.model = model
 		}
-	}
-
-	set model(model){
-		good(model, Model)
-		this[MODEL] = model
-	}
-
-	get model(){
-		return this[MODEL]
 	}
 
 	static set builder(hanlder) {
@@ -130,9 +126,21 @@ export class Controller extends Unit {
 		}
 	}
 
-	set model(model){
+	loop(model){
 		good(model, Model)
-		loop.call(this, model, this.read(-1))
+		var data = this.read(-1);
+		if(!isUndefined(data)){
+			model.update(...data);
+		}
+		while(true){
+			try {
+				model.update(
+					...await this.read()
+				)
+			} catch(e) {
+				break
+			}
+		}
 	}
 
 	async broadcast(...args){
@@ -146,18 +154,3 @@ export class Controller extends Unit {
 }
 
 readable.call(Controller.prototype)
-
-async function loop(model, data) {
-	if(!isUndefined(data)){
-		model.update(...data);
-	}
-	while(true){
-		try {
-			model.update(
-				...await this.read()
-			)
-		} catch(e) {
-			break
-		}
-	}
-}
