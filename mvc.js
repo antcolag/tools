@@ -118,11 +118,11 @@ injectProperties.call(View.prototype, {
  * @param {function} handler
  */
 export class Controller extends Unit {
-	constructor(model, handler = fullpipe){
+	constructor(handler = fullpipe, model){
 		super()
 		this.handler = handler
 		if(model){
-			this.model = model
+			this.loop(model)
 		}
 	}
 
