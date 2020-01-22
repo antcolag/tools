@@ -152,7 +152,7 @@ export class Controller extends Unit {
 			args = [args];
 		}
 		this.fire('broadcast', ...args)
-		return super.broadcast(...arg)
+		return super.broadcast(...args)
 	}
 }
 
