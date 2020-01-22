@@ -42,8 +42,8 @@
 					var o = {}
 					r.bind('foo', o)
 					r.bind('bar', o)
-					r.bind('foo', (x) => document.body.appendChild(dom.emmet `p{updating foo ${x}}`))
-					r.bind('bar', (x) => document.body.appendChild(dom.emmet `p{updating bar ${x}}`))
+					// r.bind('foo', (x) => document.body.appendChild(dom.emmet `p{updating foo ${x}}`))
+					// r.bind('bar', (x) => document.body.appendChild(dom.emmet `p{updating bar ${x}}`))
 
 					Object.assign(r, {foo:1,bar:2})
 					return ASSERT_T(o.foo == r.foo && o.bar == r.bar)
@@ -106,6 +106,9 @@
 			await new Test(
 				"emmet shuld work",
 				() => {
+
+				var testDom = dom.emmet `a.b.c`
+				ASSERT(testDom.children[0].className, "b c")
 				document.body.appendChild(dom.emmet `a#ciao[bella="ola"]>
 					bella.pe#tutti+#e+.pure*2>
 						((agli#altri+mhu#ah.ua[sdfd="dsf$$"]+ha{$$$@-5})*3)*2

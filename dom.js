@@ -372,8 +372,8 @@ class StringStream {
 class TagGroup {
 	constructor(stream, top) {
 		this.content = []
-		while(stream && stream.pick()){
-			var next = stream.pick();
+		var next;
+		while(stream && (next = stream.pick())){
 			if(next.value == ')'){
 				return;
 			}
@@ -423,7 +423,22 @@ class Tag extends TagGroup {
 		this.tagName = args.find(
 			x => x instanceof TagName
 		) || new TagName()
-		this.attributes = args.filter(x => x instanceof Attribute)
+		var classList = []
+		var classregex = /\[class="(.*)"\]/
+		this.attributes = args.filter(x => {
+			if(!(x instanceof Attribute)) {
+				return false
+			}
+			var classAttr = classregex.exec(x.value)
+			if(!classAttr) {
+				return true
+			}
+			classList.push(classAttr[1])
+			return false
+		})
+		if(classList) {
+			this.attributes.push(new Attribute(`[class="${classList.join(' ')}"]`))
+		}
 		var text = args.filter(x => x instanceof TextBlock)
 		this.content.splice(this.content.length, 0, ...text)
 		this.multiplier = args.find(x => x instanceof Multiplier)
@@ -507,7 +522,7 @@ class TagTokenStream {
 
 		case picked instanceof TextBlock:
 			this.current = this.stream.next();
-		return this.current;
+			return this.current;
 
 		case this.isTag(picked):
 			var args = []
