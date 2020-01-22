@@ -126,7 +126,7 @@ export class Controller extends Unit {
 		}
 	}
 
-	loop(model){
+	async loop(model){
 		good(model, Model)
 		var data = this.read(-1);
 		if(!isUndefined(data)){
