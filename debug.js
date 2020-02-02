@@ -108,8 +108,9 @@ function type_check(proper, value, ...types) {
 	return types.some((type) => {
 		switch(true) {
 		case typeof type == 'string':
-			return proper ?
-			type == value : type != value;
+			return proper
+			? type == typeof value
+			: type != typeof value;
 		case (value instanceof type):
 		case value.constructor == type:
 			return proper

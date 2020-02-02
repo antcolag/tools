@@ -41,6 +41,9 @@ new Test("tests shuld work", async function (arg) {
 
 	crap(1, Boolean, Object)
 
+
+	good(()=>{}, "function")
+
 	await new Test(
 		"good should die if not pass",
 		good.bind(null, 1, Boolean)
