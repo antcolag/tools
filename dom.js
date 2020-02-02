@@ -436,7 +436,7 @@ class Tag extends TagGroup {
 			classList.push(classAttr[1])
 			return false
 		})
-		if(classList) {
+		if(classList.length) {
 			this.attributes.push(new Attribute(`[class="${classList.join(' ')}"]`))
 		}
 		var text = args.filter(x => x instanceof TextBlock)
