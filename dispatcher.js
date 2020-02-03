@@ -47,9 +47,9 @@ export class Dispatcher {
 
 const METHODS = Symbol('methods')
 export class Resource {
-	constructor(methods, filter = apply) {
+	constructor(methods, trigger = apply) {
 		this[METHODS] = methods;
-		this.filter = filter;
+		this.trigger = trigger;
 		this.invoke = this.invoke.bind(this)
 	}
 
@@ -62,7 +62,7 @@ export class Resource {
 }
 
 function getter(opt, args, self, p) {
-	return this.filter(
+	return this.trigger(
 		self[p].bind(this, opt, ...args)
 	)
 }
