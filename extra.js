@@ -43,24 +43,27 @@ observe.call(Unit.prototype)
  * functions will be executed
  * @param {...any} props
  */
+const HANDLER = Symbol('handler');
 export class Model extends Unit {
 	constructor(...props){
 		super()
 		props.forEach( id => {
 			if(typeof id == "function") {
-				this.assign = id;
+				this[HANDLER] = id;
 				return;
 			}
 			this.bindable(id)
 		})
-		if(!this.assign){
-			this.assign = Model.inline
+		if(!this[HANDLER]){
+			this[HANDLER] = Model.inline
 		}
 	}
 
 	async update(...args){
 		try {
-			return this.fire('update', await this.assign(...args));
+			return this.fire('update',
+				await this[HANDLER](...args)
+			);
 		} catch (e){
 			return this.fire('reject', e)
 		} finally {
@@ -120,9 +123,9 @@ export class Controller extends Unit {
 		this[HANDLERS].push(new Handler(...arguments))
 	}
 
-	trigger(path, ...args){
+	async trigger(path, ...args){
 		return this.fire('trigger', this[HANDLERS].reduce(
-			(pre, x) => pre = pre || x.call(path, ...args),
+			(pre, x) => pre = pre || await x.call(path, ...args),
 			null
 		))
 	}
@@ -143,9 +146,9 @@ class Handler {
 		)
 	}
 
-	call(path, ...args) {
+	async call(path, ...args) {
 		var opt = this.match(path);
-		return opt && this.handler(opt, ...args)
+		return opt && await this.handler(opt, ...args)
 	}
 }
 
@@ -165,9 +168,12 @@ export class Resource {
 	}
 }
 
-function getter(opt, path, args, self, p) {
-	return this.trigger(
-		self[p].bind(this, opt, path, ...args)
+async function getter(opt, path, args, self, p) {
+	return await this.trigger(
+		self[p].bind(this),
+		opt,
+		path,
+		...args
 	)
 }
 
