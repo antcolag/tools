@@ -54,7 +54,7 @@ export class Model extends Unit {
 			this.bindable(id)
 		})
 		if(!this.assign){
-			this.assign = Model.simple
+			this.assign = Model.inline
 		}
 	}
 
@@ -73,7 +73,7 @@ export class Model extends Unit {
 		return Object.assign(this, ...args)
 	}
 
-	static simple(...args){
+	static inline(...args){
 		good(this, Model);
 		Object
 		.keys(this[BINDS])
