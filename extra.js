@@ -116,6 +116,7 @@ injectProperties.call(View.prototype, {
 const HANDLERS = Symbol('handlers');
 export class Controller extends Unit {
 	constructor() {
+		super()
 		this[HANDLERS] = [];
 	}
 
@@ -123,9 +124,9 @@ export class Controller extends Unit {
 		this[HANDLERS].push(new Handler(...arguments))
 	}
 
-	async trigger(path, ...args){
+	trigger(path, ...args){
 		return this.fire('trigger', this[HANDLERS].reduce(
-			(pre, x) => pre = pre || await x.call(path, ...args),
+			async (pre, x) => pre = pre || await x.call(path, ...args),
 			null
 		))
 	}
