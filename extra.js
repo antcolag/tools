@@ -132,15 +132,15 @@ export class Router extends Unit {
 		return result
 	}
 
-	remove(handler) {
-		this[HANDLERS] = this[HANDLERS].filter(different.bind(void 0, handler))
+	remove() {
+		this[HANDLERS] = this[HANDLERS].filter(different.bind(void 0, ...arguments))
 		return this[HANDLERS].length
 	}
 
-	trigger(path, ...args){
-		this.fire('trigger', arguments)
+	trigger(){
+		this.fire('trigger', ...arguments)
 		return this[HANDLERS].reduce(
-			async (pre, x) => pre = pre || await x.call(path, ...args),
+			async (pre, x) => pre = pre || await x.call(...arguments),
 			null
 		)
 	}
