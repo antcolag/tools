@@ -17,7 +17,8 @@ import {
 	pipe,
 	noop,
 	apply,
-	properties
+	properties,
+	different
 } from "./utils.js"
 
 import {
@@ -113,15 +114,27 @@ injectProperties.call(View.prototype, {
 	print: new DomPrinter()
 })
 
+/**
+ * you can add a route by invoking the add method
+ * then you can fire the relative function by
+ * calling the method trigger
+ */
 const HANDLERS = Symbol('handlers');
-export class Controller extends Unit {
+export class Router extends Unit {
 	constructor() {
 		super()
 		this[HANDLERS] = [];
 	}
 
 	add() {
-		this[HANDLERS].push(new Handler(...arguments))
+		const result = new Handler(...arguments)
+		this[HANDLERS].push(result)
+		return result
+	}
+
+	remove(handler) {
+		this[HANDLERS] = this[HANDLERS].filter(different.bind(void 0, handler))
+		return this[HANDLERS].length
 	}
 
 	trigger(path, ...args){
@@ -153,27 +166,33 @@ class Handler {
 	}
 }
 
+/**
+ * it allows you to handle a resource with the methods
+ * you add to it on construction.
+ * When invoked, it return your methods binded with the
+ * arguments passed to invoke
+ */
 const METHODS = Symbol('methods')
-export class Resource {
+export class Controller extends Unit {
 	constructor(methods, trigger = apply) {
+		super()
 		this[METHODS] = methods;
 		this.trigger = trigger;
 		this.invoke = this.invoke.bind(this)
 	}
 
-	invoke(opt, path, ...args) {
+	invoke() {
+		this.fire('invoke', ...arguments)
 		return new Proxy(this[METHODS], {
-			get: getter.bind(this, opt, path, args),
+			get: getter.bind(this, arguments),
 			set: noop
 		})
 	}
 }
 
-async function getter(opt, path, args, self, p) {
+async function getter(args, self, p) {
 	return await this.trigger(
 		self[p].bind(this),
-		opt,
-		path,
 		...args
 	)
 }
