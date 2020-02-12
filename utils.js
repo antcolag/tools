@@ -113,6 +113,16 @@ export function equals(obj, value){
 }
 
 /**
+ * performs a strict different comparison
+ * @
+ * @param {any} obj
+ * @param {any} value
+ */
+export function different(obj, value){
+	return obj !== value
+}
+
+/**
  * generator for comparison functions with constant values
  * @function
  * @param {any} value
