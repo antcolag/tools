@@ -138,10 +138,11 @@ export class Router extends Unit {
 	}
 
 	trigger(path, ...args){
-		return this.fire('trigger', this[HANDLERS].reduce(
+		this.fire('trigger', arguments)
+		return this[HANDLERS].reduce(
 			async (pre, x) => pre = pre || await x.call(path, ...args),
 			null
-		))
+		)
 	}
 }
 
