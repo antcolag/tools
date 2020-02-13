@@ -139,7 +139,7 @@ export class Router extends Unit {
 		return this[HANDLERS].length
 	}
 
-	async trigger(){
+	trigger(){
 		this.fire('trigger', ...arguments)
 		return this[HANDLERS].reduce(
 			reducer,
@@ -148,8 +148,8 @@ export class Router extends Unit {
 	}
 }
 
-async function reducer(pre, x){
-	return pre || await x.call(...arguments)
+function reducer(pre, x){
+	return pre || x.call(...arguments)
 }
 
 class Handler {
@@ -162,19 +162,19 @@ class Handler {
 	match(path) {
 		var opt = this.id.exec(path);
 		return opt && ['string', ...this.names].reduce(
-			matcher,
+			matcher.bind(opt),
 			{}
 		)
 	}
 
-	async call(path, ...args) {
+	call(path, ...args) {
 		var opt = this.match(path);
-		return opt && await this.handler(opt, ...args)
+		return opt && this.handler(opt, ...args)
 	}
 }
 
 function matcher(prev, curr, i) {
-	return properties.call(prev, curr, opt[i])
+	return properties.call(prev, curr, this[i])
 }
 
 /**
