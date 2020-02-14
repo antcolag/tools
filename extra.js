@@ -5,7 +5,7 @@ import {
 
 import readable from "./readable.js"
 
-import { EventTargetPolyfill } from "./observe.js"
+import EventTarget from "./events.js"
 
 import {
 	good
@@ -33,7 +33,12 @@ import {
 /**
  * Base class for controllers, models and Views
  */
-class Unit extends (typeof EventTarget === 'undefined' ? EventTargetPolyfill() : EventTarget) { }
+class Unit extends EventTarget {
+	get [Symbol.toStringTag]() {
+		return this.constructor.name
+	}
+}
+
 /**
  * it handle the data logic of the app
  * it takes an array of names that will be
@@ -149,6 +154,8 @@ function reducer(pre, x){
 	return pre || x.call(...arguments)
 }
 
+
+/* TODO Symbol.search */
 class Handler {
 	constructor(id, handler = pipe, ...names){
 		this.id = typeof id == 'string' ? new RegExp(id) : id

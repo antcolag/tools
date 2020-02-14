@@ -171,6 +171,7 @@ export function properties(name, value, ...args) {
 	return args.length? properties.apply(this, args) : this
 }
 
+/* TODO use Symbol.species */
 export class Semaphore {
 	constructor() {
 		this.promise = new Promise((resolve, reject)=>{
