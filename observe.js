@@ -107,3 +107,37 @@ function fire(events, ...args) {
 	}
 	return this[OBSERVERS][events].map(x => x.apply(this, args))
 }
+
+/**
+ * it emulate the browser's EventTarget interface
+ * intended for old browsers and nodejs
+ */
+export class EventTarget {
+	constructor() {
+		var obs = new observable()
+		injectProperties.call(this, {
+			addEventListener: addEventListener.bind(this, obs),
+			removeEventListener: removeEventListener.bind(this, obs),
+			dispatchEvent: dispatchEvent.bind(this, obs)
+		})
+	}
+}
+
+function addEventListener(obs, ...args) {
+	obs.on.call(this, ...args)
+};
+
+function removeEventListener(obs, ...args) {
+	obs.off.call(this, ...args)
+};
+
+function dispatchEvent(obs, event) {
+	obs.fire.call(this, event.type, event)
+};
+
+/**
+ * import safely: for old browsers polyfill
+ */
+export function EventTargetPolyfill() {
+	return EventTarget
+}
