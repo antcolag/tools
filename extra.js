@@ -5,7 +5,7 @@ import {
 
 import readable from "./readable.js"
 
-import observe from "./observe.js"
+import { EventTargetPolyfill } from "./observe.js"
 
 import {
 	good
@@ -29,14 +29,11 @@ import {
 	DomPrinter
 } from "./dom.js"
 
+
 /**
  * Base class for controllers, models and Views
  */
-
-class Unit { }
-
-observe.call(Unit.prototype)
-
+class Unit extends (typeof EventTarget === 'undefined' ? EventTargetPolyfill() : EventTarget) { }
 /**
  * it handle the data logic of the app
  * it takes an array of names that will be
@@ -62,13 +59,13 @@ export class Model extends Unit {
 
 	async update(...args){
 		try {
-			return this.fire('update',
+			return this.dispatchEvent(new Event('update'),
 				await this[HANDLER](...args)
 			);
 		} catch (e){
-			return this.fire('reject', e)
+			return this.dispatchEvent(new Event('reject'), e)
 		} finally {
-			this.fire('done', ...args)
+			this.dispatchEvent(new Event('done'), ...args)
 		}
 	}
 
@@ -140,7 +137,7 @@ export class Router extends Unit {
 	}
 
 	trigger(){
-		this.fire('trigger', ...arguments)
+		this.dispatchEvent(new Event('trigger'), ...arguments)
 		return this[HANDLERS].reduce(
 			reducer,
 			null
@@ -193,7 +190,7 @@ export class Controller extends Unit {
 	}
 
 	invoke() {
-		this.fire('invoke', ...arguments)
+		this.dispatchEvent(new Event('invoke'), ...arguments)
 		return new Proxy(this[METHODS], {
 			get: getter.bind(this, arguments),
 			set: noop
@@ -246,7 +243,7 @@ export class Broker extends Unit {
 		if(!args[Symbol.iterator]){
 			args = [args];
 		}
-		this.fire('broadcast', ...args)
+		this.dispatchEvent(new Event('broadcast'), ...args)
 		return super.broadcast(...args)
 	}
 }
