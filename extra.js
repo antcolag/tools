@@ -141,17 +141,17 @@ export class Router extends Unit {
 		return this[HANDLERS].length
 	}
 
-	trigger(path){
+	trigger(path, ...args){
 		this.dispatchEvent(new Event('trigger'))
 		return this[HANDLERS].reduce(
-			reducer.bind(this, path),
+			reducer.bind(this, args, path),
 			null
 		)
 	}
 }
 
-function reducer(path, pre, x){
-	return pre || x.call(path, x)
+function reducer(args, path, pre, x){
+	return pre || x.call(args, path, x)
 }
 
 
@@ -171,7 +171,7 @@ class Handler {
 		)
 	}
 
-	call(path, ...args) {
+	call(args, path) {
 		var opt = this.match(path);
 		return opt && this.handler(opt, ...args)
 	}
