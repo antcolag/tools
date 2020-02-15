@@ -5,7 +5,7 @@ import {
 
 import readable from "./readable.js"
 
-import EventTarget from "./events.js"
+import observe from "./observe.js"
 
 import {
 	good
@@ -33,11 +33,9 @@ import {
 /**
  * Base class for controllers, models and Views
  */
-class Unit extends EventTarget {
-	get [Symbol.toStringTag]() {
-		return this.constructor.name
-	}
-}
+class Unit { }
+
+observe.call(Unit.prototype)
 
 /**
  * it handle the data logic of the app
@@ -64,13 +62,13 @@ export class Model extends Unit {
 
 	async update(...args){
 		try {
-			return this.dispatchEvent(new Event('update'),
+			return this.fire('update',
 				await this[HANDLER](...args)
 			);
 		} catch (e){
-			return this.dispatchEvent(new Event('reject'))
+			return this.fire('reject', e)
 		} finally {
-			this.dispatchEvent(new Event('done'))
+			this.fire('done', ...args)
 		}
 	}
 
@@ -142,7 +140,7 @@ export class Router extends Unit {
 	}
 
 	trigger(path){
-		this.dispatchEvent(new Event('trigger'))
+		this.fire('trigger', ...arguments)
 		return this[HANDLERS].reduce(
 			reducer.bind(this, path),
 			null
@@ -197,7 +195,7 @@ export class Controller extends Unit {
 	}
 
 	invoke() {
-		this.dispatchEvent(new Event('invoke'))
+		this.fire('invoke', ...arguments)
 		return new Proxy(this[METHODS], {
 			get: getter.bind(this, arguments),
 			set: noop
@@ -250,7 +248,7 @@ export class Broker extends Unit {
 		if(!args[Symbol.iterator]){
 			args = [args];
 		}
-		this.dispatchEvent(new Event('broadcast'))
+		this.fire('broadcast', ...args)
 		return super.broadcast(...args)
 	}
 }
