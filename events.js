@@ -1,4 +1,7 @@
 import observable from "./observe.js"
+import {
+	injectProperties
+} from "./tools.js"
 
 /**
  * it emulate the browser's EventTarget interface
