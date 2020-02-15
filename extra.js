@@ -139,7 +139,7 @@ export class Router extends Unit {
 		return this[HANDLERS].length
 	}
 
-	trigger(path){
+	trigger(path, ...args){
 		this.fire('trigger', ...arguments)
 		return this[HANDLERS].reduce(
 			reducer.bind(this, args, path),
