@@ -39,3 +39,21 @@ const EventTargetClass = typeof EventTarget === 'undefined' ? EventTargetPolyfil
  * import safely: for old browsers polyfill
  */
 export default EventTargetClass
+
+export class Event {
+	constructor(event) {
+		this.type = event
+	}
+}
+
+export class CustomEvent extends Event {
+	constructor(event, params = {}) {
+		super(event)
+		params = Object.assign({
+			bubbles: false,
+			cancelable: false,
+			detail: null },
+			params
+		)
+	}
+}
