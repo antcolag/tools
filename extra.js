@@ -205,8 +205,7 @@ export class Controller extends Unit {
 
 async function getter(args, self, p) {
 	return await this.trigger(
-		self[p].bind(this),
-		...args
+		self[p].bind(this, ...args)
 	)
 }
 
