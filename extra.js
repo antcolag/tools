@@ -68,9 +68,9 @@ export class Model extends Unit {
 				await this[HANDLER](...args)
 			);
 		} catch (e){
-			return this.dispatchEvent(new Event('reject'), e)
+			return this.dispatchEvent(new Event('reject'))
 		} finally {
-			this.dispatchEvent(new Event('done'), ...args)
+			this.dispatchEvent(new Event('done'))
 		}
 	}
 
@@ -141,17 +141,17 @@ export class Router extends Unit {
 		return this[HANDLERS].length
 	}
 
-	trigger(){
-		this.dispatchEvent(new Event('trigger'), ...arguments)
+	trigger(path){
+		this.dispatchEvent(new Event('trigger'))
 		return this[HANDLERS].reduce(
-			reducer,
+			reducer.bind(this, path),
 			null
 		)
 	}
 }
 
-function reducer(pre, x){
-	return pre || x.call(...arguments)
+function reducer(path, pre, x){
+	return pre || x.call(path, x)
 }
 
 
@@ -165,9 +165,9 @@ class Handler {
 
 	match(path) {
 		var opt = this.id.exec(path);
-		return opt && ['string', ...this.names].reduce(
+		return opt && this.names.reduce(
 			matcher.bind(opt),
-			{}
+			{ path }
 		)
 	}
 
@@ -197,7 +197,7 @@ export class Controller extends Unit {
 	}
 
 	invoke() {
-		this.dispatchEvent(new Event('invoke'), ...arguments)
+		this.dispatchEvent(new Event('invoke'))
 		return new Proxy(this[METHODS], {
 			get: getter.bind(this, arguments),
 			set: noop
@@ -250,7 +250,7 @@ export class Broker extends Unit {
 		if(!args[Symbol.iterator]){
 			args = [args];
 		}
-		this.dispatchEvent(new Event('broadcast'), ...args)
+		this.dispatchEvent(new Event('broadcast'))
 		return super.broadcast(...args)
 	}
 }
