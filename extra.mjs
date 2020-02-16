@@ -211,8 +211,9 @@ export class Controller extends Unit {
 }
 
 async function getter(args, self, p) {
+	var target = self[p] || self['*']
 	return await this.trigger(
-		self[p].bind(this, ...args)
+		target.bind(this, ...args)
 	)
 }
 
