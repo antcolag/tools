@@ -120,6 +120,7 @@ injectProperties.call(View.prototype, {
  * calling the method trigger
  */
 const HANDLERS = Symbol('handlers');
+const PATH = Symbol('path');
 export class Router extends Unit {
 	constructor() {
 		super()
@@ -146,6 +147,10 @@ export class Router extends Unit {
 			null
 		)
 	}
+
+	static path(data){
+		return data[PATH]
+	}
 }
 
 function reducer(args, path, pre, x){
@@ -165,7 +170,9 @@ class Handler {
 		var opt = this.id.exec(path);
 		return opt && this.names.reduce(
 			matcher.bind(opt),
-			{ path }
+			{ 
+				[PATH]: path
+			}
 		)
 	}
 
