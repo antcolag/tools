@@ -8,33 +8,9 @@ import {
 	croak
 } from "./debug.mjs"
 import {
+	pipe,
 	fullpipe
 } from "./utils.mjs"
-
-/**
- * Autodetect if the input string is Emmet or HTML, then parse
- */
-export default function auto(){
-	return new DomPrinter().auto(...arguments)
-}
-
-/**
- * parse an HTML template string and return a document fragment
- * @param {string[]} template
- * @param {...Node} args
- */
-export function html() {
-	return new DomPrinter().html(...arguments)
-}
-
-/**
- * parse an Emmet template string and return a document fragment
- * @param {string[]} template
- * @param {...Node} args
- */
-export function emmet(){
-	return new DomPrinter().emmet(...arguments)
-}
 
 /**
  * this class provides the functions for build
@@ -46,7 +22,7 @@ export function emmet(){
  * @param {function(string: html)} builder
  */
 export class DomPrinter {
-	constructor(builder = createFragment, pipe = fullpipe) {
+	constructor(builder = detect, pipe = fullpipe) {
 		this.builder = builder
 		this.pipe = pipe
 	}
@@ -78,6 +54,8 @@ export class DomPrinter {
 	}
 }
 
+var detect = typeof DocumentFragment !== 'undefined' ? createFragment : pipe
+
 function filter(strings, data, pipe){
 	var resultString = []
 	var resultData = []
@@ -100,6 +78,33 @@ function filter(strings, data, pipe){
 		}
 	}
 	return [resultString, resultData]
+}
+
+export const shared = (instance => () => instance = instance || new DomPrinter())()
+
+/**
+ * Autodetect if the input string is Emmet or HTML, then parse
+ */
+export default function auto(){
+	return shared().auto(...arguments)
+}
+
+/**
+ * parse an HTML template string and return a document fragment
+ * @param {string[]} template
+ * @param {...Node} args
+ */
+export function html() {
+	return shared().html(...arguments)
+}
+
+/**
+ * parse an Emmet template string and return a document fragment
+ * @param {string[]} template
+ * @param {...Node} args
+ */
+export function emmet(){
+	return shared().emmet(...arguments)
 }
 
 function createFragment(string) {

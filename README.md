@@ -43,7 +43,7 @@ const sum = (...arg) => {
 }
 
 // define your test
-const test = new Test("2 + 2 shuld return 4", (N) => {
+const test = new Test("2 + 2 should return 4", (N) => {
 	ASSERT(sum(2, 2), 4)
 
 	// test the 1 + 2 + 3 + ... + N serie
