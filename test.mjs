@@ -9,17 +9,17 @@
 import {
 	noop,
 	pipe
-} from "./utils.js"
+} from "./utils.mjs"
 
 import {
 	good,
 	DEBUG,
 	ASSERT_T,
-} from "./debug.js"
+} from "./debug.mjs"
 
-import observable from "./observe.js"
+import observable from "./observe.mjs"
 
-import reactive from "./reactive.js"
+import reactive from "./reactive.mjs"
 
 DEBUG(true)
 

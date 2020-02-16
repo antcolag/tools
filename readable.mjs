@@ -5,13 +5,13 @@
 
  import {
 	injectProperties
-} from "./tools.js"
+} from "./tools.mjs"
 
 import {
 	defer,
 	Semaphore,
 	noop
-} from "./utils.js"
+} from "./utils.mjs"
 
 export const BUFFER = Symbol('buffer')
 export const WAIT = Symbol('wait')

@@ -4,7 +4,7 @@
  * @see module:utils
  */
 
-import { properties } from "./utils.js"
+import { properties } from "./utils.mjs"
 
 /**
  * build the argument for Object.defineProperty
@@ -55,55 +55,3 @@ export function injectProperties(settings, filter = variableDefiner) {
 	const handler = (prev, curr) => properties.call(prev, curr, filter(settings[curr]))
 	return Object.defineProperties(this, Object.keys(settings).reduce(handler, {}))
 }
-
-/* just for joke */
-export const lisperato = new Proxy({
-	l(x, ...args){
-		return this.cons(x, args[0] && this.l(...args))
-	},
-	cons(_car, _cdr){
-		return (f) => {
-			return f(_car, _cdr);
-		}
-	},
-	car(_cons){
-		return _cons((_car, _cdr) => _car)
-	},
-	cdr(_cons){
-		return _cons((_car, _cdr) => _cdr)
-	},
-	exec(p, s) {
-		return this.cdr(p)
-		? this.exec(this.cdr(p), this.car(p)(s))
-		: this.car(p)(s)
-	},
-	[Symbol.toPrimitive](hint){
-		switch (hint){
-		case "number":
-			return Number.MAX_VALUE;
-		case "string":
-			return '[Object ' + this.toString() + ']'
-		default:
-		}
-		return this
-	},
-	toString() {
-		return "lisperato!"
-	}
-}, {
-	get(namespace, name) {
-		if(name in namespace) {
-			return namespace[name]
-		}
-		var multi = name.match(/^c([ad]).*r$/) || []
-		if(multi[1]){ // abra cadadr-a
-			return (x) => this.get(
-				namespace,
-				name.replace(new RegExp(multi[1]), '')
-			)(namespace[`c${multi[1]}r`](x))
-		}
-	},
-	set(namespace){
-		throw new TypeError(`Write on a ${namespace} instance is not allowed`)
-	}
-})

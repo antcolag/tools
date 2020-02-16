@@ -1,15 +1,15 @@
 import {
 	BINDS,
 	default as reactive
- } from "./reactive.js"
+ } from "./reactive.mjs"
 
-import readable from "./readable.js"
+import readable from "./readable.mjs"
 
-import observe from "./observe.js"
+import observe from "./observe.mjs"
 
 import {
 	good
-} from "./debug.js"
+} from "./debug.mjs"
 
 import {
 	fullpipe,
@@ -19,15 +19,15 @@ import {
 	apply,
 	properties,
 	different
-} from "./utils.js"
+} from "./utils.mjs"
 
 import {
 	injectProperties
-} from "./tools.js"
+} from "./tools.mjs"
 
 import {
 	DomPrinter
-} from "./dom.js"
+} from "./dom.mjs"
 
 
 /**
