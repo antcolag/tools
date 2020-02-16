@@ -80,7 +80,7 @@ new Test("tests should work", async function (arg) {
 	await new Test(
 		"readable should work (no timer)",
 		pipe
-	).run(await console.read())
+	).run(await console.read()).finally(() => clearInterval(timer2))
 
 
 	clearInterval(timer)
