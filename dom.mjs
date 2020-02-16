@@ -1,47 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>JSDoc: Source: dom.js</title>
-
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-</head>
-
-<body>
-
-<div id="main">
-
-    <h1 class="page-title">Source: dom.js</h1>
-
-    
-
-
-
-    
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
+/**
  * This module provide the functionality for creating HTML fragments
  * from template strings
  * @module
  */
 
-import { croak } from "./debug.js"
+import {
+	croak
+} from "./debug.mjs"
+import {
+	fullpipe
+} from "./utils.mjs"
 
 /**
  * Autodetect if the input string is Emmet or HTML, then parse
  */
-export default function auto(strings, ...args){
-	if(strings instanceof Array){
-		return (/&lt;/.test(strings.join(''))? html : emmet)(...arguments)
-	}
-	return auto([strings], ...args)
+export default function auto(){
+	return new DomPrinter().auto(...arguments)
 }
 
 /**
@@ -64,22 +38,30 @@ export function emmet(){
 
 /**
  * this class provides the functions for build
- * a dom with a custom html interpreter
+ * a dom tree.
+ * you can set a pipe for tranform the Nth [string, any], tuple
+ * and a builder that is an handler for the strings, the
+ * default is a wrapper Range.createContextualFragment()
+ * @param {function(string: str, any: data): [string, any]} pipe
+ * @param {function(string: html)} builder
  */
 export class DomPrinter {
-	constructor(builder = createFragment) {
+	constructor(builder = createFragment, pipe = fullpipe) {
 		this.builder = builder
+		this.pipe = pipe
 	}
 
-	html() {
+	html(strings, ...data) {
+		[strings, data] = filter(strings, data, this.pipe);
 		return buildDom(
 			this.builder,
 			randomAttr(),
-			...arguments
+			...[strings, ...data]
 		)
 	}
 
 	emmet(strings, ...data){
+		[strings, data] = filter(strings, data, this.pipe);
 		var random = randomAttr();
 		var emmetTempString = strings.join( `emmet[${random}]` )
 		var stream = new TokenStream(
@@ -90,7 +72,34 @@ export class DomPrinter {
 			new TagGroup(tokenString, true).toString()
 		], ...data);
 	}
-	
+
+	auto(strings) {
+		return (/^\s*</.test(strings[0])? this.html : this.emmet)(...arguments)
+	}
+}
+
+function filter(strings, data, pipe){
+	var resultString = []
+	var resultData = []
+	var resultStringIndex = 0
+	for(var i = 0; i < strings.length - 1; i++){
+		var [currentString, currentData] = pipe(strings[i], data[i])
+		if(typeof Node == "undefined" || !(currentData instanceof Node)){
+			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + `${currentString}${currentData}`
+		} else {
+			resultString[resultStringIndex] = (resultString[resultStringIndex] || '') + currentString
+			resultStringIndex++
+			resultData.push(currentData)
+		}
+	}
+	if(strings[i]){
+		if(resultString[resultStringIndex]){
+			resultString[resultStringIndex] += strings[i]
+		} else {
+			resultString.push(strings[i])
+		}
+	}
+	return [resultString, resultData]
 }
 
 function createFragment(string) {
@@ -98,7 +107,10 @@ function createFragment(string) {
 }
 
 function buildDom(builder, random, strings, ...data) {
-	var result = builder(strings.join( `&lt;a ${random}>&lt;/a>` ))
+	var result = builder(strings.join( `<a ${random}></a>` ))
+	if(data.length <= 0) {
+		return result
+	}
 	var elements = result.querySelectorAll(
 		`[${random}]`
 	)
@@ -169,7 +181,7 @@ class Multiplier extends Token {
 	}
 
 	check(){
-		return this.current &lt; this.end
+		return this.current < this.end
 	}
 
 	init(){
@@ -285,20 +297,27 @@ class TokenStream {
 
 	readText(){
 		var text = ""
+		var escaped = false
 		const test = s => {
-			if(/}/.test(s)){
+			if(!escaped && /}/.test(s)){
 				return
 			}
-			return true
+			if(!escaped && /\\/.test(s)){
+				escaped = true
+				return
+			}
+			escaped = false
+			return s
 		}
 
 		while(text += this.stream.read(test)) {
-			text += this.stream.next()
 			var picked = this.stream.pick()
-			if(!picked || /[\^+)*@]/.test(picked)) {
+			if(!escaped){
+				text += picked
+			}
+			this.stream.next()
+			if(picked && !escaped && /}/.test(picked)) {
 				return text
-			} else {
-				text += this.stream.next()
 			}
 		}
 	}
@@ -343,7 +362,7 @@ class StringStream {
 
 	read(f){
 		var result = "";
-		while(this.pick() &amp;&amp; f(this.pick())){
+		while(this.pick() && f(this.pick())){
 			result += this.next()
 		}
 		return result;
@@ -353,8 +372,8 @@ class StringStream {
 class TagGroup {
 	constructor(stream, top) {
 		this.content = []
-		while(stream &amp;&amp; stream.pick()){
-			var next = stream.pick();
+		var next;
+		while(stream && (next = stream.pick())){
 			if(next.value == ')'){
 				return;
 			}
@@ -404,7 +423,22 @@ class Tag extends TagGroup {
 		this.tagName = args.find(
 			x => x instanceof TagName
 		) || new TagName()
-		this.attributes = args.filter(x => x instanceof Attribute)
+		var classList = []
+		var classregex = /\[class="(.*)"\]/
+		this.attributes = args.filter(x => {
+			if(!(x instanceof Attribute)) {
+				return false
+			}
+			var classAttr = classregex.exec(x.value)
+			if(!classAttr) {
+				return true
+			}
+			classList.push(classAttr[1])
+			return false
+		})
+		if(classList.length) {
+			this.attributes.push(new Attribute(`[class="${classList.join(' ')}"]`))
+		}
 		var text = args.filter(x => x instanceof TextBlock)
 		this.content.splice(this.content.length, 0, ...text)
 		this.multiplier = args.find(x => x instanceof Multiplier)
@@ -423,7 +457,7 @@ class Tag extends TagGroup {
 
 		var result;
 		for(m.init(); m.check(); m.next()){
-			result += `&lt;${
+			result += `<${
 				m.detect(this.tagName.value)
 			}${
 				this.attributes.map(
@@ -440,7 +474,7 @@ class Tag extends TagGroup {
 						return x.toString(supermul || m)
 					}
 				}).join('')
-			}&lt;/${
+			}</${
 				m.detect(this.tagName.value)
 			}>`
 		}
@@ -488,7 +522,7 @@ class TagTokenStream {
 
 		case picked instanceof TextBlock:
 			this.current = this.stream.next();
-		return this.current;
+			return this.current;
 
 		case this.isTag(picked):
 			var args = []
@@ -528,26 +562,3 @@ class TagTokenStream {
 		}
 	}
 }
-</code></pre>
-        </article>
-    </section>
-
-
-
-
-</div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-debug.html">debug</a></li><li><a href="module-dom.html">dom</a></li><li><a href="module-observe.html">observe</a></li><li><a href="module-reactive.html">reactive</a></li><li><a href="module-readable.html">readable</a></li><li><a href="module-test.html">test</a></li><li><a href="module-tools.html">tools</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="module-dom.DomPrinter.html">DomPrinter</a></li></ul><h3>Interfaces</h3><ul><li><a href="module-observe-observable.html">observable</a></li></ul>
-</nav>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Oct 17 2019 13:34:05 GMT+0200 (W. Europe Summer Time)
-</footer>
-
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
-</body>
-</html>

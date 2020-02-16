@@ -7,11 +7,11 @@
 import {
 	buildProperty,
 	injectProperties
-} from "./tools.js"
+} from "./tools.mjs"
 import {
 	pipe,
 	different
-} from "./utils.js"
+} from "./utils.mjs"
 
 export const BINDS = Symbol("binds")
 

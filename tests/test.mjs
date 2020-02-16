@@ -1,17 +1,17 @@
 
-import Test from "../test.js";
-import * as dom from "../dom.js";
-import readable from "../readable.js";
-import reactive from "../reactive.js";
+import Test from "../test.mjs";
+import * as dom from "../dom.mjs";
+import readable from "../readable.mjs";
+import reactive from "../reactive.mjs";
 import {
 	pipe,
-} from "../utils.js";
+} from "../utils.mjs";
 import {
 	good,
 	crap,
 	ASSERT,
 	ASSERT_T,
-} from "../debug.js";
+} from "../debug.mjs";
 
 new Test("tests shuld work", async function (arg) {
 	var tests = new Test(

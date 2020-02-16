@@ -24,9 +24,9 @@ This mini test class is super easy to use but work super well!
 
 you can define your test scenario and if something goes wrong (ie if something is thrown, like an unhandled runtime error), then the test will ***fail*** and a **fail** message will be printed the console. Otherwise it will ***pass*** and a **passed** message in console will be printed.
 ```javascript
-import Test from "./test.js";
+import Test from "./test.mjs";
 // ASSERT will throw an error if strict equal comparison fails
-import { ASSERT } from "./debug.js"; 
+import { ASSERT } from "./debug.mjs"; 
 
 // the function to be tested
 const sum = (...arg) => {
@@ -65,7 +65,7 @@ A set of a fiew userfull utilities for building user interfaces
 
 ```javascript
 // import the library
-import * from dom from "./dom.js";
+import * from dom from "./dom.mjs";
 
 // you can use your own elements
 const myTitle = document.createElement('h2')
@@ -102,7 +102,7 @@ It implements the observer pattern in the objects where is injected.
 For example:
 
 ```javascript
-import observable from "./observe.js"
+import observable from "./observe.mjs"
 
 // take your class
 class FireworkClass {
@@ -152,7 +152,7 @@ Reactive
 ---
 Sincronize variation between different objects
 ```javascript
-import reactive from "./reactive.js"
+import reactive from "./reactive.mjs"
 
 // define MyReactiveClass
 class MyReactiveClass {
