@@ -208,6 +208,10 @@ export class Controller extends Unit {
 			set: noop
 		})
 	}
+
+	has(method){
+		return this[METHODS].hasOwnProperty(method)
+	}
 }
 
 async function getter(args, self, p) {
