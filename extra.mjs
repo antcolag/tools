@@ -171,7 +171,7 @@ class Handler {
 		return opt && this.names.reduce(
 			matcher.bind(opt),
 			{ 
-				[PATH]: path
+				[ORIGIN]: path
 			}
 		)
 	}
