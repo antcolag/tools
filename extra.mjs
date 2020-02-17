@@ -120,7 +120,7 @@ injectProperties.call(View.prototype, {
  * calling the method trigger
  */
 const HANDLERS = Symbol('handlers');
-const PATH = Symbol('path');
+const ORIGIN = Symbol('origin');
 export class Router extends Unit {
 	constructor() {
 		super()
@@ -140,16 +140,16 @@ export class Router extends Unit {
 		return this[HANDLERS].length
 	}
 
-	trigger(path, ...args){
+	trigger(origin, ...args){
 		this.fire('trigger', ...arguments)
 		return this[HANDLERS].reduce(
-			reducer.bind(this, args, path),
+			reducer.bind(this, args, origin),
 			null
 		)
 	}
 
-	static path(data){
-		return data[PATH]
+	static origin(data){
+		return data[ORIGIN]
 	}
 }
 
