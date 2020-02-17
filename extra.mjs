@@ -164,15 +164,14 @@ class Handler {
 		this.id = typeof id == 'string' ? new RegExp(id) : id
 		this.handler = handler
 		this.names = names
+		this.names.splice(0,0, ORIGIN)
 	}
 
 	match(path) {
 		var opt = this.id.exec(path);
 		return opt && this.names.reduce(
 			matcher.bind(opt),
-			{ 
-				[ORIGIN]: path
-			}
+			{}
 		)
 	}
 
