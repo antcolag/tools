@@ -157,14 +157,16 @@ function reducer(args, path, pre, x){
 	return pre || x.call(args, path, x)
 }
 
-
 /* TODO Symbol.search */
 class Handler {
 	constructor(id, handler = pipe, ...names){
 		this.id = typeof id == 'string' ? new RegExp(id) : id
-		this.handler = handler
 		this.names = names
 		this.names.splice(0,0, ORIGIN)
+		this[HANDLER] = handler
+		if(this[HANDLER] instanceof Controller){
+			this[HANDLER] = invoke.bind(this[HANDLER])
+		}
 	}
 
 	match(path) {
@@ -177,12 +179,20 @@ class Handler {
 
 	call(args, path) {
 		var opt = this.match(path);
-		return opt && this.handler(opt, ...args)
+		return opt && this[HANDLER](opt, ...args)
 	}
 }
 
 function matcher(prev, curr, i) {
 	return properties.call(prev, curr, this[i])
+}
+
+function invoke() {
+	this.fire('invoke', ...arguments)
+	return new Proxy(this[METHODS], {
+		get: getter.bind(this, arguments),
+		set: noop
+	})
 }
 
 /**
@@ -197,19 +207,10 @@ export class Controller extends Unit {
 		super()
 		this[METHODS] = methods;
 		this.trigger = trigger;
-		this.invoke = this.invoke.bind(this)
 	}
 
-	invoke() {
-		this.fire('invoke', ...arguments)
-		return new Proxy(this[METHODS], {
-			get: getter.bind(this, arguments),
-			set: noop
-		})
-	}
-
-	has(method){
-		return this[METHODS].hasOwnProperty(method)
+	static has(controller, method){
+		return controller[METHODS].hasOwnProperty(method)
 	}
 }
 
@@ -218,6 +219,41 @@ async function getter(args, self, p) {
 	return await this.trigger(
 		target.bind(this, ...args)
 	)
+}
+
+const ALLOWED = Symbol("allowed")
+export class ActionController extends Controller {
+	constructor(init = {}){
+		var arg = {}
+		for(var method in init){
+			arg[method] = (...args) => serve.call(this, method, ...args)
+		}
+
+		super(arg)
+
+		this[ALLOWED] = {}
+
+		for(var method in init){
+			ActionController.allow.call(this, method, init[method])
+		}
+	}
+
+	static allow(method, actions){
+		this[ALLOWED][method] = this[ALLOWED][method] || actions
+	}
+}
+
+function allowed(method, action){
+	if(!this[ALLOWED][method].indexOf(action) < 0){
+		throw new Error("method not allowed")
+	}
+}
+
+function serve(method, {action = "visit"}) {
+	allowed.call(this, method, action)
+	if(typeof this[action] == "function"){
+		return this[action](...arguments)
+	}
 }
 
 /**
@@ -231,7 +267,7 @@ async function getter(args, self, p) {
 export class Broker extends Unit {
 	constructor(handler = fullpipe){
 		super()
-		this.handler = handler
+		this[HANDLER] = handler
 	}
 
 	async loop(resolve, reject = noop){
@@ -254,7 +290,7 @@ export class Broker extends Unit {
 	}
 
 	async broadcast(...args) {
-		args = await this.handler(...args)
+		args = await this[HANDLER](...args)
 		if(!args[Symbol.iterator]){
 			args = [args];
 		}
