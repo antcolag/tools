@@ -226,7 +226,7 @@ export class ActionController extends Controller {
 	constructor(init = {}){
 		var arg = {}
 		for(var method in init){
-			arg[method] = action(method)
+			arg[method] = action.call(this, method)
 		}
 		super(arg)
 		this[ALLOWED] = {}
