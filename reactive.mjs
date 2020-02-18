@@ -56,15 +56,12 @@ function bindable(id, build = pipe) {
 	return Object.defineProperty(this, id, buildedBinder)
 }
 
-function bind(id, fun, name) {
+function bind(id, fun, name = id) {
 	const binds = check.call(this)
 	if(!binds[id]){
 		return false
 	}
 	if(typeof fun == "object"){
-		if(!name){
-			name = id
-		}
 		let who = fun
 		fun = (x) => who[name] = x
 	}
@@ -74,5 +71,9 @@ function bind(id, fun, name) {
 
 function unbind(id, key) {
 	const binds = check.call(this)
-	binds[id] = binds[id].filter(different.bind(key))
+	const index = binds[id].indexOf(key)
+	if(index < 0){
+		return
+	}
+	binds[id].splice(index, 1)
 }
