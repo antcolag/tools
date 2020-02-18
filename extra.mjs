@@ -226,13 +226,10 @@ export class ActionController extends Controller {
 	constructor(init = {}){
 		var arg = {}
 		for(var method in init){
-			arg[method] = (...args) => serve.call(this, method, ...args)
+			arg[method] = action(method)
 		}
-
 		super(arg)
-
 		this[ALLOWED] = {}
-
 		for(var method in init){
 			ActionController.allow.call(this, method, init[method])
 		}
@@ -241,6 +238,13 @@ export class ActionController extends Controller {
 	static allow(method, actions){
 		this[ALLOWED][method] = this[ALLOWED][method] || actions
 	}
+}
+
+function action(method){
+	if(method instanceof Function){
+		return method
+	}
+	return (...args) => serve.call(this, method, ...args)
 }
 
 function allowed(method, action){
