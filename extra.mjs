@@ -226,7 +226,7 @@ export class ActionController extends Controller {
 	constructor(init = {}){
 		var arg = {}
 		for(var method in init){
-			arg[method] = action.call(this, method)
+			arg[method] = method instanceof Function ? method : (...args) => serve.call(this, method, ...args)
 		}
 		super(arg)
 		this[ALLOWED] = {}
@@ -238,13 +238,6 @@ export class ActionController extends Controller {
 	static allow(method, actions){
 		this[ALLOWED][method] = this[ALLOWED][method] || actions
 	}
-}
-
-function action(method){
-	if(method instanceof Function){
-		return method
-	}
-	return (...args) => serve.call(this, method, ...args)
 }
 
 function allowed(method, action){
