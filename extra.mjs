@@ -165,7 +165,7 @@ class Handler {
 		this.names.splice(0,0, ORIGIN)
 		this[HANDLER] = handler
 		if(this[HANDLER] instanceof Controller){
-			this[HANDLER] = invoke.bind(this[HANDLER])
+			this[HANDLER] = Controller.invoke.bind(void 0, this[HANDLER])
 		}
 	}
 
@@ -187,14 +187,6 @@ function matcher(prev, curr, i) {
 	return properties.call(prev, curr, this[i])
 }
 
-function invoke() {
-	this.fire('invoke', ...arguments)
-	return new Proxy(this[METHODS], {
-		get: getter.bind(this, arguments),
-		set: noop
-	})
-}
-
 /**
  * it allows you to handle a resource with the methods
  * you add to it on construction.
@@ -212,6 +204,13 @@ export class Controller extends Unit {
 	static has(controller, method){
 		return controller[METHODS].hasOwnProperty(method)
 	}
+	static invoke(self, ...args) {
+		self.fire('invoke', ...args)
+		return new Proxy(self[METHODS], {
+			get: getter.bind(self, args),
+			set: noop
+		})
+	}
 }
 
 async function getter(args, self, p) {
@@ -222,11 +221,21 @@ async function getter(args, self, p) {
 }
 
 const ALLOWED = Symbol("allowed")
+const METHOD = Symbol("method")
 export class ActionController extends Controller {
-	constructor(init = {}){
+	constructor(init = {"*": "*"}){
 		var arg = {}
 		for(var method in init){
-			arg[method] = method instanceof Function ? method : (...args) => serve.call(this, method, ...args)
+			let result = init[method];
+			switch(typeof init[method]) {
+			case "string":
+				init[method] = [init[method]]
+				result = init[method]
+			default:
+				result = (...args) => serve.call(this, method, ...args)
+			case "function":
+				arg[method] = result
+			}
 		}
 		super(arg)
 		this[ALLOWED] = {}
@@ -238,18 +247,26 @@ export class ActionController extends Controller {
 	static allow(method, actions){
 		this[ALLOWED][method] = this[ALLOWED][method] || actions
 	}
+
+	static method(data) {
+		return data[METHOD]
+	}
 }
 
 function allowed(method, action){
-	if(!this[ALLOWED][method].indexOf(action) < 0){
+	if(!this[ALLOWED][method].some(
+		x => x == action || x == "*"
+	)){
 		throw new Error("method not allowed")
 	}
 }
 
-function serve(method, {action = "visit"}) {
-	allowed.call(this, method, action)
-	if(typeof this[action] == "function"){
-		return this[action](...arguments)
+function serve(method, data, ...rest) {
+	data[METHOD] = method
+	data.action = data.action || "visit"
+	allowed.call(this, method, data.action)
+	if(typeof this[data.action] == "function"){
+		return this[data.action](data, ...rest)
 	}
 }
 
