@@ -225,17 +225,18 @@ const METHOD = Symbol("method")
 export class ActionController extends Controller {
 	constructor(init = {"*": "*"}){
 		var arg = {}
-		for(var method in init){
+		for(let method in init){
 			let result = init[method];
 			switch(typeof init[method]) {
 			case "string":
 				init[method] = [init[method]]
-				result = init[method]
 			default:
 				result = (...args) => serve.call(this, method, ...args)
+				break;
 			case "function":
-				arg[method] = result
+				continue;
 			}
+			arg[method] = result;
 		}
 		super(arg)
 		this[ALLOWED] = {}
