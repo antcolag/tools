@@ -172,12 +172,25 @@ export function properties(name, value, ...args) {
 }
 
 /* TODO use Symbol.species */
-export class Semaphore {
-	constructor() {
-		this.promise = new Promise((resolve, reject)=>{
-			this.resolve = resolve
-			this.reject = reject
+export class Semaphore extends Promise {
+	constructor(args = noop) {
+		var res, rej;
+		super((resolve, reject) => {
+			return args(
+				res = resolve,
+				rej = reject
+			)
 		})
+		this.resolve = res
+		this.reject = rej
+	}
+
+	static get [Symbol.species]() {
+		return Promise;
+	}
+
+	get [Symbol.toStringTag]() {
+		return 'Semaphore';
 	}
 }
 
