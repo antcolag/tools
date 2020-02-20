@@ -9,8 +9,7 @@ import {
 	injectProperties
 } from "./tools.mjs"
 import {
-	pipe,
-	different
+	pipe
 } from "./utils.mjs"
 
 export const BINDS = Symbol("binds")
