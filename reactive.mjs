@@ -37,7 +37,8 @@ function buildBinder (val, list, build) {
 	}
 	return build({
 		set: setter,
-		get: () => val
+		get: () => val,
+		enumerable: true
 	})
 }
 
