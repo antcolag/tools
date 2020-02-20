@@ -170,11 +170,11 @@ class Handler {
 	}
 
 	match(path) {
-		var opt = this.id.exec(path);
-		return opt && this.names.reduce(
+		var opt = path.match(this.id);
+		return opt && this.names.length ? this.names.reduce(
 			matcher.bind(opt),
 			{}
-		)
+		) : opt
 	}
 
 	call(args, path) {
