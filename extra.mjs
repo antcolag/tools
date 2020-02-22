@@ -193,20 +193,40 @@ function matcher(prev, curr, i) {
  * When invoked, it return your methods binded with the
  * arguments passed to invoke
  */
-const METHODS = Symbol('methods')
+const REGISTERED = Symbol('registered')
+const ALLOWED = Symbol("allowed")
+const METHOD = Symbol("method")
 export class Controller extends Unit {
-	constructor(methods, trigger = apply) {
+	constructor(init = {"*": "*"},trigger = apply){
 		super()
-		this[METHODS] = methods;
+		this[ALLOWED] = {}
+		this[REGISTERED] = {}
 		this.trigger = trigger;
+		for(let method in init){
+			let result = init[method];
+			switch(typeof init[method]) {
+			case "string":
+				init[method] = [init[method]]
+			default:
+				result = (...args) => serve.call(this, method, ...args)
+				this[ALLOWED][method] = init[method]
+			case "function":
+				this[REGISTERED][method] = result;
+			}
+		}
+	}
+
+	static method(data) {
+		return data[METHOD]
 	}
 
 	static has(controller, method){
-		return controller[METHODS].hasOwnProperty(method)
+		return controller[REGISTERED].hasOwnProperty(method)
 	}
+
 	static invoke(self, ...args) {
 		self.fire('invoke', ...args)
-		return new Proxy(self[METHODS], {
+		return new Proxy(self[REGISTERED], {
 			get: getter.bind(self, args),
 			set: noop
 		})
@@ -220,40 +240,6 @@ async function getter(args, self, p) {
 	)
 }
 
-const ALLOWED = Symbol("allowed")
-const METHOD = Symbol("method")
-export class ActionController extends Controller {
-	constructor(init = {"*": "*"}){
-		var arg = {}
-		for(let method in init){
-			let result = init[method];
-			switch(typeof init[method]) {
-			case "string":
-				init[method] = [init[method]]
-			default:
-				result = (...args) => serve.call(this, method, ...args)
-				break;
-			case "function":
-				continue;
-			}
-			arg[method] = result;
-		}
-		super(arg)
-		this[ALLOWED] = {}
-		for(var method in init){
-			ActionController.allow.call(this, method, init[method])
-		}
-	}
-
-	static allow(method, actions){
-		this[ALLOWED][method] = this[ALLOWED][method] || actions
-	}
-
-	static method(data) {
-		return data[METHOD]
-	}
-}
-
 function allowed(method, action){
 	if(!this[ALLOWED][method].some(
 		x => x == action || x == "*"
@@ -262,7 +248,7 @@ function allowed(method, action){
 	}
 }
 
-function serve(method, data, ...rest) {
+function serve(method, data = {}, ...rest) {
 	data[METHOD] = method
 	data.action = data.action || "visit"
 	allowed.call(this, method, data.action)
