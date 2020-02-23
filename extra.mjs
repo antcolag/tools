@@ -96,17 +96,49 @@ reactive.call(Model.prototype)
  * should return the rendered data
  * @param {function} render
  */
+
+ var renderonce = false
+ const RENDERONCE = Symbol("renderonce")
+ const LAST = Symbol("last")
+ const RENDER = Symbol("render")
 export class View extends Unit {
 	constructor(render){
 		super()
 		if(render){
 			good(render, 'function')
-			this.render = render
+			this[RENDER] = render
 		}
+	}
+
+	render(){
+		if((this[RENDERONCE] || renderonce) && this[LAST]){
+			return this[LAST]
+		}
+		return this[LAST] = this[RENDER](...arguments)
 	}
 
 	static set builder(hanlder) {
 		this.prototype.print.builder = hanlder
+	}
+
+	static renderOnce(view){
+		if(view){
+			view[RENDERONCE] = true
+		} {
+			renderonce = true
+		}
+	}
+
+	static renderAlways(view){
+		if(view){
+			view[RENDERONCE] = false
+		} {
+			renderonce = false
+		}
+	}
+
+	static last(view){
+		return view[LAST]
 	}
 }
 
