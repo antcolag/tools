@@ -238,7 +238,7 @@ export class Controller extends Unit {
 			let result = init[method];
 			switch(typeof init[method]) {
 			case "string":
-				init[method] = [init[method]]
+				init[method] = init[method].split(" ")
 			default:
 				result = (...args) => serve.call(this, method, ...args)
 				this[ALLOWED][method] = init[method]
