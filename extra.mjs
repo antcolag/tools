@@ -196,9 +196,6 @@ class Handler {
 		this.names = names
 		this.names.splice(0,0, ORIGIN)
 		this[HANDLER] = handler
-		if(this[HANDLER] instanceof Controller){
-			this[HANDLER] = Controller.invoke.bind(void 0, this[HANDLER])
-		}
 	}
 
 	match(path) {
@@ -256,10 +253,10 @@ export class Controller extends Unit {
 		return controller[REGISTERED].hasOwnProperty(method)
 	}
 
-	static invoke(self, ...args) {
-		self.fire('invoke', ...args)
-		return new Proxy(self[REGISTERED], {
-			get: getter.bind(self, args),
+	invoke(...args) {
+		this.fire('invoke', ...args)
+		return new Proxy(this[REGISTERED], {
+			get: getter.bind(this, args),
 			set: noop
 		})
 	}
