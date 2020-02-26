@@ -15,8 +15,6 @@ import {
 
 export const BUFFER = Symbol('buffer')
 export const WAIT = Symbol('wait')
-export const BROADCAST = Symbol('broadcast')
-export const CLEAR = Symbol('clear')
 
 export const HANDLERS = {
 	read,
