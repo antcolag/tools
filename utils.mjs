@@ -123,6 +123,15 @@ export function different(obj, value){
 }
 
 /**
+ * return a value provider function
+ * @param val value to be returned
+ */
+
+export function value(val) {
+	return apply.bind(void 0, pipe, val)
+}
+
+/**
  * generator for comparison functions with constant values
  * @function
  * @param {any} value
