@@ -16,7 +16,6 @@ import {
 	isUndefined,
 	pipe,
 	noop,
-	apply,
 	properties,
 	different
 } from "./utils.mjs"
@@ -223,30 +222,24 @@ function matcher(prev, curr, i) {
  * arguments passed to invoke
  */
 const REGISTERED = Symbol('registered')
-const ALLOWED = Symbol("allowed")
-const METHOD = Symbol("method")
+const TRIGGER = Symbol("trigger")
 export class Controller extends Unit {
-	constructor(init = {"*": "*"},trigger = apply){
+	constructor(init = {}, trigger = pipe){
 		super()
-		this[ALLOWED] = {}
-		this[REGISTERED] = {}
-		this.trigger = trigger;
-		for(let method in init){
-			let result = init[method];
-			switch(typeof init[method]) {
-			case "string":
-				init[method] = init[method].split(" ")
-			default:
-				result = (...args) => serve.call(this, method, ...args)
-				this[ALLOWED][method] = init[method]
-			case "function":
-				this[REGISTERED][method] = result;
-			}
-		}
+		this[REGISTERED] = init
+		this[TRIGGER] = trigger;
 	}
 
-	static method(data) {
-		return data[METHOD]
+	static has(controller, method){
+		return controller[REGISTERED].hasOwnProperty(method)
+	}
+
+	add(method, handler) {
+		return this[REGISTERED][method] = handler
+	}
+
+	remove(method) {
+		return delete this[REGISTERED][method];
 	}
 
 	static has(controller, method){
@@ -254,36 +247,18 @@ export class Controller extends Unit {
 	}
 
 	invoke(...args) {
-		this.fire('invoke', ...args)
+		var resource = this[TRIGGER](...args)
+		this.fire('invoke', resource)
 		return new Proxy(this[REGISTERED], {
-			get: getter.bind(this, args),
+			get: getter.bind(resource),
 			set: noop
 		})
 	}
 }
 
-async function getter(args, self, p) {
+function getter(self, p) {
 	var target = self[p] || self['*']
-	return await this.trigger(
-		target.bind(this, ...args)
-	)
-}
-
-function allowed(method, action){
-	if(!this[ALLOWED][method].some(
-		x => x == action || x == "*"
-	)){
-		throw new Error("method not allowed")
-	}
-}
-
-function serve(method, data = {}, ...rest) {
-	data[METHOD] = method
-	data.action = data.action || "visit"
-	allowed.call(this, method, data.action)
-	if(typeof this[data.action] == "function"){
-		return this[data.action](data, ...rest)
-	}
+	return target.bind(this)
 }
 
 /**
