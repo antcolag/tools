@@ -234,16 +234,16 @@ export class Controller extends Unit {
 		return controller[REGISTERED].hasOwnProperty(method)
 	}
 
-	add(method, handler) {
+	set(method, handler) {
 		return this[REGISTERED][method] = handler
 	}
 
-	remove(method) {
+	unset(method) {
 		return delete this[REGISTERED][method];
 	}
 
-	static has(controller, method){
-		return controller[REGISTERED].hasOwnProperty(method)
+	has(method){
+		return this[REGISTERED].hasOwnProperty(method)
 	}
 
 	invoke(...args) {
