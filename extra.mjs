@@ -12,7 +12,7 @@ import {
 } from "./debug.mjs"
 
 import {
-	value,
+	constant,
 	fullpipe,
 	isUndefined,
 	pipe,
