@@ -12,6 +12,7 @@ import {
 } from "./debug.mjs"
 
 import {
+	value,
 	fullpipe,
 	isUndefined,
 	pipe,
@@ -97,11 +98,12 @@ reactive.call(Model.prototype)
  */
 
  var renderonce = false
+ const defaultRender = constant('')
  const RENDERONCE = Symbol("renderonce")
  const LAST = Symbol("last")
  const RENDER = Symbol("render")
 export class View extends Unit {
-	constructor(render){
+	constructor(render = defaultRender){
 		super()
 		if(render){
 			good(render, 'function')

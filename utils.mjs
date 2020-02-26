@@ -127,7 +127,7 @@ export function different(obj, value){
  * @param val value to be returned
  */
 
-export function value(val) {
+export function constant(val) {
 	return apply.bind(void 0, pipe, val)
 }
 
