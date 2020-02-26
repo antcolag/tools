@@ -12,9 +12,6 @@
  * @throws {any}
  */
 export function croak(value){
-	if(!DEBUGGING){
-		return
-	}
 	throw value
 }
 
@@ -41,9 +38,6 @@ export const crap = type_check.bind(void 0, false);
  * @function
  */
 export function pause() {
-	if(!DEBUGGING){
-		return
-	}
 	debugger
 }
 
