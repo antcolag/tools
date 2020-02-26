@@ -226,7 +226,10 @@ const TRIGGER = Symbol("trigger")
 export class Controller extends Unit {
 	constructor(init = {}, trigger = pipe){
 		super()
-		this[REGISTERED] = init
+		Object.assign(
+			this[REGISTERED] = {},
+			init
+		)
 		this[TRIGGER] = trigger;
 	}
 
