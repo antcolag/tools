@@ -33,9 +33,8 @@ import {
 /**
  * Base class for controllers, models and Views
  */
-class Unit { }
-
-observe.call(Unit.prototype)
+class EventBroker { }
+observe.call(EventBroker.prototype)
 
 /**
  * it handle the data logic of the app
@@ -45,7 +44,7 @@ observe.call(Unit.prototype)
  * @param {...any} props
  */
 const HANDLER = Symbol('handler');
-export class Model extends Unit {
+export class Model extends EventBroker {
 	constructor(...props){
 		super()
 		props.forEach( id => {
@@ -102,7 +101,7 @@ reactive.call(Model.prototype)
  const RENDERONCE = Symbol("renderonce")
  const LAST = Symbol("last")
  const RENDER = Symbol("render")
-export class View extends Unit {
+export class View extends EventBroker {
 	constructor(render = defaultRender){
 		super()
 		if(render){
@@ -154,7 +153,7 @@ injectProperties.call(View.prototype, {
  */
 const HANDLERS = Symbol('handlers');
 const ORIGIN = Symbol('origin');
-export class Router extends Unit {
+export class Router extends EventBroker {
 	constructor() {
 		super()
 		this[HANDLERS] = [];
@@ -225,7 +224,7 @@ function matcher(prev, curr, i) {
  */
 const REGISTERED = Symbol('registered')
 const TRIGGER = Symbol("trigger")
-export class Controller extends Unit {
+export class Controller extends EventBroker {
 	constructor(init = {}, trigger = pipe){
 		super()
 		Object.assign(
@@ -274,7 +273,7 @@ function getter(self, p) {
  * @param {function} handler
  */
 
-export class Broker extends Unit {
+export class Gateway extends EventBroker {
 	constructor(handler = fullpipe){
 		super()
 		this[HANDLER] = handler
@@ -309,4 +308,4 @@ export class Broker extends Unit {
 	}
 }
 
-readable.call(Broker.prototype)
+readable.call(Gateway.prototype)
