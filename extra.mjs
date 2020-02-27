@@ -33,7 +33,7 @@ import {
 /**
  * Base class for controllers, models and Views
  */
-class EventBroker { }
+export class EventBroker { }
 observe.call(EventBroker.prototype)
 
 /**

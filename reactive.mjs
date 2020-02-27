@@ -24,7 +24,7 @@ export default function reactive() {
 	return injectProperties.call(this, HANDLERS)
 }
 
-function buildBinder (val, list, build) {
+function buildBinder (list, build, val) {
 	var recurring = 0
 	const setter = (v) => {
 		if(recurring++){
@@ -52,8 +52,12 @@ function bindable(id, build = pipe) {
 		return false
 	}
 	binds[id] = []
-	const buildedBinder = buildBinder(this[id], binds[id], build)
-	return Object.defineProperty(this, id, buildedBinder)
+	return buildProperty.call(
+		this,
+		id,
+		this[id],
+		buildBinder.bind(this, binds[id], build)
+	)
 }
 
 function bind(id, fun, name = id) {
