@@ -199,7 +199,7 @@ class Handler {
 	}
 
 	match(path) {
-		var opt = path.match(this.id);
+		var opt = path.toString().match(this.id);
 		return opt && this.names.length ? this.names.reduce(
 			matcher.bind(opt),
 			{}
