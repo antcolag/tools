@@ -4,7 +4,9 @@
  * @see module:utils
  */
 
-import { properties } from "./utils.mjs"
+import {
+	properties
+} from "./utils.mjs"
 
 /**
  * build the argument for Object.defineProperty
