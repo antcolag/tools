@@ -39,7 +39,11 @@ export class DomPrinter {
 	emmet(strings, ...data){
 		[strings, data] = filter(strings, data, this.pipe);
 		var random = randomAttr();
-		var emmetTempString = strings.join( `emmet[${random}]` )
+		var elm = `emmet[${random}]`
+		var emmetTempString = strings.join( elm )
+		if(strings.length == data.length){
+			emmetTempString += elm
+		}
 		var stream = new TokenStream(
 			new StringStream(emmetTempString)
 		)
