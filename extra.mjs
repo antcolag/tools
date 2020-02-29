@@ -33,7 +33,7 @@ observe.call(EventBroker.prototype)
  * functions will be executed
  * @param {...any} props
  */
-class ModelBase extends EventBroker {}
+class ModelBase extends EventBroker { }
 reactive.call(ModelBase.prototype)
 
 export function Model(...props){
