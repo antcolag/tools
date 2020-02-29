@@ -83,8 +83,35 @@ export function debounce(f, t = 100) {
 }
 
 /**
+ * use it with string.match as regex pattern to build an object
+ * from the given properties
+ * @param {any} id
+ * @param {...string} names
+ */
+
+const ORIGIN = Symbol('origin');
+export class RegObj {
+	constructor(id, ...names){
+		this.id = typeof id == 'string' ? new RegExp(id) : id
+		this.names = names
+		this.names.splice(0,0, ORIGIN)
+	}
+
+	[Symbol.match](path){
+		var opt = path.toString().match(this.id);
+		return opt && this.names.length ? this.names.reduce(
+			(prev, curr, i) => properties.call(prev, curr, opt[i]),
+			{}
+		) : opt
+	}
+
+	static origin(data){
+		return data[ORIGIN]
+	}
+}
+
+/**
  * apply a function to arguments
- * @
  * @param {function} f
  * @param {...any} args
  */
@@ -94,7 +121,6 @@ export function apply(f, ...args) {
 
 /**
  * return a function that apply a handler to arguments
- * @
  * @param {function} f
  * @param {...any} values
  */
@@ -104,7 +130,6 @@ export function applyWithConst(f, ...values){
 
 /**
  * performs a strict equal comparison
- * @
  * @param {any} obj
  * @param {any} value
  */
@@ -114,7 +139,6 @@ export function equals(obj, value){
 
 /**
  * performs a strict different comparison
- * @
  * @param {any} obj
  * @param {any} value
  */
