@@ -66,7 +66,7 @@ export async function defer(t, f, ...args) {
  * @param {function} f
  * @param {number} t
  */
-export function debounce(f, t = 100) {
+export function debounce(f, t = 0) {
 	var last, self
 	return function debouncing (...args){
 		self = this
