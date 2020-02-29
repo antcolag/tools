@@ -10,7 +10,8 @@ import {
 	isUndefined,
 	pipe,
 	noop,
-	different
+	different,
+	debounce
 } from "./utils.mjs"
 import {
 	injectProperties
@@ -36,12 +37,16 @@ observe.call(EventBroker.prototype)
 class ModelBase extends EventBroker { }
 reactive.call(ModelBase.prototype)
 
-export function Model(...props){
-	const self = this || ModelBase
+export function Model(self, ...props){
+	self = self || ModelBase
 	return props.length ? class Model extends self {
 		constructor(...args){
 			super(...args)
 			props.forEach( id => this.bindable(id))
+			var deb = debounce(() => {
+				this.fire('update')
+			})
+			props.forEach( id => this.bind(id, deb))
 		}
 	} : self
 }
