@@ -1,30 +1,21 @@
-import {
-	BINDS,
-	default as reactive
- } from "./reactive.mjs"
-
+import reactive from "./reactive.mjs"
 import readable from "./readable.mjs"
-
 import observe from "./observe.mjs"
-
 import {
 	good
 } from "./debug.mjs"
-
 import {
 	constant,
 	fullpipe,
 	isUndefined,
 	pipe,
 	noop,
-	properties,
+	RegObj,
 	different
 } from "./utils.mjs"
-
 import {
 	injectProperties
 } from "./tools.mjs"
-
 import {
 	DomPrinter
 } from "./dom.mjs"
@@ -43,51 +34,18 @@ observe.call(EventBroker.prototype)
  * functions will be executed
  * @param {...any} props
  */
-const HANDLER = Symbol('handler');
-export class Model extends EventBroker {
-	constructor(...props){
-		super()
-		props.forEach( id => {
-			if(typeof id == "function") {
-				this[HANDLER] = id;
-				return;
-			}
-			this.bindable(id)
-		})
-		if(!this[HANDLER]){
-			this[HANDLER] = Model.inline
+class ModelBase extends EventBroker {}
+reactive.call(ModelBase.prototype)
+
+export function Model(...props){
+	const self = this || ModelBase
+	return props.length ? class Model extends self {
+		constructor(...args){
+			super(...args)
+			props.forEach( id => this.bindable(id))
 		}
-	}
-
-	async update(...args){
-		try {
-			return this.fire('update',
-				await this[HANDLER](...args)
-			);
-		} catch (e){
-			return this.fire('reject', e)
-		} finally {
-			this.fire('done', ...args)
-		}
-	}
-
-	static struct(...args){
-		good(this, Model);
-		return Object.assign(this, ...args)
-	}
-
-	static inline(...args){
-		good(this, Model);
-		Object
-		.keys(this[BINDS])
-		.forEach( (id, i) =>{
-			this[id] = args[i]
-		})
-		return this
-	}
+	} : self
 }
-
-reactive.call(Model.prototype)
 
 /**
  * it hanlde the rendering of the data
@@ -152,7 +110,6 @@ injectProperties.call(View.prototype, {
  * calling the method trigger
  */
 const HANDLERS = Symbol('handlers');
-const ORIGIN = Symbol('origin');
 export class Router extends EventBroker {
 	constructor() {
 		super()
@@ -179,41 +136,23 @@ export class Router extends EventBroker {
 			null
 		)
 	}
-
-	static origin(data){
-		return data[ORIGIN]
-	}
 }
 
 function reducer(args, path, pre, x){
 	return pre || x.call(args, path, x)
 }
 
-/* TODO Symbol.search */
+const HANDLER = Symbol('handler');
 class Handler {
-	constructor(id, handler = pipe, ...names){
+	constructor(id, handler = pipe){
 		this.id = typeof id == 'string' ? new RegExp(id) : id
-		this.names = names
-		this.names.splice(0,0, ORIGIN)
 		this[HANDLER] = handler
 	}
 
-	match(path) {
-		var opt = path.toString().match(this.id);
-		return opt && this.names.length ? this.names.reduce(
-			matcher.bind(opt),
-			{}
-		) : opt
-	}
-
 	call(args, path) {
-		var opt = this.match(path);
+		var opt = path.toString().match(this.id);
 		return opt && this[HANDLER](opt, ...args)
 	}
-}
-
-function matcher(prev, curr, i) {
-	return properties.call(prev, curr, this[i])
 }
 
 /**
