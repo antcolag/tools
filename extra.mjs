@@ -10,7 +10,6 @@ import {
 	isUndefined,
 	pipe,
 	noop,
-	RegObj,
 	different
 } from "./utils.mjs"
 import {
