@@ -122,7 +122,7 @@ class Handler {
 	}
 
 	call(args, path) {
-		var opt = path.toString().match(this.id);
+		var opt = this.id[Symbol.match](path);
 		return opt && this[HANDLER](opt, ...args)
 	}
 }
