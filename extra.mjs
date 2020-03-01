@@ -2,9 +2,6 @@ import reactive from "./reactive.mjs"
 import readable from "./readable.mjs"
 import observe from "./observe.mjs"
 import {
-	good
-} from "./debug.mjs"
-import {
 	constant,
 	fullpipe,
 	isUndefined,
@@ -32,23 +29,24 @@ observe.call(EventBroker.prototype)
  * it takes an array of names that will be
  * expoted by reactive's bindable,
  * functions will be executed
+ * @param {...type} self
  * @param {...any} props
  */
-class ModelBase extends EventBroker { }
-reactive.call(ModelBase.prototype)
 
 export function Model(self, ...props){
-	self = self || ModelBase
-	return props.length ? class Model extends self {
+	self = class Model extends self {
 		constructor(...args){
 			super(...args)
 			props.forEach( id => this.bindable(id))
-			var deb = debounce(() => {
-				this.fire('update')
+			var debounced = debounce(() => {
+				this.fire('update', this)
 			})
-			props.forEach( id => this.bind(id, deb))
+			props.forEach( id => this.bind(id, debounced))
 		}
-	} : self
+	}
+	reactive.call(self.prototype)
+	observe.call(self.prototype)
+	return self;
 }
 
 /**
@@ -58,49 +56,19 @@ export function Model(self, ...props){
  * @param {function} render
  */
 
- var renderonce = false
- const defaultRender = constant('')
- const RENDERONCE = Symbol("renderonce")
- const LAST = Symbol("last")
  const RENDER = Symbol("render")
 export class View extends EventBroker {
-	constructor(render = defaultRender){
+	constructor(render = constant('')){
 		super()
-		if(render){
-			good(render, 'function')
-			this[RENDER] = render
-		}
+		this[RENDER] = render
 	}
 
 	render(){
-		if((this[RENDERONCE] || renderonce) && this[LAST]){
-			return this[LAST]
-		}
-		return this[LAST] = this[RENDER](...arguments)
+		return this[RENDER](...arguments)
 	}
 
 	static set builder(hanlder) {
 		this.prototype.print.builder = hanlder
-	}
-
-	static renderOnce(view){
-		if(view){
-			view[RENDERONCE] = true
-		} {
-			renderonce = true
-		}
-	}
-
-	static renderAlways(view){
-		if(view){
-			view[RENDERONCE] = false
-		} {
-			renderonce = false
-		}
-	}
-
-	static last(view){
-		return view[LAST]
 	}
 }
 

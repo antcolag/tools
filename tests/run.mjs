@@ -3,8 +3,10 @@ import Test from "../test.mjs";
 import * as dom from "../dom.mjs";
 import readable from "../readable.mjs";
 import reactive from "../reactive.mjs";
+import * as extra from "../extra.mjs";
 import {
 	pipe,
+	delay
 } from "../utils.mjs";
 import {
 	good,
@@ -12,6 +14,11 @@ import {
 	ASSERT,
 	ASSERT_T,
 } from "../debug.mjs";
+import {
+	View
+} from "../extra.mjs";
+
+const isBrowser = typeof Document != 'undefined' && document.body
 
 new Test("tests should work", async function (arg) {
 	var tests = new Test(
@@ -85,7 +92,7 @@ new Test("tests should work", async function (arg) {
 
 	clearInterval(timer)
 
-	if(typeof Document != 'undefined' && document.body) {
+	if(isBrowser){
 		await new Test(
 			"emmet should work",
 			() => {
@@ -130,7 +137,67 @@ new Test("tests should work", async function (arg) {
 		).run(dom.emmet `a#id.class.name[data-att="attr"]{bella }>({pe ${"tutti"}}` == '<a id="id" data-att="attr" class="class name">bella pe tutti</a>')
 	}
 	
+	await new Test('some extra', async function(){
+		class ConcreteModel extends extra.Model(Object, 'foo', 'bar', 'baz') {}
+		var model = new ConcreteModel()
+		var n = 0
+		var i = 0
+		model.on('update', function(){
+			n++;
+		})
+		model.bind('foo', function(x){
+			if(x !== i) {
+				throw "foo should be equal to x when assigned"
+			}
+		})
+		model.foo = ++i
+		await delay()
+		model.foo = ++i
+		model.bar = n
+		model.baz = n
+		await delay()
+		Object.assign(model, {
+			foo: ++i,
+			bar: n,
+			baz: n
+		})
+		await delay()
+		if(n !== i) {
+			throw `update fired ${n} times in Model instead of ${i}`
+		}
+		if(!isBrowser) {
+			return true;
+		}
 
+		var view = new View(function(model){
+			return this.print.emmet `div>li>${model.foo} ^ li>${model.bar}`
+		})
+		var view2 = new View(function(model){
+			return view.render({
+				foo: `{${model.foo}}`,
+				bar: `{${model.bar}}`
+			})
+		})
+		var view3 = new View(function(model){
+			foo = document.createElement('span')
+			bar = document.createElement('span')
+			model.bind('foo', foo, 'innerHTML')
+			model.bind('bar', bar, 'innerHTML')
+			return view.render({
+				foo: foo,
+				bar: bar
+			})
+		}).render(model), foo, bar
+		document.body.append(view3, view2.render(model))
+		Object.assign(model, {
+			foo: ++i,
+			bar: n,
+			baz: n
+		})
+		ASSERT_T(foo.innerText == i)
+		ASSERT_T(bar.innerText == n)
+		return true
+	}).run()
 
 	return arg
 }).run(true)
