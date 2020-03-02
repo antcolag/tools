@@ -21,7 +21,13 @@ import {
 /**
  * Base class for controllers, models and Views
  */
-export class EventBroker { }
+export class EventBroker {
+	constructor(){
+		injectProperties.call(this, {
+			fireLast: debounce(this.fire.bind(this))
+		})
+	}
+}
 observe.call(EventBroker.prototype)
 
 /**

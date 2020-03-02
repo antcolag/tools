@@ -15,7 +15,8 @@ import {
 	ASSERT_T,
 } from "../debug.mjs";
 import {
-	View
+	View,
+	EventBroker
 } from "../extra.mjs";
 
 const isBrowser = typeof Document != 'undefined' && document.body
@@ -199,5 +200,20 @@ new Test("tests should work", async function (arg) {
 		return true
 	}).run()
 
+	var evt = new EventBroker()
+	var x = 0
+	var handler = () => ++x
+	evt.on('one', handler)
+	evt.on('two', handler)
+	evt.on('three', handler)
+
+	await delay(100)
+	evt.fireLast('one')
+	evt.fireLast('two')
+	evt.fireLast('three')
+
+	await delay(100)
+
+	ASSERT_T(x == 1)
 	return arg
 }).run(true)
