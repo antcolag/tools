@@ -7,7 +7,6 @@ import {
 	isUndefined,
 	pipe,
 	noop,
-	different,
 	debounce
 } from "./utils.mjs"
 import {
@@ -72,15 +71,17 @@ export class View extends EventBroker {
 	render(){
 		return this[RENDER](...arguments)
 	}
-
-	static set builder(hanlder) {
-		this.prototype.print.builder = hanlder
-	}
 }
+
+View.prototype.print.builder = makeView
 
 injectProperties.call(View.prototype, {
 	print: new DomPrinter()
 })
+
+function makeView(){
+
+}
 
 /**
  * you can add a route by invoking the add method
@@ -89,9 +90,11 @@ injectProperties.call(View.prototype, {
  */
 const HANDLERS = Symbol('handlers');
 export class Router extends EventBroker {
-	constructor() {
+	constructor(method = "reduce", handler = reducer) {
 		super()
 		this[HANDLERS] = [];
+		this[HANDLERS].method = method
+		this[HANDLERS].handler = handler
 	}
 
 	add() {
@@ -101,23 +104,23 @@ export class Router extends EventBroker {
 	}
 
 	remove() {
-		this[HANDLERS] = this[HANDLERS].filter(
-			different.bind(void 0, ...arguments)
-		)
+		do {
+			var id = this[HANDLERS].indexOf(...arguments)
+		} while(id >= 0 && this[HANDLERS].splice(id, 1))
 		return this[HANDLERS].length
 	}
 
 	trigger(origin, ...args){
 		this.fire('trigger', ...arguments)
-		return this[HANDLERS].reduce(
-			reducer.bind(this, args, origin),
+		return this[HANDLERS][this[HANDLERS].method](
+			this[HANDLERS].handler.bind(this, origin, args),
 			null
 		)
 	}
 }
 
-function reducer(args, path, pre, x){
-	return pre || x.call(args, path, x)
+function reducer(path, args, pre, x){
+	return pre || x.call(path, args, x)
 }
 
 const HANDLER = Symbol('handler');
@@ -127,7 +130,7 @@ class Handler {
 		this[HANDLER] = handler
 	}
 
-	call(args, path) {
+	call(path, args) {
 		var opt = this.id[Symbol.match](path);
 		return opt && this[HANDLER](opt, ...args)
 	}
