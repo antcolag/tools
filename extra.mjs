@@ -73,11 +73,11 @@ export class View extends EventBroker {
 	}
 }
 
-injectProperties.call(View.prototype, {
-	print: new DomPrinter()
-})
+// injectProperties.call(View.prototype, {
+// 	print: new DomPrinter()
+// })
 
-View.prototype.print.builder = makeView
+// View.prototype.print.builder = makeView
 
 function makeView(){
 
