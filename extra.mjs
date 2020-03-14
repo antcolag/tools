@@ -62,29 +62,22 @@ export function Model(self, ...props){
  */
 const RENDER = Symbol('render')
 export class View extends EventBroker {
-	constructor(render = constant(''), scope = ViewScope.build){
+	constructor(render = constant(''), scope = pipe){
 		super()
 		this[RENDER] = render
 		this.scope = scope
 	}
 
 	render(){
-		var scope = this.scope(this)
+		var scope = this.scope;
+		if(scope instanceof Function){
+			scope = new.target ? new scope(this) : scope(this)
+		}
 		return this[RENDER].apply(scope, arguments)
 	}
 }
 
-export class ViewScope  extends EventBroker {
-	constructor(view){
-		this.view = view;
-
-	}
-	static build(view){
-		return new this(view);
-	}
-}
-
-injectProperties.call(ViewScope.prototype, {
+injectProperties.call(View, {
 	print: new DomPrinter()
 })
 
