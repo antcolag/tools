@@ -227,6 +227,25 @@ export class Semaphore extends Promise {
 	}
 }
 
+/**
+ * deep merge two objects. skips symbols and non enumerable entries
+ * @param obj1 
+ * @param obj2 
+ */
+export function merge(obj1, obj2){
+	var keys = [...(new Set([
+		...typeof obj1 == "string"? [] : Object.keys(obj1 || {}),
+		...typeof obj2 == "string"? [] : Object.keys(obj2 || {})
+	]))]
+	if(!keys.length){
+		return obj1 || obj2
+	}
+	return keys.reduce((prev, curr) => {
+		prev[curr] = merge(obj1 && obj1[curr], obj2 && obj2[curr])
+		return prev
+	}, obj1)
+}
+
 /* just for joke */
 export const lisperato = new Proxy({
 	l(x, ...args){
