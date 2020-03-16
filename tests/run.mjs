@@ -171,7 +171,7 @@ new Test("tests should work", async function (arg) {
 		}
 
 		var view = new View(function(model){
-			return View.print.emmet `div>li>${model.foo} ^ li>${model.bar}`
+			return this.print.emmet `div>li>${model.foo} ^ li>${model.bar}`
 		})
 		var view2 = new View(function(model){
 			return view.render({
@@ -199,10 +199,6 @@ new Test("tests should work", async function (arg) {
 		ASSERT_T(bar.innerText == n)
 		return true
 	}).run()
-
-	class v extends View {}
-
-	v.print.emmet
 
 
 	var evt = new EventBroker()

@@ -60,26 +60,20 @@ export function Model(self, ...props){
  * should return the rendered data
  * @param {function} render
  */
-const RENDER = Symbol('render')
-export class View extends EventBroker {
-	constructor(render = constant(''), scope = pipe){
-		super()
-		this[RENDER] = render
-		this.scope = scope
-	}
 
-	render(){
-		var scope = this.scope;
-		if(scope instanceof Function){
-			scope = new.target ? new scope(this) : scope(this)
+export class Viewbase extends EventBroker {}
+
+export function View(render = constant("")) {
+	class View extends Viewbase {
+		render(){
+			return render.apply(this, arguments)
 		}
-		return this[RENDER].apply(scope, arguments)
 	}
+	injectProperties.call(View.prototype, {
+		print: new DomPrinter()
+	})
+	return new.target ? new View : View
 }
-
-injectProperties.call(View, {
-	print: new DomPrinter()
-})
 
 /**
  * you can add a route by invoking the add method
