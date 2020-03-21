@@ -61,10 +61,10 @@ export function Model(self, ...props){
  * @param {function} render
  */
 
-export class Viewbase extends EventBroker {}
+export class ViewBase extends EventBroker {}
 
 export function View(render = constant("")) {
-	class View extends Viewbase {
+	class View extends ViewBase {
 		render(){
 			return render.apply(this, arguments)
 		}
