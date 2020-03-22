@@ -87,12 +87,17 @@ export class Router extends EventBroker {
 		this[HANDLERS] = [];
 		this[HANDLERS].method = method
 		this[HANDLERS].handler = handler
+		this[HANDLERS].fallback = noop
 	}
 
 	add() {
 		const result = new Handler(...arguments)
 		this[HANDLERS].push(result)
 		return result
+	}
+
+	fallback(handler) {
+		this[HANDLERS].fallback = handler || noop
 	}
 
 	remove() {
@@ -107,7 +112,7 @@ export class Router extends EventBroker {
 		return this[HANDLERS][this[HANDLERS].method](
 			this[HANDLERS].handler.bind(this, origin, args),
 			null
-		)
+		) || this[HANDLERS].fallback.apply(this, args)
 	}
 }
 
