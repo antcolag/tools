@@ -41,6 +41,18 @@ export function no(){
 }
 
 /**
+ * random int32
+ */
+export const random = ((buffer) => {
+	const f_buffer = new Float32Array(buffer)
+	const i_buffer = new Int32Array(buffer)
+	return () => {
+		f_buffer[0] = Math.random()
+		return i_buffer[0];
+	}
+})(new ArrayBuffer(4))
+
+/**
  * continue the execution after t milliseconds
  * @param {number} t
  * @returns {Promise}
