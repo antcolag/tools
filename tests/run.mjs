@@ -6,6 +6,7 @@ import reactive from "../reactive.mjs";
 import * as extra from "../extra.mjs";
 import {
 	pipe,
+	random,
 	delay
 } from "../utils.mjs";
 import {
@@ -13,6 +14,7 @@ import {
 	crap,
 	ASSERT,
 	ASSERT_T,
+	ASSERT_F
 } from "../debug.mjs";
 import {
 	View,
@@ -197,6 +199,7 @@ new Test("tests should work", async function (arg) {
 		})
 		ASSERT_T(foo.innerText == i)
 		ASSERT_T(bar.innerText == n)
+		ASSERT_F(random() == random())
 		return true
 	}).run()
 
