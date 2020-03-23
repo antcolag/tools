@@ -7,14 +7,15 @@ import * as extra from "../extra.mjs";
 import {
 	pipe,
 	random,
-	delay
+	delay,
+	noop,
+	RegObj
 } from "../utils.mjs";
 import {
 	good,
 	crap,
 	ASSERT,
 	ASSERT_T,
-	ASSERT_F
 } from "../debug.mjs";
 import {
 	View,
@@ -199,10 +200,10 @@ new Test("tests should work", async function (arg) {
 		})
 		ASSERT_T(foo.innerText == i)
 		ASSERT_T(bar.innerText == n)
-		ASSERT_F(random() == random())
 		return true
 	}).run()
 
+	ASSERT_T("foobar!".match(new RegObj(/\w+(bar\!)/, "baz")).baz == "bar!")
 
 	var evt = new EventBroker()
 	var x = 0
@@ -219,5 +220,35 @@ new Test("tests should work", async function (arg) {
 	await delay(100)
 
 	ASSERT_T(x == 1)
+
+	const randomTest = await new Test('random', async function(tot, i1 = 0, i2 = 2 << 15, handler = noop){
+		function randomInteger(min = 0, max = 2 << 15) {
+			return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
+
+		var s0 = performance.now();
+		for(var i = 0; i < tot; i++){
+			handler(randomInteger(i1, i2))
+		}
+		var e0 = performance.now();
+
+		var s1 = performance.now();
+		for(var i = 0; i < tot; i++){
+			handler(random(i1, i2))
+		}
+		var e1 = performance.now();
+
+		var t0 = e0 - s0, t1 = e1 - s1, r = t0 - t1
+		if(r < 0){
+			throw r
+		}
+		return r
+	})
+
+	randomTest.run(1000)
+	randomTest.run(10000)
+	randomTest.run(100000)
+	randomTest.run(100000, -1200, 3456)
+
 	return arg
 }).run(true)

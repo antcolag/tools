@@ -43,12 +43,14 @@ export function no(){
 /**
  * random int32
  */
+
+
 export const random = ((buffer) => {
 	const f_buffer = new Float32Array(buffer)
-	const i_buffer = new Int32Array(buffer)
-	return () => {
+	const i_buffer = new Int16Array(buffer)
+	return (min = 0, max = 2 << 15) => {
 		f_buffer[0] = Math.random()
-		return i_buffer[0];
+		return ((i_buffer[0] + (2 << 14)) % (max - min)) + min
 	}
 })(new ArrayBuffer(4))
 
@@ -97,6 +99,9 @@ export function debounce(f, t = 0) {
 /**
  * use it with string.match as regex pattern to build an object
  * from the given properties
+ * @example console.log(
+ * 	"foobar!".match(new RegObj(/\w+(bar\!)/, "baz"))
+ * ) // prints {baz: "bar!"}
  * @param {any} id
  * @param {...string} names
  */
