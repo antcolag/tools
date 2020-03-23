@@ -41,10 +41,8 @@ export function no(){
 }
 
 /**
- * random int32
+ * random int16
  */
-
-
 export const random = ((buffer) => {
 	const f_buffer = new Float32Array(buffer)
 	const i_buffer = new Int16Array(buffer)
