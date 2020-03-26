@@ -39,7 +39,7 @@ observe.call(EventBroker.prototype)
  */
 
 export function Model(self, ...props){
-	self = class Model extends self {
+	class Model extends self {
 		constructor(...args){
 			super(...args)
 			props.forEach( id => this.bindable(id))
@@ -49,9 +49,9 @@ export function Model(self, ...props){
 			props.forEach( id => this.bind(id, debounced))
 		}
 	}
-	reactive.call(self.prototype)
-	observe.call(self.prototype)
-	return self;
+	reactive.call(Model.prototype)
+	observe.call(Model.prototype)
+	return Model;
 }
 
 /**
@@ -63,15 +63,16 @@ export function Model(self, ...props){
 
 export class ViewBase extends EventBroker {}
 
+injectProperties.call(ViewBase.prototype, {
+	print: new DomPrinter()
+})
+
 export function View(render = constant("")) {
 	class View extends ViewBase {
 		render(){
 			return render.apply(this, arguments)
 		}
 	}
-	injectProperties.call(View.prototype, {
-		print: new DomPrinter()
-	})
 	return new.target ? new View : View
 }
 
