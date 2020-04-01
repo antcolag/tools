@@ -248,7 +248,7 @@ new Test("tests should work", async function (arg) {
 	randomTest.run(1000)
 	randomTest.run(10000)
 	randomTest.run(100000)
-	randomTest.run(100000, -1200, 3456)
+	randomTest.run(1000000, -1200, 3456)
 
 	return arg
 }).run(true)
