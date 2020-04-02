@@ -44,7 +44,7 @@ export function Model(self, ...props){
 			super(...args)
 			props.forEach( id => this.bindable(id))
 			var debounced = debounce(() => {
-				this.fire('update', this)
+				this.fire('updated', this)
 			})
 			props.forEach( id => this.bind(id, debounced))
 		}
