@@ -138,7 +138,7 @@ new Test("tests should work", async function (arg) {
 		await new Test(
 			"emmet should work in node",
 			ASSERT_T
-		).run(dom.emmet `a#id.class.name[data-att="attr"]{bella }>({pe ${"tutti"}}` == '<a id="id" data-att="attr" class="class name">bella pe tutti</a>')
+		).run(dom.emmet `a#id.class.name[data-att="attr"]{bella }>{pe ${"tutti"}}` == '<a id="id" data-att="attr" class="class name">bella pe tutti</a>')
 	}
 	
 	await new Test('some extra', async function(){
@@ -221,22 +221,22 @@ new Test("tests should work", async function (arg) {
 
 	ASSERT_T(x == 1)
 
-	const randomTest = await new Test('random', async function(tot, i1 = 0, i2 = 2 << 15, handler = noop){
+	const randomTest = await new Test('random', async function(tot, i1 = 0, i2 = 1 << 15, handler = noop){
 		function randomInteger(min = 0, max = 2 << 15) {
 			return Math.floor(Math.random() * (max - min + 1)) + min;
 		}
-
-		var s0 = performance.now();
+		var now = typeof performance === "undefined" ? 	now = Date.now : performance.now.bind(performance)
+		var s0 = now();
 		for(var i = 0; i < tot; i++){
 			handler(randomInteger(i1, i2))
 		}
-		var e0 = performance.now();
+		var e0 = now();
 
-		var s1 = performance.now();
+		var s1 = now();
 		for(var i = 0; i < tot; i++){
 			handler(random(i1, i2))
 		}
-		var e1 = performance.now();
+		var e1 = now();
 
 		var t0 = e0 - s0, t1 = e1 - s1, r = t0 - t1
 		if(r < 0){
