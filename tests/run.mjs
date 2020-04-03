@@ -98,7 +98,7 @@ new Test("tests should work", async function (arg) {
 
 	if(isBrowser){
 		await new Test(
-			"emmet should work",
+			"emmet should work in browser",
 			() => {
 	
 			var testDom = dom.emmet `a.b.c`
@@ -136,7 +136,7 @@ new Test("tests should work", async function (arg) {
 	} else {
 
 		await new Test(
-			"emmet should",
+			"emmet should work in node",
 			ASSERT_T
 		).run(dom.emmet `a#id.class.name[data-att="attr"]{bella }>({pe ${"tutti"}}` == '<a id="id" data-att="attr" class="class name">bella pe tutti</a>')
 	}
