@@ -46,9 +46,9 @@ export function no(){
 export const random = ((buffer) => {
 	const f_buffer = new Float32Array(buffer)
 	const i_buffer = new Int16Array(buffer)
-	return (min = 0, max = 2 << 15) => {
+	return (min = 0, max = 1 << 16) => {
 		f_buffer[0] = Math.random()
-		return ((i_buffer[0] + (2 << 14)) % (max - min)) + min
+		return ((i_buffer[0] + (1 << 15)) % (max - min)) + min
 	}
 })(new ArrayBuffer(4))
 
