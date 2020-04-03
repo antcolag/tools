@@ -146,7 +146,7 @@ new Test("tests should work", async function (arg) {
 		var model = new ConcreteModel()
 		var n = 0
 		var i = 0
-		model.on('update', function(){
+		model.on('updated', function(){
 			n++;
 		})
 		model.bind('foo', function(x){
