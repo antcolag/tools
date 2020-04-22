@@ -68,11 +68,12 @@ injectProperties.call(ViewBase.prototype, {
 })
 
 export function View(render = constant("")) {
-	return new.target ? new class extends ViewBase {
+	class View extends ViewBase {
 		render(){
 			return render.apply(this, arguments)
 		}
-	} : ViewBase
+	}
+	return new.target ? new View : View
 }
 
 /**
