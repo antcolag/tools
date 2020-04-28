@@ -255,6 +255,10 @@ export function merge(obj1, obj2){
 	if(!keys.length){
 		return obj1 || obj2
 	}
+	var dangerous = keys.indexOf('__proto__')
+	if(dangerous >= 0){
+		keys.splice(dangerous,1)
+	}
 	return keys.reduce((prev, curr) => {
 		prev[curr] = merge(obj1 && obj1[curr], obj2 && obj2[curr])
 		return prev
