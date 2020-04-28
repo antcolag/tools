@@ -6,8 +6,7 @@ import {
 	fullpipe,
 	isUndefined,
 	pipe,
-	noop,
-	debounce
+	noop
 } from "./utils.mjs"
 import {
 	injectProperties
@@ -22,12 +21,9 @@ import {
  */
 export class EventBroker {
 	constructor(){
-		injectProperties.call(this, {
-			fireLast: debounce(this.fire.bind(this))
-		})
+		observe.call(this)
 	}
 }
-observe.call(EventBroker.prototype)
 
 /**
  * it handle the data logic of the app
@@ -43,10 +39,7 @@ export function Model(self, ...props){
 		constructor(...args){
 			super(...args)
 			props.forEach( id => this.bindable(id))
-			var debounced = debounce(() => {
-				this.fire('updated', this)
-			})
-			props.forEach( id => this.bind(id, debounced))
+			props.forEach( id => this.bind(id, this.fireLast.bind(this, 'updated')))
 		}
 	}
 	reactive.call(Model.prototype)

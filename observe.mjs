@@ -8,6 +8,12 @@
 	injectProperties
 } from "./tools.mjs"
 
+import {
+	debounce
+} from "./utils.mjs"
+
+
+
 /**
  * Identifier the property for storing event handlers
  * @constant
@@ -22,7 +28,8 @@ const HANDLERS = {
 	on,
 	once,
 	off,
-	fire
+	fire,
+	fireLast: debounce(fire)
 }
 
 /**
@@ -106,4 +113,8 @@ function fire(events, ...args) {
 		return events.map(x => this.fire(x, ...args))
 	}
 	return this[OBSERVERS][events].map(x => x.apply(this, args))
+}
+
+function fireLast(...args) {
+	
 }
