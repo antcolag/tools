@@ -114,7 +114,3 @@ function fire(events, ...args) {
 	}
 	return this[OBSERVERS][events].map(x => x.apply(this, args))
 }
-
-function fireLast(...args) {
-	
-}
