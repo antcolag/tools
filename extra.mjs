@@ -81,7 +81,7 @@ export class Router extends EventBroker {
 		this[HANDLERS] = [];
 		this[HANDLERS].method = method
 		this[HANDLERS].handler = handler
-		this[HANDLERS].fallback = noop
+		this.fallback = noop
 	}
 
 	add() {
@@ -90,8 +90,12 @@ export class Router extends EventBroker {
 		return result
 	}
 
-	fallback(handler) {
-		this[HANDLERS].fallback = handler || noop
+	set fallback(handler) {
+		this[HANDLERS].fallback = handler
+	}
+
+	get fallback() {
+		return this[HANDLERS].fallback
 	}
 
 	remove() {
