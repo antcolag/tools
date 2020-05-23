@@ -79,7 +79,7 @@ export class Semaphore extends Promise {
 
 export class Timer extends Semaphore {
 	started
-	timer
+	id
 
 	constructor(handler = apply) {
 		super()
@@ -87,13 +87,13 @@ export class Timer extends Semaphore {
 	}
 
 	start(t = 0) {
-		this.timer = setTimeout(() => this.handler(this.resolve, this.reject), t)
+		this.id = setTimeout(() => this.handler(this.resolve, this.reject), t)
 		this.started = Date.now()
 		return Date.now() + t
 	}
 
 	stop() {
-		this.timer = clearInterval(this.timer)
+		this.id = clearInterval(this.id)
 		this.started = void 0
 	}
 }
