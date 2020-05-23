@@ -21,7 +21,12 @@ import {
 	View,
 	EventBroker
 } from "../extra.mjs";
-import { debounce } from "../utils.mjs";
+import {
+	debounce
+} from "../utils.mjs";
+import {
+	Semaphore
+} from "../utils.mjs";
 
 const isBrowser = typeof Document != 'undefined' && document.body
 
@@ -223,9 +228,13 @@ new Test("tests should work", async function (arg) {
 	ASSERT_T(x == 1)
 
 
-	new Test('debounce', (count, interval, debouncing) => {
-		var int;
-		var f = debounce(function(){
+	await new Test('debounce', (count, interval, debouncing) => {
+		var int, semaphore = new Semaphore();
+		var f = debounce(function(count){
+			if(count) {
+				semaphore.reject()
+			}
+			semaphore.resolve()
 		}, debouncing)
 
 		int = setInterval(function(){
@@ -234,9 +243,10 @@ new Test("tests should work", async function (arg) {
 			}
 			f(count)
 		}, interval)
-	}).run(100, 10, 500)
+		return semaphore;
+	}).run(10, 10, 200)
 
-	const randomTest = await new Test('random', async function(tot, i1 = 0, i2 = 1 << 15, handler = noop){
+	const randomTest = new Test('random', async function(tot, i1 = 0, i2 = 1 << 15, handler = noop){
 		function randomInteger(min = 0, max = 2 << 15) {
 			return Math.floor(Math.random() * (max - min + 1)) + min;
 		}
@@ -260,10 +270,10 @@ new Test("tests should work", async function (arg) {
 		return r
 	})
 
-	randomTest.run(1000)
-	randomTest.run(10000)
-	randomTest.run(100000)
-	randomTest.run(1000000, -1200, 3456)
+	await randomTest.run(1000)
+	await randomTest.run(10000)
+	await randomTest.run(100000)
+	await randomTest.run(1000000, -1200, 3456)
 
 	return arg
 }).run(true)
