@@ -21,6 +21,7 @@ import {
 	View,
 	EventBroker
 } from "../extra.mjs";
+import { debounce } from "../utils.mjs";
 
 const isBrowser = typeof Document != 'undefined' && document.body
 
@@ -216,6 +217,19 @@ new Test("tests should work", async function (arg) {
 	evt.fireLast('one')
 	evt.fireLast('two')
 	evt.fireLast('three')
+
+	var int;
+	var count = 100
+	var f = debounce(function(){
+		console.log("debouncing", this, arguments)
+	}, 500)
+
+	int = setInterval(function(){
+		if(!count--){
+			clearInterval(int)
+		}
+		f(count)
+	}, 10)
 
 	await delay(100)
 
