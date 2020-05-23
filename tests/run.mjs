@@ -218,22 +218,23 @@ new Test("tests should work", async function (arg) {
 	evt.fireLast('two')
 	evt.fireLast('three')
 
-	var int;
-	var count = 100
-	var f = debounce(function(){
-		console.log("debouncing", this, arguments)
-	}, 500)
-
-	int = setInterval(function(){
-		if(!count--){
-			clearInterval(int)
-		}
-		f(count)
-	}, 10)
-
 	await delay(100)
 
 	ASSERT_T(x == 1)
+
+
+	new Test('debounce', (count, interval, debouncing) => {
+		var int;
+		var f = debounce(function(){
+		}, debouncing)
+
+		int = setInterval(function(){
+			if(!--count){
+				clearInterval(int)
+			}
+			f(count)
+		}, interval)
+	}).run(100, 10, 500)
 
 	const randomTest = await new Test('random', async function(tot, i1 = 0, i2 = 1 << 15, handler = noop){
 		function randomInteger(min = 0, max = 2 << 15) {

@@ -80,7 +80,6 @@ export class Semaphore extends Promise {
 export class Timer extends Semaphore {
 	started
 	timer
-	handler
 
 	constructor(handler = apply) {
 		super()
