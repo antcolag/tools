@@ -48,7 +48,7 @@ function read(time){
 	}
 	return (time ? Semaphore.race([
 		this[WAIT],
-		defer(time, noop)
+		defer(noop)
 	]) : this[WAIT])
 }
 

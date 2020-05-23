@@ -52,14 +52,64 @@ export const random = ((buffer) => {
 	}
 })(new ArrayBuffer(4))
 
+
+
+export class Semaphore extends Promise {
+	constructor(args = noop) {
+		var res, rej;
+		super((resolve, reject) => {
+			return args(
+				res = resolve,
+				rej = reject
+			)
+		})
+		this.resolve = res
+		this.reject = rej
+	}
+
+	static get [Symbol.species]() {
+		return Promise;
+	}
+
+	get [Symbol.toStringTag]() {
+		return 'Semaphore';
+	}
+}
+
+
+export class Timer extends Semaphore {
+	started
+	timer
+	handler
+
+	constructor(handler = apply) {
+		super()
+		this.handler = handler
+	}
+
+	start(t = 0) {
+		this.timer = setTimeout(() => this.handler(this.resolve, this.reject), t)
+		this.started = Date.now()
+		return Date.now() + t
+	}
+
+	stop() {
+		this.timer = clearInterval(this.timer)
+		this.started = void 0
+	}
+}
+
 /**
  * continue the execution after t milliseconds
  * @param {number} t
  * @returns {Promise}
  */
 export function delay(t) {
-	return new Promise((resolve)=>setTimeout(resolve, t))
+	var timer = new Timer()
+	timer.start(t)
+	return timer
 }
+
 
 /**
  * defer a function
@@ -68,9 +118,10 @@ export function delay(t) {
  * @param {...any} args
  * @returns {Promise}
  */
-export async function defer(t, f, ...args) {
-	await delay(t)
-	return f(...args)
+export function defer(f, t, ...args) {
+	var timer = delay(t)
+	timer.then(() => f.apply(this, args))
+	return timer
 }
 
 /**
@@ -79,18 +130,20 @@ export async function defer(t, f, ...args) {
  * @param {number} t
  */
 export function debounce(f, t = 0) {
-	var last, self
+	var last, self, timer;
+	init()
 	return function debouncing (...args){
 		self = this
-		if(last){
-			last = args
-			return
-		}
 		last = args
-		defer(t, () => {
+		timer.stop()
+		timer.start(t)
+	}
+	function init() {
+		timer = new Timer()
+		timer.then(() => {
 			f.apply(self, last)
-			last = void 0
-		})
+			init()
+		});
 	}
 }
 
@@ -131,7 +184,7 @@ export class RegObj {
  * @param {...any} args
  */
 export function apply(f, ...args) {
-	return f(...args)
+	return f.apply(this, args)
 }
 
 /**
@@ -217,29 +270,6 @@ export const isFalse = compareWhitConst(false)
 export function properties(name, value, ...args) {
 	this[name] = value
 	return args.length? properties.apply(this, args) : this
-}
-
-/* TODO use Symbol.species */
-export class Semaphore extends Promise {
-	constructor(args = noop) {
-		var res, rej;
-		super((resolve, reject) => {
-			return args(
-				res = resolve,
-				rej = reject
-			)
-		})
-		this.resolve = res
-		this.reject = rej
-	}
-
-	static get [Symbol.species]() {
-		return Promise;
-	}
-
-	get [Symbol.toStringTag]() {
-		return 'Semaphore';
-	}
 }
 
 /**
