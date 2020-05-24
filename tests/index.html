@@ -10,5 +10,30 @@
 <body>
 	<h1>Tests</h1>
 	<p>open the console</p>
+	<custom-elm data-id="0">
+		<p slot="test-slot">
+			test custom elements
+		</p>
+	</custom-elm>
+	<custom-elm data-id="1">
+		<p slot="test-2">
+			test 2 (i should not be rendered)
+		</p>
+	</custom-elm>
+	<custom-elm data-id="0">
+		<div slot="test-slot">
+			test custom elements
+		</div>
+		<hr>
+		<div slot="test-slot">
+			test 2 (i should be rendered too)
+		</div>
+		<hr slot="test-slot"/>
+	</custom-elm>
+	<custom-elm data-id="2">
+		<p slot="test-slot">
+			test custom elements
+		</p>
+	</custom-elm>
 </body>
 </html>

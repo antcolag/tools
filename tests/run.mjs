@@ -1,4 +1,3 @@
-
 import Test from "../test.mjs";
 import * as dom from "../dom.mjs";
 import readable from "../readable.mjs";
@@ -56,7 +55,6 @@ new Test("tests should work", async function (arg) {
 
 	crap(1, Boolean, Object)
 
-
 	good(()=>{}, "function")
 
 	await new Test(
@@ -99,7 +97,6 @@ new Test("tests should work", async function (arg) {
 		pipe
 	).run(await console.read()).finally(() => clearInterval(timer2))
 
-
 	clearInterval(timer)
 
 	if(isBrowser){
@@ -139,14 +136,49 @@ new Test("tests should work", async function (arg) {
 			document.body.append.bind(document.body)
 		).run(dom.emmet `article>${myTitle2}.title>{\\\\\\} } + span{hello ${567}} ^ ${myTitle}>{weeee}`)
 		myTitle2.innerHTML += 'emmet!'
-	} else {
 
+		await new Test('custom html element', async function() {
+			var module = await import('./module.mjs')
+			module.add({
+				field: "foobar"
+			})
+
+			class CustomView extends View(function(id){
+				return this.print.html `
+				<h1>
+				${
+					this.model.field + " " + id
+				}
+				</h1>
+				<slot name="test-slot">fallback text</slot>
+				`
+			}){
+				constructor(model) {
+					super()
+					this.model = model
+				}
+			}
+
+			globalThis.customElements.define('custom-elm', class extends HTMLElement {
+				constructor() {
+					super()
+					this.attachShadow({
+						mode: "open"
+					})
+					import('./module.mjs').then(x => {
+						var view = new CustomView(x.getModel(this.dataset.id))
+						this.shadowRoot.append(view.render(x.increment()))
+					})
+				}
+			})
+		}).run()
+	} else {
 		await new Test(
 			"emmet should work in node",
 			ASSERT_T
 		).run(dom.emmet `a#id.class.name[data-att="attr"]{bella }>{pe ${"tutti"}}` == '<a id="id" data-att="attr" class="class name">bella pe tutti</a>')
 	}
-	
+
 	await new Test('some extra', async function(){
 		class ConcreteModel extends extra.Model(Object, 'foo', 'bar', 'baz') {}
 		var model = new ConcreteModel()
@@ -226,7 +258,6 @@ new Test("tests should work", async function (arg) {
 	await delay(100)
 
 	ASSERT_T(x == 1)
-
 
 	await new Test('debounce', (count, interval, debouncing) => {
 		var int, semaphore = new Semaphore();
