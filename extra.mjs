@@ -38,8 +38,7 @@ export function Model(self, ...props){
 	class Model extends self {
 		constructor(...args){
 			super(...args)
-			props.forEach( id => this.bindable(id))
-			props.forEach( id => this.bind(id, this.fireLast.bind(this, 'updated')))
+			initModel.apply(this, props)
 		}
 	}
 	reactive.call(Model.prototype)
@@ -47,6 +46,12 @@ export function Model(self, ...props){
 	return Model;
 }
 
+Model.init = initModel
+
+function initModel(...props){
+	props.forEach( id => this.bindable(id))
+	props.forEach( id => this.bind(id, this.fireLast.bind(this, 'updated')))
+}
 /**
  * it hanlde the rendering of the data
  * it takes the render function, that
