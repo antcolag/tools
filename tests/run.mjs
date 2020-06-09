@@ -30,10 +30,15 @@ import {
 } from "../utils.mjs";
 
 const isBrowser = typeof Document != 'undefined' && document.body
+const now = typeof performance === "undefined" ? Date.now : performance.now.bind(performance)
 
-new Test("tests should work", async function (arg) {
-	var tests = new Test(
-		"reactive and events should work",
+export async function testTest() {
+	return await new Test("tests should work", noop).run(true)
+}
+
+export async function testReactive(){
+	var test1 = new Test(
+		"reactive and events should work init",
 		() => {
 			var r = new reactive()
 			r.bindable('foo')
@@ -46,26 +51,43 @@ new Test("tests should work", async function (arg) {
 			return ASSERT_T(o.foo == r.foo && o.bar == r.bar)
 		}
 	)
-	tests.bind("result", this, "reactiveResult")
-	tests.on(
-		"PASSED FAILED complete",
-		ASSERT.bind(null, this.reactiveResult, tests.result)
+	var test2 = new Test(
+		"reactive and events should work end",
+		async function () {
+			test1.bind("result", this, "reactiveResult")
+			test1.on(
+				"PASSED FAILED complete",
+				ASSERT.bind(null, this.reactiveResult, test1.result)
+			)
+			await test1.run(true)
+		}
 	)
-	await tests.run(true)
 
-	good(1, Boolean, Number)
+	await test2.run()
+}
 
-	crap(1, Boolean, Object)
 
-	good(()=>{}, "function")
+export async function testGoodCrap() {
+
 
 	await new Test(
-		"good should die if not pass",
+		"good and crap pass",
+		() => {
+			good(1, Boolean, Number)
+
+			crap(1, Boolean, Object)
+
+			good(()=>{}, "function")
+		}
+	).run(true)
+
+	await new Test(
+		"good die",
 		good.bind(null, 1, Boolean)
 	).die(true)
 
 	await new Test(
-		"crap should die if not pass",
+		"crap die",
 		crap.bind(null, 1, Number)
 	).die(true)
 
@@ -73,7 +95,9 @@ new Test("tests should work", async function (arg) {
 		"should fail if description is not a String",
 		() => new Test(-1).run()
 	).die(true)
+}
 
+export async function testReadable() {
 	readable.call(console)
 	var i = 0;
 	var timer = setInterval(()=>{
@@ -100,7 +124,11 @@ new Test("tests should work", async function (arg) {
 	).run(await console.read()).finally(() => clearInterval(timer2))
 
 	clearInterval(timer)
+}
 
+
+
+export async function testEmmet() {
 	if(isBrowser){
 		await new Test(
 			"emmet should work in browser",
@@ -180,7 +208,10 @@ new Test("tests should work", async function (arg) {
 			ASSERT_T
 		).run(dom.emmet `a#id.class.name[data-att="attr"]{bella }>{pe ${"tutti"}}` == '<a id="id" data-att="attr" class="class name">bella pe tutti</a>')
 	}
+}
 
+
+export async function testExtra() {
 	await new Test('some extra', async function(){
 		class ConcreteModel extends extra.Model(Object, 'foo', 'bar', 'baz') {}
 		var model = new ConcreteModel()
@@ -242,25 +273,36 @@ new Test("tests should work", async function (arg) {
 		ASSERT_T(bar.innerText == n)
 		return true
 	}).run()
+}
 
-	ASSERT_T("foobar!".match(new RegObj(/\w+(bar\!)/, "baz")).baz == "bar!")
+export async function testRegObj() {
+	return await new Test("reg obj", async () =>{
+		ASSERT_T("foobar!".match(new RegObj(/\w+(bar\!)/, "baz")).baz == "bar!")
+	})
+}
 
-	var evt = new EventBroker()
-	var x = 0
-	var handler = () => ++x
-	evt.on('one', handler)
-	evt.on('two', handler)
-	evt.on('three', handler)
 
-	await delay(100)
-	evt.fireLast('one')
-	evt.fireLast('two')
-	evt.fireLast('three')
+export async function testEventBroker() {
+	return await new Test("event broker", async () =>{
+		var evt = new EventBroker()
+		var x = 0
+		var handler = () => ++x
+		evt.on('one', handler)
+		evt.on('two', handler)
+		evt.on('three', handler)
 
-	await delay(100)
+		await delay(100)
+		evt.fireLast('one')
+		evt.fireLast('two')
+		evt.fireLast('three')
 
-	ASSERT_T(x == 1)
+		await delay(100)
 
+		ASSERT_T(x == 1)
+	})
+}
+
+export async function testDebounce() {
 	await new Test('debounce', (count, interval, debouncing) => {
 		var int, semaphore = new Semaphore();
 		var f = debounce(function(count){
@@ -278,9 +320,9 @@ new Test("tests should work", async function (arg) {
 		}, interval)
 		return semaphore;
 	}).run(10, 10, 200)
+}
 
-	var now = typeof performance === "undefined" ? 	now = Date.now : performance.now.bind(performance)
-
+export async function testRandom() {
 	const randomTest = new Test('random', async function(tot, i1 = 0, i2 = 1 << 15, handler = noop){
 		function randomInteger(min = 0, max = 2 << 15) {
 			return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -307,8 +349,9 @@ new Test("tests should work", async function (arg) {
 	await randomTest.run(10000)
 	await randomTest.run(100000)
 	await randomTest.run(1000000, -1200, 3456)
+}
 
-
+export async function testMerge() {
 	var testMerge = new Test("merge", function(method, X, Y, times = 100000) {
 		var start = now()
 		while(times--){
@@ -369,8 +412,10 @@ new Test("tests should work", async function (arg) {
 	}, function() {
 		return y2
 	})
+}
 
-
-
-	return arg
-}).run(true)
+export async function run(arr = Object.keys(this)){
+	for(var i of arr) {
+		i != "run" && await this[i]()
+	}
+}
