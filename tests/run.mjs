@@ -12,6 +12,7 @@ import {
 } from "../utils.mjs";
 import {
 	good,
+	croak,
 	crap,
 	ASSERT,
 	ASSERT_T,
@@ -21,7 +22,8 @@ import {
 	EventBroker
 } from "../extra.mjs";
 import {
-	debounce
+	debounce,
+	merge
 } from "../utils.mjs";
 import {
 	Semaphore
@@ -277,11 +279,12 @@ new Test("tests should work", async function (arg) {
 		return semaphore;
 	}).run(10, 10, 200)
 
+	var now = typeof performance === "undefined" ? 	now = Date.now : performance.now.bind(performance)
+
 	const randomTest = new Test('random', async function(tot, i1 = 0, i2 = 1 << 15, handler = noop){
 		function randomInteger(min = 0, max = 2 << 15) {
 			return Math.floor(Math.random() * (max - min + 1)) + min;
 		}
-		var now = typeof performance === "undefined" ? 	now = Date.now : performance.now.bind(performance)
 		var s0 = now();
 		for(var i = 0; i < tot; i++){
 			handler(randomInteger(i1, i2))
@@ -300,11 +303,74 @@ new Test("tests should work", async function (arg) {
 		}
 		return r
 	})
-
 	await randomTest.run(1000)
 	await randomTest.run(10000)
 	await randomTest.run(100000)
 	await randomTest.run(1000000, -1200, 3456)
+
+
+	var testMerge = new Test("merge", function(method, X, Y, times = 100000) {
+		var start = now()
+		while(times--){
+			var x = method(new X(), new Y())
+		}
+		var stop = now()
+		x.toString()
+		return stop - start
+	})
+
+	var x1 = {
+		x: 1,
+		y: 2,
+		z: {
+			x: 1,
+			y: 2,
+			z: {
+				x: 1
+			}
+		}
+	}, y1 = {
+		x: 100,
+		y2: 200,
+		z: {
+			x: 100,
+			y: 200,
+			z2: {
+				x: 200
+			}
+		}
+	}, x2 = {
+		x: 1,
+		y: 2,
+		__proto__: {
+			toString(){
+				return "ok"
+			}
+		}
+	}, y2 = {
+		x: 100,
+		y2: 200,
+		__proto__: {
+			toString(){
+				return croak("bad string")
+			}
+		}
+	}
+	function m() {
+		return merge(...arguments)
+	}
+	await testMerge.run(m, function() {
+		return x1
+	}, function() {
+		return y1
+	})
+	await testMerge.run(m, function() {
+		return x2
+	}, function() {
+		return y2
+	})
+
+
 
 	return arg
 }).run(true)

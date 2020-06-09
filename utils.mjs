@@ -276,22 +276,15 @@ export function properties(name, value, ...args) {
  * @param obj1 
  * @param obj2 
  */
-export function merge(obj1, obj2){
+export function merge(obj1, obj2, handler = (obj1, obj2) => obj2 || obj1 ){
 	var keys = [...(new Set([
 		...typeof obj1 == "string"? [] : Object.keys(obj1 || {}),
 		...typeof obj2 == "string"? [] : Object.keys(obj2 || {})
 	]))]
-	if(!keys.length){
-		return obj1 || obj2
-	}
-	var dangerous = keys.indexOf('__proto__')
-	if(dangerous >= 0){
-		keys.splice(dangerous,1)
-	}
-	return keys.reduce((prev, curr) => {
+	return keys.length ? keys.reduce((prev = {}, curr) => {
 		prev[curr] = merge(obj1 && obj1[curr], obj2 && obj2[curr])
 		return prev
-	}, obj1)
+	}, obj1) : handler(obj1, obj2)
 }
 
 /* just for joke */
