@@ -9,9 +9,12 @@
 
 import {
 	defer,
-	Semaphore,
-	noop
+	Semaphore
 } from "./utils.mjs"
+
+import {
+	noop
+} from "./operation.mjs"
 
 export const BUFFER = Symbol('buffer')
 export const WAIT = Symbol('wait')

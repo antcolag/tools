@@ -2,12 +2,15 @@ import reactive from "./reactive.mjs"
 import readable from "./readable.mjs"
 import observe from "./observe.mjs"
 import {
-	constant,
-	fullpipe,
-	isUndefined,
-	pipe,
-	noop
+	fullpipe
 } from "./utils.mjs"
+
+import {
+	constant,
+	pipe,
+	isUndefined,
+	noop
+} from "./operation.mjs"
 import {
 	injectProperties
 } from "./tools.mjs"

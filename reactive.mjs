@@ -10,7 +10,7 @@ import {
 } from "./tools.mjs"
 import {
 	pipe
-} from "./utils.mjs"
+} from "./operation.mjs"
 
 export const BINDS = Symbol("binds")
 

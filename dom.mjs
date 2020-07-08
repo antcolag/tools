@@ -7,10 +7,14 @@
 import {
 	croak
 } from "./debug.mjs"
+
 import {
-	pipe,
 	fullpipe
 } from "./utils.mjs"
+
+import {
+	pipe
+} from "./operation.mjs"
 
 /**
  * this class provides the functions for build

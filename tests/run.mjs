@@ -4,12 +4,17 @@ import readable from "../readable.mjs";
 import reactive from "../reactive.mjs";
 import * as extra from "../extra.mjs";
 import {
-	pipe,
 	random,
 	delay,
-	noop,
-	RegObj
+	RegObj,
+	debounce,
+	merge,
+	Semaphore
 } from "../utils.mjs";
+import {
+	pipe,
+	noop
+} from "../operation.mjs";
 import {
 	good,
 	croak,
@@ -21,13 +26,6 @@ import {
 	View,
 	EventBroker
 } from "../extra.mjs";
-import {
-	debounce,
-	merge
-} from "../utils.mjs";
-import {
-	Semaphore
-} from "../utils.mjs";
 
 const isBrowser = typeof Document != 'undefined' && document.body
 const now = typeof performance === "undefined" ? Date.now : performance.now.bind(performance)

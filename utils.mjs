@@ -3,19 +3,10 @@
  * @module
  */
 
-/**
- * do nothing
- */
-export function noop(){}
-
-/**
- * Pipes value
- * @param {any} v
- * @returns {any} the same value in input
- */
-export function pipe(v){
-	return v
-}
+import {
+	apply,
+	noop
+} from "./operation.mjs"
 
 /**
  * Pipes the arguments array
@@ -24,20 +15,6 @@ export function pipe(v){
  */
 export function fullpipe(){
 	return arguments
-}
-
-/**
- * returns true
- */
-export function yes(){
-	return true
-}
-
-/**
- * returns false
- */
-export function no(){
-	return false
 }
 
 /**
@@ -178,83 +155,6 @@ export class RegObj {
 }
 
 /**
- * apply a function to arguments
- * @param {function} f
- * @param {...any} args
- */
-export function apply(f, ...args) {
-	return f.apply(this, args)
-}
-
-/**
- * return a function that apply a handler to arguments
- * @param {function} f
- * @param {...any} values
- */
-export function applyWithConst(f, ...values){
-	return (obj) => f(obj, ...values)
-}
-
-/**
- * performs a strict equal comparison
- * @param {any} obj
- * @param {any} value
- */
-export function equals(obj, value){
-	return obj === value
-}
-
-/**
- * performs a strict different comparison
- * @param {any} obj
- * @param {any} value
- */
-export function different(obj, value){
-	return obj !== value
-}
-
-/**
- * return a value provider function
- * @param val value to be returned
- */
-
-export function constant(val) {
-	return apply.bind(void 0, pipe, val)
-}
-
-/**
- * generator for comparison functions with constant values
- * @function
- * @param {any} value
- * @param {any} costant
- */
-export const compareWhitConst = applyWithConst.bind(void 0, equals)
-
-/**
- * @function
- * @param {any} value
- */
-export const isNull = compareWhitConst(null)
-
-/**
- * @function
- * @param {any} value
- */
-export const isUndefined = compareWhitConst(void 0)
-
-/**
- * @function
- * @param {any} value
- */
-export const isTrue = compareWhitConst(true)
-
-/**
- * @function
- * @param {any} value
- */
-export const isFalse = compareWhitConst(false)
-
-/**
  * it sets one or more copule of key value pair
  * passed plain to a function
  * ie
@@ -285,56 +185,3 @@ export function merge(obj1, obj2, handler = (obj1, obj2) => obj2 || obj1 ){
 		return prev
 	}, obj1) : handler(obj1, obj2)
 }
-
-
-/* just for joke */
-export const lisperato = new Proxy({
-	l(x, ...args){
-		return this.cons(x, args[0] && this.l(...args))
-	},
-	cons(_car, _cdr){
-		return (f) => {
-			return f(_car, _cdr);
-		}
-	},
-	car(_cons){
-		return _cons((_car, _cdr) => _car)
-	},
-	cdr(_cons){
-		return _cons((_car, _cdr) => _cdr)
-	},
-	exec(p, s) {
-		return this.cdr(p)
-		? this.exec(this.cdr(p), this.car(p)(s))
-		: this.car(p)(s)
-	},
-	[Symbol.toPrimitive](hint){
-		switch (hint){
-		case "number":
-			return Number.MAX_VALUE;
-		case "string":
-			return '[Object ' + this.toString() + ']'
-		default:
-		}
-		return this
-	},
-	toString() {
-		return "lisperato!"
-	}
-}, {
-	get(namespace, name) {
-		if(name in namespace) {
-			return namespace[name]
-		}
-		var multi = name.match(/^c([ad]).*r$/) || []
-		if(multi[1]){ // abra cadadr-a
-			return (x) => this.get(
-				namespace,
-				name.replace(new RegExp(multi[1]), '')
-			)(namespace[`c${multi[1]}r`](x))
-		}
-	},
-	set(namespace){
-		throw new TypeError(`Write on a ${namespace} instance is not allowed`)
-	}
-})

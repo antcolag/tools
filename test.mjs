@@ -9,7 +9,7 @@
 import {
 	noop,
 	pipe
-} from "./utils.mjs"
+} from "./operation.mjs"
 
 import {
 	good,
