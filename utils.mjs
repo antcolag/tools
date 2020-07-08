@@ -277,15 +277,15 @@ export function properties(name, value, ...args) {
  * @param obj2 
  */
 export function merge(obj1, obj2, handler = (obj1, obj2) => obj2 || obj1 ){
-	var keys = [...(new Set([
-		...typeof obj1 == "string"? Array.prototype : Object.keys(obj1 || Object.prototype),
-		...typeof obj2 == "string"? Array.prototype : Object.keys(obj2 || Object.prototype)
-	]))]
+	var keys = [...new Set(
+		typeof obj2 == "string"? Array.prototype : Object.keys(obj2 || Object.prototype)
+	)]
 	return keys.length ? keys.reduce((prev = {}, curr) => {
-		prev[curr] = merge(obj1 && obj1[curr], obj2 && obj2[curr])
+		prev[curr] = merge(obj1 && obj1[curr], obj2 && obj2[curr], handler)
 		return prev
 	}, obj1) : handler(obj1, obj2)
 }
+
 
 /* just for joke */
 export const lisperato = new Proxy({
