@@ -28,7 +28,8 @@ import {
 } from "../extra.mjs";
 
 const isBrowser = typeof Document != 'undefined' && document.body
-const now = typeof performance === "undefined" ? Date.now : performance.now.bind(performance)
+const p =  typeof performance === "undefined" ? Date : performance
+const now = p.now.bind(p)
 
 export async function testTest() {
 	return await new Test("tests should work", noop).run(true)
@@ -144,8 +145,10 @@ export async function testEmmet() {
 						${document.querySelector('h1')}+p{with fun}+ul>
 						.azz*3`
 			)
-			document.body.appendChild(dom.emmet `div$$.c-\${$$$@3chiaro?$$@-8!!!}*3`)
-	
+			document.body.appendChild(
+				dom.emmet `div$$.c-\${$$$@3chiaro?$$@-8!!!}*3`
+			)
+			ASSERT_T(document.querySelector('div02'))
 			return ASSERT_T(document.querySelector('agli#altri'))
 		}).run()
 	
@@ -162,7 +165,12 @@ export async function testEmmet() {
 		await new Test(
 			"escaped emmet should work",
 			document.body.append.bind(document.body)
-		).run(dom.emmet `article>${myTitle2}.title>{\\\\\\} } + span{hello ${567}} ^ ${myTitle}>{weeee}`)
+		).run(dom.emmet `
+			article>${
+				myTitle2
+			}.title>{\\\\\\} } + span{hello ${567}} ^ ${
+				myTitle
+			}>{weeee}`)
 		myTitle2.innerHTML += 'emmet!'
 
 		await new Test('custom html element', async function() {
@@ -187,7 +195,9 @@ export async function testEmmet() {
 				}
 			}
 
-			globalThis.customElements.define('custom-elm', class extends HTMLElement {
+			globalThis
+			.customElements
+			.define('custom-elm', class extends HTMLElement {
 				constructor() {
 					super()
 					this.attachShadow({
@@ -321,28 +331,30 @@ export async function testDebounce() {
 }
 
 export async function testRandom() {
-	const randomTest = new Test('random', async function(tot, i1 = 0, i2 = 1 << 15, handler = noop){
-		function randomInteger(min = 0, max = 2 << 15) {
-			return Math.floor(Math.random() * (max - min + 1)) + min;
-		}
-		var s0 = now();
-		for(var i = 0; i < tot; i++){
-			handler(randomInteger(i1, i2))
-		}
-		var e0 = now();
+	const randomTest = new Test('random',
+		async function(tot, i1 = 0, i2 = 1 << 15, handler = noop){
+			function randomInteger(min = 0, max = 2 << 15) {
+				return Math.floor(Math.random() * (max - min + 1)) + min;
+			}
+			var s0 = now();
+			for(var i = 0; i < tot; i++){
+				handler(randomInteger(i1, i2))
+			}
+			var e0 = now();
 
-		var s1 = now();
-		for(var i = 0; i < tot; i++){
-			handler(random(i1, i2))
-		}
-		var e1 = now();
+			var s1 = now();
+			for(var i = 0; i < tot; i++){
+				handler(random(i1, i2))
+			}
+			var e1 = now();
 
-		var t0 = e0 - s0, t1 = e1 - s1, r = t0 - t1
-		if(r < 0){
-			throw r
+			var t0 = e0 - s0, t1 = e1 - s1, r = t0 - t1
+			if(r < 0){
+				throw r
+			}
+			return r
 		}
-		return r
-	})
+	)
 	await randomTest.run(1000)
 	await randomTest.run(10000)
 	await randomTest.run(100000)

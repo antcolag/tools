@@ -7,7 +7,8 @@
 	<title>Tests</title>
 	<script type="module" async>
 		import * as tests from "./run.mjs"
-		tests.run(window.location.hash ? window.location.hash.replace(/^#/, '').split(',') : void 0)
+		var l = window.location
+		tests.run(l.hash ? l.hash.replace(/^#/, '').split(',') : void 0)
 	</script>
 	<link rel="shortcut icon" href=""></head>
 <body>
