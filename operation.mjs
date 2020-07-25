@@ -118,3 +118,9 @@ export function not(a){
 export function sum(a, b){
 	return a + b
 }
+
+export function inverse(f) {
+	return function(...args) {
+		return f.apply(this, ...args.reverse())
+	}
+}

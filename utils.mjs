@@ -5,7 +5,9 @@
 
 import {
 	apply,
-	noop
+	noop,
+	inverse,
+	or
 } from "./operation.mjs"
 
 /**
@@ -176,7 +178,7 @@ export function properties(name, value, ...args) {
  * @param obj1 
  * @param obj2 
  */
-export function merge(obj1, obj2, handler = (obj1, obj2) => obj2 || obj1 ){
+export function merge(obj1, obj2, handler = inverse(or)){
 	var keys = [...new Set(
 		typeof obj2 == "string"? Array.prototype : Object.keys(obj2 || Object.prototype)
 	)]
