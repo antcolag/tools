@@ -19,17 +19,9 @@ export function fullpipe(){
 	return arguments
 }
 
-/**
- * random int16
- */
-export const random = ((buffer) => {
-	const f_buffer = new Float32Array(buffer)
-	const i_buffer = new Int16Array(buffer)
-	return (min = 0, max = 1 << 16) => {
-		f_buffer[0] = Math.random()
-		return ((i_buffer[0] + (1 << 15)) % (max - min)) + min
-	}
-})(new ArrayBuffer(4))
+export function random(min = 0, max = 2 << 15) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 
 
@@ -183,6 +175,12 @@ export function merge(obj1, obj2, handler = inverse(or)){
 		typeof obj2 == "string"? Array.prototype : Object.keys(obj2 || Object.prototype)
 	)]
 	return keys.length ? keys.reduce((prev = {}, curr) => {
+		if(curr == "__proto__"){
+			throw new TypeError("Prototype pollution")
+		}
+		if(curr == "constructor"){
+			throw new TypeError("Ovverride constructor")
+		}
 		prev[curr] = merge(obj1 && obj1[curr], obj2 && obj2[curr], handler)
 		return prev
 	}, obj1) : handler(obj1, obj2)

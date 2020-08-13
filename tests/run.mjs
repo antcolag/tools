@@ -330,39 +330,8 @@ export async function testDebounce() {
 	}).run(10, 10, 200)
 }
 
-export async function testRandom() {
-	const randomTest = new Test('random',
-		async function(tot, i1 = 0, i2 = 1 << 15, handler = noop){
-			function randomInteger(min = 0, max = 2 << 15) {
-				return Math.floor(Math.random() * (max - min + 1)) + min;
-			}
-			var s0 = now();
-			for(var i = 0; i < tot; i++){
-				handler(randomInteger(i1, i2))
-			}
-			var e0 = now();
-
-			var s1 = now();
-			for(var i = 0; i < tot; i++){
-				handler(random(i1, i2))
-			}
-			var e1 = now();
-
-			var t0 = e0 - s0, t1 = e1 - s1, r = t0 - t1
-			if(r < 0){
-				throw r
-			}
-			return r
-		}
-	)
-	await randomTest.run(1000)
-	await randomTest.run(10000)
-	await randomTest.run(100000)
-	await randomTest.run(1000000, -1200, 3456)
-}
-
 export async function testMerge() {
-	var testMerge = new Test("merge", function(method, X, Y, times = 100000) {
+	var test = new Test("merge", function(method, X, Y, times = 100000) {
 		var start = now()
 		while(times--){
 			var x = method(new X(), new Y())
@@ -412,16 +381,28 @@ export async function testMerge() {
 	function m() {
 		return merge(...arguments)
 	}
-	await testMerge.run(m, function() {
+	await test.run(m, function() {
 		return x1
 	}, function() {
 		return y1
 	})
-	await testMerge.run(m, function() {
+	await test.run(m, function() {
 		return x2
 	}, function() {
 		return y2
 	})
+	await test.die(m, class Z {}, function() {
+		return {["__proto__"]: {toString(){throw "__proto__ pollution 1"}}}
+	})
+	await test.die(m, class Z {}, function() {
+		return JSON.parse(`{"constructor": false, "__proto__": {"a": 1337}}`)
+	})
+	// class Z{}
+	// merge(new Z, JSON.parse(`{"constructor": false, "__proto__": {"a": 1337}}`))
+	// var x = new Z
+	// if(x.a){
+	// 	throw "aaargh"
+	// }
 }
 
 export async function run(arr = Object.keys(this)){

@@ -63,6 +63,7 @@ export class Test {
 			return await this.run(fail.state == "FAILED");
 		} finally {
 			this.print = this.constructor.prototype.print
+			this.test = fail.test
 		}
 	}
 }

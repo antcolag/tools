@@ -121,6 +121,6 @@ export function sum(a, b){
 
 export function inverse(f) {
 	return function(...args) {
-		return f.apply(this, ...args.reverse())
+		return f.apply(this, args.reverse())
 	}
 }
