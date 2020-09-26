@@ -3,7 +3,7 @@
  * @module
  * @see module:tools
  * @see module:reactive
- * @see module:observe
+ * @see module:observer
  */
 
 import {
@@ -18,8 +18,8 @@ import {
 } from "./debug.mjs"
 
 import {
-	iObserve
- } from "./observe.mjs"
+	iObserver
+ } from "./observer.mjs"
 
 import {
 	iReactive
@@ -34,7 +34,7 @@ export const states = {
 	PASSED: "PASSED"
 }
 
-export class Test extends iObserve(iReactive()) {
+export class Test extends iObserver(iReactive()) {
 	constructor(description, test = pipe) {
 		good(description, String)
 		good(test, Function)

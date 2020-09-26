@@ -1,9 +1,9 @@
 import reactive from "./reactive.mjs"
 import readable from "./readable.mjs"
 import {
-	Observe,
-	iObserve
-} from "./observe.mjs"
+	Observer,
+	iObserver
+} from "./observer.mjs"
 import {
 	fullpipe
 } from "./utils.mjs"
@@ -28,7 +28,7 @@ import {
  */
 
 export function Model(self, ...props){
-	class Model extends iObserve(self) {
+	class Model extends iObserver(self) {
 		constructor(...args){
 			super(...args)
 			initModel.apply(this, props)
@@ -51,7 +51,7 @@ function initModel(...props){
  * @param {function} render
  */
 
-export class ViewBase extends Observe {
+export class ViewBase extends Observer {
 	print = new DomPrinter()
 	render(){}
 }
@@ -71,7 +71,7 @@ export function View(render = constant("")) {
  * calling the method trigger
  */
 const HANDLERS = Symbol('handlers');
-export class Router extends Observe {
+export class Router extends Observer {
 	constructor(method = "reduce", handler = reducer) {
 		super()
 		this[HANDLERS] = [];
@@ -135,7 +135,7 @@ class Handler {
  */
 const REGISTERED = Symbol('registered')
 const TRIGGER = Symbol("trigger")
-export class Controller extends Observe {
+export class Controller extends Observer {
 	[REGISTERED] = {}
 	constructor(init = {}, trigger = pipe){
 		super()
@@ -182,7 +182,7 @@ function getter(self, p) {
  * @param {function} handler
  */
 
-export class Gateway extends Observe {
+export class Gateway extends Observer {
 	constructor(handler = fullpipe){
 		super()
 		this[HANDLER] = handler

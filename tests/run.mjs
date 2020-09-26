@@ -4,8 +4,8 @@ import readable from "../readable.mjs";
 import reactive from "../reactive.mjs";
 import * as extra from "../extra.mjs";
 import {
-	Observe
-} from "../observe.mjs";
+	Observer
+} from "../observer.mjs";
 import {
 	delay,
 	RegObj,
@@ -291,9 +291,9 @@ export async function testRegObj() {
 }
 
 
-export async function testObserve() {
+export async function testObserver() {
 	return await new Test("event broker", async (x = 0) =>{
-		var evt = new Observe()
+		var evt = new Observer()
 		var handler = () => ++x
 		evt.on('one', handler)
 		evt.on('two', handler)
@@ -307,7 +307,7 @@ export async function testObserve() {
 		await delay(100)
 		
 		ASSERT_T(x == 1)
-		var evt = new class extends Observe {}, y
+		var evt = new class extends Observer {}, y
 		evt.on('e', x => (y = x))
 		evt.fire('e', x)
 		ASSERT_T(x == y)
