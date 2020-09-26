@@ -17,9 +17,13 @@ import {
 	ASSERT_T,
 } from "./debug.mjs"
 
-import observable from "./observe.mjs"
+import {
+	iObserve
+ } from "./observe.mjs"
 
-import reactive from "./reactive.mjs"
+import {
+	iReactive
+} from "./reactive.mjs"
 
 DEBUG(true)
 
@@ -30,12 +34,12 @@ export const states = {
 	PASSED: "PASSED"
 }
 
-export class Test {
-	constructor(description, test = pipe, ...opt) {
+export class Test extends iObserve(iReactive()) {
+	constructor(description, test = pipe) {
 		good(description, String)
 		good(test, Function)
+		super()
 		this.id = ++COUNTER
-		this.options = opt;
 		this.description = description;
 		this.test = test;
 		this.bindable("result")
@@ -69,9 +73,6 @@ export class Test {
 }
 
 Test.prototype.print = consolePrinter;
-
-observable.call(Test.prototype)
-reactive.call(Test.prototype)
 
 export default Test;
 

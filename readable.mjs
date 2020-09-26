@@ -36,6 +36,14 @@ export default function readable(
 	return injectProperties.call(this, opt)
 }
 
+export function iReadable(self = Object) {
+	class Readable extends self {}
+	readable.call(Readable.prototype)
+	return Readable
+}
+
+export const Readable = iReadable()
+
 function broadcast(){
 	this[BUFFER] = arguments
 	flush.apply(this, arguments)

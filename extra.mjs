@@ -1,10 +1,12 @@
 import reactive from "./reactive.mjs"
 import readable from "./readable.mjs"
-import observe from "./observe.mjs"
+import {
+	Observe,
+	iObserve
+} from "./observe.mjs"
 import {
 	fullpipe
 } from "./utils.mjs"
-
 import {
 	constant,
 	pipe,
@@ -12,21 +14,9 @@ import {
 	noop
 } from "./operation.mjs"
 import {
-	injectProperties
-} from "./tools.mjs"
-import {
 	DomPrinter
 } from "./dom.mjs"
 
-
-/**
- * Base class for controllers, models and Views
- */
-export class EventBroker {
-	constructor(){
-		observe.call(this)
-	}
-}
 
 /**
  * it handle the data logic of the app
@@ -38,14 +28,13 @@ export class EventBroker {
  */
 
 export function Model(self, ...props){
-	class Model extends self {
+	class Model extends iObserve(self) {
 		constructor(...args){
 			super(...args)
 			initModel.apply(this, props)
 		}
 	}
 	reactive.call(Model.prototype)
-	observe.call(Model.prototype)
 	return Model;
 }
 
@@ -62,11 +51,10 @@ function initModel(...props){
  * @param {function} render
  */
 
-export class ViewBase extends EventBroker {}
-
-injectProperties.call(ViewBase.prototype, {
-	print: new DomPrinter()
-})
+export class ViewBase extends Observe {
+	print = new DomPrinter()
+	render(){}
+}
 
 export function View(render = constant("")) {
 	class View extends ViewBase {
@@ -83,7 +71,7 @@ export function View(render = constant("")) {
  * calling the method trigger
  */
 const HANDLERS = Symbol('handlers');
-export class Router extends EventBroker {
+export class Router extends Observe {
 	constructor(method = "reduce", handler = reducer) {
 		super()
 		this[HANDLERS] = [];
@@ -147,13 +135,11 @@ class Handler {
  */
 const REGISTERED = Symbol('registered')
 const TRIGGER = Symbol("trigger")
-export class Controller extends EventBroker {
+export class Controller extends Observe {
+	[REGISTERED] = {}
 	constructor(init = {}, trigger = pipe){
 		super()
-		Object.assign(
-			this[REGISTERED] = {},
-			init
-		)
+		this[REGISTERED] = init
 		this[TRIGGER] = trigger;
 	}
 
@@ -196,7 +182,7 @@ function getter(self, p) {
  * @param {function} handler
  */
 
-export class Gateway extends EventBroker {
+export class Gateway extends Observe {
 	constructor(handler = fullpipe){
 		super()
 		this[HANDLER] = handler

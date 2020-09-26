@@ -1,5 +1,5 @@
 /**
- * Observable interface
+ * observe interface
  * @module
  * @see module:tools
  */
@@ -22,7 +22,7 @@ export const OBSERVERS = Symbol("observers")
 
 /**
  * Interface definition
- * @interface observable
+ * @interface observe
  */
 const HANDLERS = {
 	on,
@@ -34,12 +34,22 @@ const HANDLERS = {
 
 /**
  * Interface definition
- * @lends observable
+ * @lends observe
  */
-export function observable() {
+export function observe() {
 	return injectProperties.call(this, HANDLERS)
 }
-export default observable
+
+export default observe
+
+export function iObserve(self = Object) {
+	class Observe extends self {}
+	observe.call(Observe.prototype)
+	return Observe
+}
+
+export const Observe = iObserve()
+
 
 /**
  * Builds the event list if not exist

@@ -4,7 +4,9 @@ import readable from "../readable.mjs";
 import reactive from "../reactive.mjs";
 import * as extra from "../extra.mjs";
 import {
-	random,
+	Observe
+} from "../observe.mjs";
+import {
 	delay,
 	RegObj,
 	debounce,
@@ -23,8 +25,7 @@ import {
 	ASSERT_T,
 } from "../debug.mjs";
 import {
-	View,
-	EventBroker
+	View
 } from "../extra.mjs";
 
 const isBrowser = typeof Document != 'undefined' && document.body
@@ -286,28 +287,32 @@ export async function testExtra() {
 export async function testRegObj() {
 	return await new Test("reg obj", async () =>{
 		ASSERT_T("foobar!".match(new RegObj(/\w+(bar\!)/, "baz")).baz == "bar!")
-	})
+	}).run()
 }
 
 
-export async function testEventBroker() {
-	return await new Test("event broker", async () =>{
-		var evt = new EventBroker()
-		var x = 0
+export async function testObserve() {
+	return await new Test("event broker", async (x = 0) =>{
+		var evt = new Observe()
 		var handler = () => ++x
 		evt.on('one', handler)
 		evt.on('two', handler)
 		evt.on('three', handler)
-
+		
 		await delay(100)
 		evt.fireLast('one')
 		evt.fireLast('two')
 		evt.fireLast('three')
-
+		
 		await delay(100)
-
+		
 		ASSERT_T(x == 1)
-	})
+		var evt = new class extends Observe {}, y
+		evt.on('e', x => (y = x))
+		evt.fire('e', x)
+		ASSERT_T(x == y)
+		return x
+	}).run()
 }
 
 export async function testDebounce() {
