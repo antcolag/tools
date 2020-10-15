@@ -18,8 +18,8 @@ import {
 } from "./debug.mjs"
 
 import {
-	iObserver
- } from "./observer.mjs"
+	Base
+} from "./framework.mjs"
 
 import {
 	iReactive
@@ -34,7 +34,7 @@ export const states = {
 	PASSED: "PASSED"
 }
 
-export class Test extends iObserver(iReactive()) {
+export class Test extends iReactive(Base) {
 	constructor(description, test = pipe) {
 		good(description, String)
 		good(test, Function)
