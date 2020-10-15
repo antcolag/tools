@@ -24,6 +24,15 @@ export default function reactive() {
 	return injectProperties.call(this, HANDLERS)
 }
 
+export function iReactive(self = Object) {
+	class Reactive extends self {}
+	reactive.call(Reactive.prototype)
+	return Reactive
+}
+
+export const Reactive = iReactive()
+
+
 function buildBinder (list, build, val) {
 	var recurring = 0
 	const setter = (v) => {
