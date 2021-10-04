@@ -5,11 +5,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Tests</title>
-	<script type="module" async>
-		import * as tests from "./run.mjs"
-		var l = window.location
-		tests.run(l.hash ? l.hash.replace(/^#/, '').split(',') : void 0)
-	</script>
 	<link rel="shortcut icon" href=""></head>
 <body>
 	<h1>Tests</h1>
@@ -39,5 +34,10 @@
 			test custom elements
 		</p>
 	</custom-elm>
+	<script type="module" async defer>
+		import * as tests from "./run.mjs"
+		var l = window.location
+		tests.run(l.hash ? l.hash.replace(/^#/, '').split(',') : void 0)
+	</script>
 </body>
 </html>

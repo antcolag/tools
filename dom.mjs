@@ -58,7 +58,9 @@ export class DomPrinter {
 	}
 
 	auto(strings) {
-		return (/^\s*</.test(strings[0])? this.html : this.emmet)(...arguments)
+		return (/^\s*</.test(strings[0])? this.html : this.emmet).apply(
+			this, arguments
+		)
 	}
 }
 

@@ -148,6 +148,9 @@ export async function testEmmet() {
 			document.body.appendChild(
 				dom.emmet `div$$.c-\${$$$@3chiaro?$$@-8!!!}*3`
 			)
+			document.body.appendChild(
+				(new dom.DomPrinter()).auto `div$$.c-\${$$$@3chiaro?$$@-8!!!}*3`
+			)
 			ASSERT_T(document.querySelector('div02'))
 			return ASSERT_T(document.querySelector('agli#altri'))
 		}).run()
