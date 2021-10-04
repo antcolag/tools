@@ -289,7 +289,7 @@ export async function testExtra() {
 export async function testRegObj() {
 	return await new Test("reg obj", async () =>{
 		ASSERT_T("foobar!".match(new RegObj(/\w+(bar\!)/, "baz")).baz == "bar!")
-	})
+	}).run()
 }
 
 
@@ -310,7 +310,7 @@ export async function testEventBroker() {
 		await delay(100)
 
 		ASSERT_T(x == 1)
-	})
+	}).run()
 }
 
 export async function testDebounce() {
@@ -409,7 +409,15 @@ export async function testMerge() {
 }
 
 export async function run(arr = Object.keys(this)){
+	console.log(`init ${arr}`)
 	for(var i of arr) {
-		i != "run" && await this[i]()
+		i != "run" && await runSingle(this[i])
 	}
+	console.log(`done`)
+}
+
+async function runSingle(h) {
+	console.log(`start ${h.name}`)
+	await h()
+	console.log(`stop ${h.name}`)
 }
