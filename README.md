@@ -5,13 +5,13 @@ userfull es6 mini library
 ## What it does provide
 
 In this library you can find utilities for
-* generic purpuse -> *[utils.mjs](doc/utils.md)*
-* generator for object conposition -> *[tools.mjs](doc/tools.md)*
-* observer pattern interface -> *[observe.mjs](doc/observe.md)*
-* reactive pattern interface -> *[reactive.mjs](doc/reactive.md)*
-* a mini test suite -> *[test.mjs](doc/test.md)*
-* debuging handlers -> *[debug.mjs](doc/debug.md)*
-* dom printing -> *[dom.mjs](doc/dom.md)*
+* generic purpuse -> *[utils.mjs](docs/utils.md)*
+* generator for object conposition -> *[tools.mjs](docs/tools.md)*
+* observer pattern interface -> *[observe.mjs](docs/observe.md)*
+* reactive pattern interface -> *[reactive.mjs](docs/reactive.md)*
+* a mini test suite -> *[test.mjs](docs/test.md)*
+* debuging handlers -> *[debug.mjs](docs/debug.md)*
+* dom printing -> *[dom.mjs](docs/dom.md)*
 
 # Examples
 
