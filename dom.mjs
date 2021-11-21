@@ -1,6 +1,6 @@
 /**
  * This module provide the functionality for creating HTML fragments
- * from template strings
+ * from a template strings
  * @module
  */
 
@@ -19,7 +19,7 @@ import {
 /**
  * this class provides the functions for build
  * a dom tree.
- * you can set a pipe for tranform the Nth [string, any], tuple
+ * you can set a pipe for tranform the Nth [string, any] tuple
  * and a builder that is an handler for the strings, the
  * default is a wrapper Range.createContextualFragment()
  * @param {function(string: str, any: data): [string, any]} pipe
