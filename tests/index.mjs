@@ -9,5 +9,6 @@ function parseargv([{}, {}, ...rest]) {
 
 if(process){
 	var args = parseargv(process.argv)
-	tests.run(args.length ? args : void 0)
+	
+	void (async () => await tests.run(args.length ? args : void 0))()
 }

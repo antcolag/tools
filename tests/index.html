@@ -34,10 +34,10 @@
 			test custom elements
 		</p>
 	</custom-elm>
-	<script type="module" async defer>
+	<script type="module">
 		import * as tests from "./run.mjs"
 		var l = window.location
-		tests.run(l.hash ? l.hash.replace(/^#/, '').split(',') : void 0)
+		void (async () => await tests.run(l.hash ? l.hash.replace(/^#/, '').split(',') : void 0))()
 	</script>
 </body>
 </html>
