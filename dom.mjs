@@ -26,9 +26,13 @@ import {
  * @param {function(string: html)} builder
  */
 export class DomPrinter {
-	constructor(builder = detect, pipe = fullpipe) {
+	constructor(builder = detect, pipe = fullpipe, sandbox = {
+		TagName: allow(false, 'TagName', [/^script$/]),
+		Attribute: allow(true, 'Attribute', [/^abbr$/, /^accept$/, /^accept-charset$/, /^accesskey$/, /^action$/, /^align$/, /^alt$/, /^axis$/, /^border$/, /^cellpadding$/, /^cellspacing$/, /^char$/, /^charoff$/, /^charset$/, /^checked$/, /^cite$/, /^class$/, /^clear$/, /^cols$/, /^colspan$/, /^color$/, /^compact$/, /^coords$/, /^datetime$/, /^dir$/, /^disabled$/, /^enctype$/, /^for$/, /^frame$/, /^headers$/, /^height$/, /^href$/, /^hreflang$/, /^hspace$/, /^id$/, /^ismap$/, /^label$/, /^lang$/, /^longdesc$/, /^maxlength$/, /^media$/, /^method$/, /^multiple$/, /^name$/, /^nohref$/, /^noshade$/, /^nowrap$/, /^prompt$/, /^readonly$/, /^rel$/, /^rev$/, /^rows$/, /^rowspan$/, /^rules$/, /^scope$/, /^selected$/, /^shape$/, /^size$/, /^span$/, /^src$/, /^srcset$/, /^start$/, /^summary$/, /^tabindex$/, /^target$/, /^title$/, /^type$/, /^usemap$/, /^valign$/, /^value$/, /^vspace$/, /^width$/, /^data-.*$/]),
+	}) {
 		this.builder = builder
 		this.pipe = pipe
+		this.sandbox = sandbox
 	}
 
 	html(strings, ...data) {
@@ -51,7 +55,7 @@ export class DomPrinter {
 		var stream = new TokenStream(
 			new StringStream(emmetTempString)
 		)
-		var tokenString = new TagTokenStream(stream)
+		var tokenString = new TagTokenStream(stream, this.sandbox)
 		return buildDom(this.builder, random, [
 			new TagGroup(tokenString, true).toString()
 		], ...data);
@@ -61,6 +65,16 @@ export class DomPrinter {
 		return (/^\s*</.test(strings[0])? this.html : this.emmet).apply(
 			this, arguments
 		)
+	}
+}
+
+export function allow(allow, type, list, raise = true) {
+	return function(name) {
+		const ok = list.find(x => (allow? x.test(name) : !x.test(name)) )
+		if(!ok && raise){
+			throw new SyntaxError(`${name} not allowed for ${type}`)
+		}
+		return ok
 	}
 }
 
@@ -95,7 +109,7 @@ export const shared = (instance => () => instance = instance || new DomPrinter()
 /**
  * Autodetect if the input string is Emmet or HTML, then parse
  */
-export default function auto(){
+export function auto(){
 	return shared().auto(...arguments)
 }
 
@@ -117,6 +131,8 @@ export function emmet(){
 	return shared().emmet(...arguments)
 }
 
+export default auto;
+
 function createFragment(string) {
 	return document.createRange().createContextualFragment( string )
 }
@@ -136,7 +152,7 @@ function buildDom(builder, random, strings, ...data) {
 		element.replaceWith(node)
 		node.append(...element.childNodes)
 		Array.prototype.forEach.call(element.attributes, item => {
-			if(item.nodeName == random) {
+			if(`${item.name}="${item.value}"` == random) {
 				return;
 			}
 			node.setAttributeNode(item.cloneNode())
@@ -146,7 +162,7 @@ function buildDom(builder, random, strings, ...data) {
 }
 
 function randomAttr(random = randomInt()) {
-	return `data-random-builder${random}`
+	return `data-random-builder="${random}"`
 }
 
 function randomInt(){
@@ -158,6 +174,10 @@ function randomInt(){
 class Token {
 	constructor(value){
 		this.value = value
+	}
+
+	allowed(sandbox, value = this.value){
+		return (sandbox[this.constructor.name] || pipe)(value)
 	}
 }
 
@@ -181,6 +201,10 @@ class Attribute extends Token {
 	toString(){
 		var pair = this.value.match(/^\[(.+)\]$/)
 		return ` ${pair[1]}`
+	}
+
+	allowed(sandbox) {
+		return super.allowed(sandbox, this.value.replace(/\[(.+)=.*]/, '$1'))
 	}
 }
 
@@ -227,6 +251,9 @@ class MulValue {
 
 	toString(){
 		var sign = this.start > 0 ? 1 : -1
+		if(sign < 0){
+			this.start -= parseInt(this.multiplier.value.replace(/^\*/, '')) - 1
+		}
 		return ((this.start + this.multiplier.current) * sign + '')
 		.padStart(this.size, '0')
 	}
@@ -234,7 +261,7 @@ class MulValue {
 
 class TextBlock extends Token {
 	toString(){
-		return this.value.replace(/^\{(.*)\}$/, '$1');
+		return this.value.replace(/^\{([\S\s]+)\}$/, '$1');
 	}
 }
 
@@ -452,7 +479,9 @@ class Tag extends TagGroup {
 			return false
 		})
 		if(classList.length) {
-			this.attributes.push(new Attribute(`[class="${classList.join(' ')}"]`))
+			this.attributes.push(
+				new Attribute(`[class="${classList.join(' ')}"]`)
+			)
 		}
 		var text = args.filter(x => x instanceof TextBlock)
 		this.content.splice(this.content.length, 0, ...text)
@@ -482,7 +511,7 @@ class Tag extends TagGroup {
 				this.content.map(x => {
 					if(x instanceof TextBlock) {
 						return new TextBlock(
-							x.value.match(/(.*?\$+@?-?[0-9]*|.*$)/g)
+							x.value.match(/(\$*@?[0-9-*]+|.+?)/g)
 							.map( y => (supermul || m).detect(y)).join('')
 						)
 					} else {
@@ -511,14 +540,16 @@ class Tag extends TagGroup {
 }
 
 class TagTokenStream {
-	constructor(stream){
+	constructor(stream, sandbox){
 		this.stream = stream
+		this.sandbox = sandbox
 	}
 
 	pick(){
 		if(this.current){
 			return this.current;
 		}
+
 		var picked = this.stream.pick()
 		if(!picked){
 			return;
@@ -533,7 +564,7 @@ class TagTokenStream {
 			}
 			this.current = new TagGroup(this);
 			this.addMultiplier(picked)
-		return this.current
+			return this.current
 
 		case picked instanceof TextBlock:
 			this.current = this.stream.next();
@@ -541,13 +572,21 @@ class TagTokenStream {
 
 		case this.isTag(picked):
 			var args = []
+			var mul;
 			while(this.isTag(picked)){
-				args.push(this.stream.next())
+				if(picked.allowed(this.sandbox)){
+					args.push(this.stream.next())
+				} else {
+					this.stream.next()
+				}
 				picked = this.stream.pick()
+				if(picked instanceof Multiplier){
+					mul = picked
+				}
 			}
 			this.current = new Tag(...args)
-			this.addMultiplier(picked)
-		break;
+			this.addMultiplier(mul)
+			break;
 		default:
 			var next = this.stream.next();
 			this.current = next
@@ -566,7 +605,8 @@ class TagTokenStream {
 		case picked instanceof Attribute:
 		case picked instanceof TagName:
 		case picked instanceof TextBlock:
-		return true
+		case picked instanceof Multiplier:
+			return true
 		}
 	}
 
