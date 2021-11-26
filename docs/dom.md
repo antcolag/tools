@@ -15,7 +15,7 @@ console.log(
 	dom.html `<div>${document.createElement('span')}</div>`,
 	dom.emmet `div>${document.createElement('span')}.emmet>{hello world!}`
 )
-// in the console you can see the builded DocumentFragment instancies
+// in the console you can see the built DocumentFragment instancies
 ```
 
 DomPrinter
