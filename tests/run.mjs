@@ -53,7 +53,7 @@ if(!globalThis.document) {
 
 export const tests = {
 	/** test the test suite, both run and die */
-	testTestSuite: async function testTestSuite() {
+	testTestSuite: async function() {
 		await new Test("tests should work", noop).run(true)
 
 		await new Test(
@@ -62,7 +62,7 @@ export const tests = {
 		).die(true)
 	},
 
-	testReactive: async function testReactive(){
+	testReactive: async function(){
 		var test1 = new Test(
 			"reactive and events should work init",
 			() => {
@@ -92,7 +92,7 @@ export const tests = {
 		await test2.run()
 	},
 
-	testGoodCrap: async function testGoodCrap() {
+	testGoodCrap: async function() {
 		await new Test(
 			"good and crap pass",
 			() => {
@@ -115,7 +115,7 @@ export const tests = {
 		).die(true)
 	},
 
-	testReadable: async function testReadable() {
+	testReadable: async function() {
 		readable.call(console)
 		var i = 0;
 		var timer = setInterval(()=>{
@@ -144,7 +144,7 @@ export const tests = {
 		clearInterval(timer)
 	},
 
-	testEmmet: async function testEmmet() {
+	testEmmet: async function() {
 		if(isBrowser){
 			await new Test(
 				"emmet should work in browser",
@@ -236,7 +236,9 @@ export const tests = {
 			await new Test(
 				"emmet should work in node",
 				function() {
-					const result = dom.emmet `a#id.class.name[data-att="attr"]{bella }>{pe ${"tutti"}}`
+					const result = dom.emmet `
+						a#id.class.name[data-att="attr"]{bella }>{pe ${"tutti"}}
+					`
 					ASSERT_T(result == '<a id="id" data-att="attr" class="class name">bella pe tutti</a>')
 				}
 			).run()
@@ -269,7 +271,7 @@ export const tests = {
 		}).run()
 	},
 
-	testEmmeScriptElementOk: async function testEmmeScriptElementOk() {
+	testEmmeScriptElementOk: async function() {
 		await new Test('script and style ok if sandbox enabled', async () => {
 			const dom = new DomPrinter()
 			dom.sandbox = {}
@@ -281,7 +283,7 @@ export const tests = {
 					debugger
 					void (async () => {
 						await new test.Test(
-							"script are interpretated inside emmet view, be careful",
+							"nested script should run",
 							() => {
 								document.body.append(dom.auto \`.NESTED#DOM\`)
 								document.body.querySelector(
@@ -326,7 +328,7 @@ ${
 		}).run()
 	},
 
-	testEmmetCustomAttrOk: async function testEmmetCustomAttrOk() {
+	testEmmetCustomAttrOk: async function() {
 		await new Test('unsandboxed printer custom attribute ok on onload', () => {
 			const printer = new dom.DomPrinter()
 			printer.sandbox = {}
@@ -334,7 +336,26 @@ ${
 		}).run()
 	},
 
-	testEscaped: async function testEscapedEmmet() {
+	testEmmetNestedTestTextMultiplier: async function() {
+		/*
+
+			to test
+
+			ul>{$$@2}*3
+				<ul>
+					02
+					03
+					04
+				</ul>
+				
+				ul>{$$@2}*3
+				<ul>02</ul>
+				<ul>03</ul>
+				<ul>04</ul>
+		*/
+	},
+
+	testEscaped: async function() {
 		const myTitle = document.createElement('h2')
 		const myTitle2 = document.createElement('h2')
 		
@@ -359,14 +380,14 @@ ${
 		}
 	},
 
-	testEmmetCustomAttrKo: async function testEmmetCustomAttrKo() {
+	testEmmetCustomAttrKo: async function() {
 		await new Test('sandboxed printer custom attribute ko on onload', () => {
 			document.body.append(dom.emmet `a#ciao[bella="ola"]`)
 		}).die()
 	},
 
 
-	testExtra: async function testExtra() {
+	testExtra: async function() {
 		await new Test('some extra',async function(){
 			class ConcreteModel extends extra.Model(Object, 'foo', 'bar', 'baz') {}
 			var model = new ConcreteModel()
@@ -430,14 +451,14 @@ ${
 		}).run()
 	},
 
-	testRegObj: async function testRegObj() {
+	testRegObj: async function() {
 		return await new Test("reg obj", async () =>{
 			ASSERT_T("foobar!".match(new RegObj(/\w+(bar\!)/, "baz")).baz == "bar!")
 		}).run()
 	},
 
 
-	testEventBroker: async function testEventBroker() {
+	testEventBroker: async function() {
 		return await new Test("event broker", async () =>{
 			var evt = new EventBroker()
 			var x = 0
@@ -457,7 +478,7 @@ ${
 		}).run()
 	},
 
-	testDebounce: async function testDebounce() {
+	testDebounce: async function() {
 		await new Test('debounce', (count, interval, debouncing) => {
 			var int, semaphore = new Semaphore();
 			var f = debounce(function(count){
@@ -477,7 +498,7 @@ ${
 		}).run(10, 10, 200)
 	},
 
-	testMerge: async function testMerge() {
+	testMerge: async function() {
 		var test = new Test("merge", function(method, X, Y, times = 100000) {
 			var start = now()
 			while(times--){

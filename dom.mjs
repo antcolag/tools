@@ -1,6 +1,13 @@
 /**
- * This module provide the functionality for creating HTML fragments
- * from a template strings
+ * This module exports a class to create DOM components and three functions
+ * that are the methods of a shared instance of the same class, exposed.
+ * 
+ * All the three methods accepts a template string tag, so can be used this way:
+ * 
+ * 
+ * import * as dom from "./tools/dom.mjs"
+ * dom.auto `ul>.child{$$@2}*3`
+ * 
  * @module
  */
 
@@ -17,11 +24,21 @@ import {
 } from "./operation.mjs"
 
 /**
- * this class provides the functions for build
- * a dom tree.
- * you can set a pipe for tranform the Nth [string, any] tuple
- * and a builder that is an handler for the strings, the
- * default is a wrapper Range.createContextualFragment()
+ * You can use this class to create your dom component from a
+ * template string tag.
+ * 
+ * You can pass three arguments to the constructor of this class:
+ * 
+ * The first argument is an handler to manipulate the result. The default
+ * behaviour is to build a document fragment on the browsers and, in nodejs,
+ * a string containing the HTML.
+ * 
+ * The second argument is and an handler to tranform the parameters passed to
+ * the template string.
+ * 
+ * the last argument provides a way to avoid or allow making script elements and
+ * dangerous attributes like onload for images.
+ * 
  * @param {function(string: str, any: data): [string, any]} pipe
  * @param {function(string: html)} builder
  */
@@ -511,7 +528,7 @@ class Tag extends TagGroup {
 				this.content.map(x => {
 					if(x instanceof TextBlock) {
 						return new TextBlock(
-							x.value.match(/(\$*@?[0-9-*]+|.+?)/g)
+							x.value.match(/(\$*@?[0-9-*]+|[\w\W]+?)/g)
 							.map( y => (supermul || m).detect(y)).join('')
 						)
 					} else {
