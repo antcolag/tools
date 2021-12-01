@@ -280,7 +280,6 @@ export const tests = {
 					import * as test from "../test.mjs"
 					import * as dom from "../dom.mjs"
 
-					debugger
 					void (async () => {
 						await new test.Test(
 							"nested script should run",
@@ -337,6 +336,9 @@ ${
 	},
 
 	testEmmetNestedTestTextMultiplier: async function() {
+		const dom = new DomPrinter(pipe)
+		const d = dom.auto `ul>{$$@2}*3`
+		ASSERT_T(d)
 		/*
 
 			to test

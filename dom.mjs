@@ -529,7 +529,7 @@ class Tag extends TagGroup {
 					if(x instanceof TextBlock) {
 						return new TextBlock(
 							// use replace with a fnuction as parameter
-							x.value.match(/(\$*@?[0-9-*]+)|([\w\W]+?)/g)
+							x.value.match(/(\$+@?[0-9-*]+)|([\w\W]+?)/g)
 							.map( y => (supermul || m).detect(y)).join('')
 						)
 					} else {
