@@ -528,7 +528,8 @@ class Tag extends TagGroup {
 				this.content.map(x => {
 					if(x instanceof TextBlock) {
 						return new TextBlock(
-							x.value.match(/(\$*@?[0-9-*]+|[\w\W]+?)/g)
+							// use replace with a fnuction as parameter
+							x.value.match(/(\$*@?[0-9-*]+)|([\w\W]+?)/g)
 							.map( y => (supermul || m).detect(y)).join('')
 						)
 					} else {
