@@ -8,7 +8,8 @@ import {
 	RegObj,
 	debounce,
 	merge,
-	Semaphore
+	Semaphore,
+	Timer
 } from "../utils.mjs";
 import {
 	pipe,
@@ -31,6 +32,7 @@ import {
 	html as htmlDomBuilder,
 	auto as autoDomBuilder
 } from "../dom.mjs"
+import { DomPrinter } from "../dom.mjs";
 
 const isBrowser = typeof Document != 'undefined' && document.body
 const p =  typeof performance === "undefined" ? Date : performance
@@ -229,6 +231,7 @@ export const tests = {
 					}
 				})
 			}).run()
+
 		} else {
 			await new Test(
 				"emmet should work in node",
@@ -263,6 +266,63 @@ export const tests = {
 					}
 				`
 			}).die()
+		}).run()
+	},
+
+	testEmmeScriptElementOk: async function testEmmeScriptElementOk() {
+		await new Test('script and style ok if sandbox enabled', async () => {
+			const dom = new DomPrinter()
+			dom.sandbox = {}
+			const element = dom.emmet `
+				script[type="module"].script-appended {
+					import * as test from "../test.mjs"
+					import * as dom from "../dom.mjs"
+
+					debugger
+					void (async () => {
+						await new test.Test(
+							"script are interpretated inside emmet view, be careful",
+							() => {
+								document.body.append(dom.auto \`.NESTED#DOM\`)
+								document.body.querySelector(
+									'.pipe-promise-element'
+								).res(true)
+								return true;
+
+								/*
+
+${
+	unescape(JSON.stringify({x: 1111, a:'b'})).replace(/\}/, '\\}')
+}
+
+
+								*/
+							\\}
+						).run()
+					\\})()
+				}
+			`
+			if(isBrowser){
+				const pipeElm = dom.auto `.pipe-promise-element`
+				var sem = new Semaphore(), tim = new Timer((_, rej) => rej('timeout'))
+				tim.start(1000)
+				document.body.append(pipeElm)
+				document.body.querySelector(
+					'.pipe-promise-element'
+				).res = sem.resolve
+				try {
+					document.body.append(element)
+					await Promise.race([
+						tim,
+						sem
+					])
+					if(!document.querySelector('.NESTED#DOM')) {
+						throw new Error('.NESTED#DOM not found')
+					}
+				} catch(e) {
+					throw e
+				}
+			}
 		}).run()
 	},
 
