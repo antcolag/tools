@@ -1,10 +1,17 @@
 Dom
 ===
 
-It provides a couple of userfull tools:
+It provides a class that exports functions to build HTML fragments.
+
 
 - *emmet*: will build a dom from an emmet like string
 - *html*: will print a dom from an html like string
+
+The functions are to be used as template string tag.
+
+The module also exports the above functions exported from a shared instance
+but you can create an instance of the DomPrinter class and use it with custom
+settings
 
 Example
 ---
@@ -20,14 +27,20 @@ console.log(
 
 DomPrinter
 ---
+This is the class that exposes the html and emmet methods.
 
-You can use an instance of this class if you have to handle the concrete building of the dom, the default builder is a wrapper for
+The constructor accepts a builder function to transform the resulting
+html string, and a filter function to parse the argumets passed to the
+template string tag
 
-`document.createRange().createContextualWrapper( /* your string */ )`
+You can use an instance of this class if you have to handle the building of the
+dom, the default builder is a wrapper for `Range.createContextualFragment`
 
-so it will render a *DocumentFragment* instance in the browser.
+so it will render a *DocumentFragment* in the browser.
 
-If you have to build different objects you can set a different *builder* in the class. The result must anyway implement some basic Element's methods ie querySelectorAll, setAttributeNode and append.
+If you have to build different objects you can set a different *builder* in the
+class. The result must anyway implement some basic Element's methods ie
+querySelectorAll, setAttributeNode and append.
 
 Example
 ---
