@@ -1,11 +1,4 @@
 /**
- * This module collects the debugging utilities userfull both
- * during development as well as on production, like type checks,
- * throwing errors and assertions
- * @module
- */
-
-/**
  * Throws the parameter
  * @function
  * @param {any} value

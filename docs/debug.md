@@ -4,8 +4,8 @@ Debug
 The module contains collection of functions for type checking and to handle
 statements like throw and debug, as functions.
 
-It also exposes the ```DEBUGGING``` member of the module controlls the behaviour
-of some functions. Can be changed using the DEBUG function exposesd in the
+It also exposes a ```DEBUGGING``` that can be used to controll some behaviour
+of your functions. Can be changed using the DEBUG function exposesd in the
 module.
 
 ASSERT
