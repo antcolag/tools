@@ -28,11 +28,11 @@ import {
  * 
  * You can pass three arguments to the constructor of this class:
  * 
- * The first argument is an handler to manipulate the result. The default
+ * The first argument is a handler to manipulate the result. The default
  * behaviour is to build a document fragment on the browsers and, in nodejs,
  * a string containing the HTML.
  * 
- * The second argument is and an handler to tranform the parameters passed to
+ * The second argument is and a handler to tranform the parameters passed to
  * the template string.
  * 
  * the last argument provides a way to avoid or allow making script elements and

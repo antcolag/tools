@@ -95,7 +95,7 @@ export function defer(f, t, ...args) {
 }
 
 /**
- * Debunce an handler
+ * Debunce a handler
  * @param {function} f
  * @param {number} t
  */
