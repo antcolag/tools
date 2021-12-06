@@ -88,7 +88,7 @@ console.log('are in debugging mode?', debug.DEBUGGING)
 
 ## DEBUGGING
 
-Userfull to check the debugging status
+Check the debugging status
 ```javascript
 import { DEBUGGING } from './debug.js'
 if(DEBUGGING){
