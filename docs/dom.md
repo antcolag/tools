@@ -9,7 +9,7 @@ It provides a class that exports functions to build HTML fragments.
 
 The functions are to be used as template string tag.
 
-The module also exports the above functions exported from a shared instance
+The module also exports the above functions exposed from a shared instance
 but you can create an instance of the DomPrinter class and use it with custom
 settings
 
