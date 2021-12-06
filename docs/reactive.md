@@ -1,13 +1,8 @@
 Reactive
 ===
-This extension provide a way to build a bind betwin the properies of two or more objcets.
+Binds properies between objects.
 
-Description
----
-Is userfull when you need to mantain aligned the properties of a set of objects. But is perfect for build graphic interfaces because it semplify the binding between a model object and the UI for visualize data.
 
-Initialization
----
 ```javascript
 // you can initialize an existing object
 var myObj = reactive.call({})
@@ -23,35 +18,34 @@ var myReact = new reactive
 myObj.bindable("property")
 ```
 
-Provides
+bindable
 ---
-> bindable
-> ---
-> *declare a bindable property*
-> ```javascript
-> var instance = reactive.call({})
-> instance.bindable("property")
-> ```
-> ---
-> bind
-> ---
-> *binds an object to a reactive instance*
-> ```javascript
-> var other = {}
-> instance.bind("property", other)
-> ```
-> ---
-> unbind
-> ---
-> *unbinds a property from the reactive instance*
->```javascript
-> instance.unbind("property", other)
-> ```
+*declare a bindable property*
+```javascript
+var instance = reactive.call({})
+instance.bindable("property")
+```
+---
+bind
+---
+*binds an object to a reactive instance*
+```javascript
+var other = {}
+instance.bind("property", other)
+```
+---
+unbind
+---
+*unbinds a property from the reactive instance*
+```javascript
+instance.unbind("property", other)
+```
 
 
 How to use
 ---
-You only need to inject his instance in the object you want to enhance, declare the bindable properties and then bind the object you want to mantain aligned
+Declare the bindable properties and then bind the object you want keep
+syncronized
 
 ```javascript
 // you can initialize an existing object
@@ -77,14 +71,13 @@ myObj.unbind("property", yourObj)
 
 Note
 ---
-It explots getters and setters for properties you want to share, so it cannot export property that already use getters or setters like the magic properties of the built in object of the browsers (ie you cannot make innerHTML on an HTMLElement bindable, but you can bind the innerHTML property of an HTMLElement to an object you build)
+It cannot export property that use getters or setters already
 
 ```javascript
 // this will not work
 document.querySelector("a").bindable("innerHTML")
 
-// this will auto update the innerHTML of the first
-// HTMLAnchorElement in the document when o.innerHTML
+// this will auto update the innerHTML when o.innerHTML
 // changes
 var o = new reactive()
 o.bindable("innerHTML")

@@ -1,10 +1,10 @@
 Test
 ===
-Mini test suite
+Test suite
 
 Test
 ---
-test suite
+test class
 
 ---
 
