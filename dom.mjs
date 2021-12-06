@@ -1,6 +1,5 @@
 /**
- * This module exports a class to create DOM components and three functions
- * that are the methods of a shared instance of the same class, exposed.
+ * This module exports a class and three functions to create DOM components.
  * 
  * All the three methods accepts a template string tag, so can be used this way:
  * 
