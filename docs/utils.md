@@ -1,4 +1,4 @@
 Utils
 ===
 
-Is a collection of functions and operation like a noop, a pipe, true/false ecc
+Collection of functions and operation like a noop, a pipe, true/false ecc
