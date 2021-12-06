@@ -56,19 +56,6 @@ ASSERT_F(myvalue2)
 ```
 
 
-## DEBUGGING
-
-Userfull to check the debugging status
-```javascript
-import { DEBUGGING } from './debug.js'
-if(DEBUGGING){
-	console.warn('debugging mode')
-}
-else {
-	console.log('normal mode')
-}
-```
-
 ## croak
 
 Functional wrapper for ```throw```
@@ -97,6 +84,19 @@ DEBUG(false)
 console.log('are in debugging mode?', debug.DEBUGGING)
 DEBUG(true)
 console.log('are in debugging mode?', debug.DEBUGGING)
+```
+
+## DEBUGGING
+
+Userfull to check the debugging status
+```javascript
+import { DEBUGGING } from './debug.js'
+if(DEBUGGING){
+	console.warn('debugging mode')
+}
+else {
+	console.log('normal mode')
+}
 ```
 
 ## Good and crap
