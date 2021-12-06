@@ -42,7 +42,7 @@ const sum = (...arg) => {
 
 // Define your test case
 const test = new Test(
-	// Add a descrioption
+	// Add a description
 	"2 + 2 should return 4",
 	
 	// define the test case
