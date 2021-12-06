@@ -1,7 +1,7 @@
 # Tools
 
-Collection of JavaScript functions that I found useful,
-collected in few ES6 modules.
+Collection of JavaScript functions that I found useful, collected in few ES6
+modules.
 
 ## What it provide
 
