@@ -2,7 +2,7 @@ Observe
 ===
 
 
-It exploit the [injectProperties](utils.md#The-injectProperties-function) and add the
+Adds the
 - *on*: run the handler every time of the event occurs
 - *once*: run the handler once 
 - *off*: remove the handler from the handlers chain
