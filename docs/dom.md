@@ -25,7 +25,7 @@ console.log(
 // in the console you can see the built DocumentFragment instancies
 ```
 
-DomPrinter
+DomPrinter class
 ---
 This is the class that exposes the `html` and `emmet` methods.
 
