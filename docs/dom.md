@@ -27,7 +27,7 @@ console.log(
 
 DomPrinter
 ---
-This is the class that exposes the html and emmet methods.
+This is the class that exposes the `html` and `emmet` methods.
 
 The constructor accepts a builder function to transform the resulting
 html string, and a filter function to parse the argumets passed to the
