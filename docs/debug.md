@@ -38,7 +38,6 @@ ASSERT_T(myvalue1)
 // ko, will throw NaN
 ASSERT_T(myvalue2)
 ```
----
 
 ## ASSERT_F
 
