@@ -1,71 +1,81 @@
-Tools
-===
-userfull es6 mini library
+# Tools
 
-## What it does provide
+This is a collection of some JavaScript functions that I found usefull,
+collected in few ES6 modules.
+
+## What it provide
 
 In this library you can find utilities for
-* generic purpuse -> *[utils.mjs](docs/utils.md)*
-* generator for object conposition -> *[tools.mjs](docs/tools.md)*
-* observer pattern interface -> *[observe.mjs](docs/observe.md)*
-* reactive pattern interface -> *[reactive.mjs](docs/reactive.md)*
-* a mini test suite -> *[test.mjs](docs/test.md)*
-* debuging handlers -> *[debug.mjs](docs/debug.md)*
-* dom printing -> *[dom.mjs](docs/dom.md)*
+* [base utils](doc/utils.md)
+* [base tools](doc/tools.md)
+* [debuging library](doc/debug.md)
+* [observer pattern interface](doc/observe.md)
+* [reactive pattern interface](doc/reactive.md)
+* [test suite](doc/test.md)
+* [HTML printing](doc/dom.md)
 
-# Examples
+# Some examples
 
-I think that the test suite, the dom utilities, and the ```observable``` and ```reactive``` interfaces deserve quick but in depth view
+The following examples assume that the repository is cloned in the current
+direcotry.
 
-Test suite
----
+## Test suite
 
-This mini test class is super easy to use but work super well!
+A class for test handling is provided in the test.mjs module
 
-you can define your test scenario and if something goes wrong (ie if something is thrown, like an unhandled runtime error), then the test will ***fail*** and a **fail** message will be printed the console. Otherwise it will ***pass*** and a **passed** message in console will be printed.
 ```javascript
-import Test from "./test.mjs";
-// ASSERT will throw an error if strict equal comparison fails
-import { ASSERT } from "./debug.mjs"; 
+import Test from "./tools/test.mjs";
 
-// the function to be tested
+// Throw an error if strict equal comparison fails
+import { ASSERT } from "./tools/debug.mjs"; 
+
+// The function to be tested, it simply sums the arguments if there are any,
+// otherwise it will throw
 const sum = (...arg) => {
-	// ...
-	// if something goes wrong
-	// throw it with no mercy!!
 	if(!arg.length){
 		throw new Error("no arguments!");
 	}
-	// simply sum the arguments
 	return arg.reduce((prev, curr) => {
 		return curr + prev
 	}, 0)
 }
 
-// define your test
-const test = new Test("2 + 2 should return 4", (N) => {
-	ASSERT(sum(2, 2), 4)
+// Define your test case
+const test = new Test(
+	// Add a descrioption
+	"2 + 2 should return 4",
+	
+	// define the test case
+	(N) => {
+		ASSERT(sum(2, 2), 4)
 
-	// test the 1 + 2 + 3 + ... + N serie
-	var args = []
-	for(var i = 1; i <= N; i++) {
-		args.push(i)
+		// You can run the test using different arguments
+		// ie test the 1 + 2 + 3 + ... + N serie
+		var args = []
+		for(var i = 1; i <= N; i++) {
+			args.push(i)
+		}
+
+		ASSERT(sum.apply(this, args), N * (N + 1) / 2 )
 	}
-	ASSERT(sum.apply(this, args), N * (N + 1) / 2 )
-})
+)
 
-// run it!
+// run with 100 as argument
 test.run(100)
+
+// Throws an error if called with no arguments
+test.die()
 ```
 
-Dom utilities
----
+## Dom utilities
 
-A set of a fiew userfull utilities for building user interfaces
+A set of functions for building html fragments
 
 ```javascript
 // import the library
-import * from dom from "./dom.mjs";
+import * from dom from "./tools/dom.mjs";
+
+document.body.appendChild(dom.html `<span>ipsum</span>`)
 
 // you can use your own elements
 const myTitle = document.createElement('h2')
@@ -85,7 +95,7 @@ And it work with an ***emmet-like*** sintax too!
 ```javascript
 const myTitle2 = document.createElement('h2')
 
-// print a dom fragment in the body... in emmet dialect!
+// prints a dom fragment in the body... in emmet dialect!
 document.body.appendChild(
 	dom.emmet `article>${myTitle2}.title>span{hello }`
 )
@@ -94,25 +104,27 @@ document.body.appendChild(
 myTitle2.innerHTML += 'emmet!'
 ```
 
-Observer
----
+## Observer
 
-It implements the observer pattern in the objects where is injected.
-
-For example:
+Injects an observer patterns interface in objects by adding the following
+function to handle events
+- `on` to append an handler to a event
+- `off` to remove an handler
+- `once` to append an handler to an event and call it once
+- `fire` to call all the handler associated to an event
 
 ```javascript
-import observable from "./observe.mjs"
+import observable from "./tools/observe.mjs"
 
-// take your class
-class FireworkClass {
-	now(...args){
-		// do some magic stuff
-		// then...
-		this.fire('fireworks!', ...args)
+// the following class will trigger the event "firework" repeatedly
+class Firework {
+	#counter = 0
+	// trigger the event using "fire" and then reschedule
+	now(){
+		this.fire('fireworks', ++this.#counter)
 		this.schedule()
 	}
-	// never stop the fireworks <3
+
 	schedule() {
 		setTimeout(
 			this.now.bind(this),
@@ -120,89 +132,67 @@ class FireworkClass {
 		)
 	}
 }
-// and inject the interface
-observable.call(FireworkClass.prototype)
-```
-The `observable.call(FireworkClass.prototype)` will add the function for handle events
-- on
-- off
-- once
-- fire
 
-***fire*** will dispatch the event
-```javascript
+// you can inject the interface to the prototype
+observable.call(Firework.prototype)
 
-// ...
-
-// create instance
-let firework = new FireworkClass()
+// create instance of Firework
+let firework = new Firework()
 
 // add an event handler for both the events
-firework.on('fireworks!', (...args) => {
-	console.log('this fireworks are beautiful', ...args)
+firework.on('fireworks', (counter) => {
+	console.log('firework event triggered!', counter)
 })
 
-// ...
-
-// let's do the fireworks now!
-firework.now( /* [...args] */ )
+firework.now()
 ```
 
-Reactive
----
-Sincronize variation between different objects
-```javascript
-import reactive from "./reactive.mjs"
+## Reactive
 
-// define MyReactiveClass
-class MyReactiveClass {
+Sincronize variation between different objects
+
+```javascript
+import reactive from "./tools/reactive.mjs"
+
+// The instances from the following class expose a property named "magic"
+// that can be used to update property of other objects
+class MyReactive {
 	constructor() {
-		// make magicProperty bindable
-		this.bindable("magicProperty")
+		// expose magic as bindable. Assumes that the interface is injected
+		this.bindable("magic")
 	}
 }
-// add reactive inteface to MyReactiveClass's prototype
-reactive.call(MyReactiveClass.prototype)
-```
-After you have injected the interface, the instances can have some ***bindable*** properties
-```javascript
-// create instance
-let myReactiveInstance = new MyReactiveClass()
-let myObj = {} // given an object
-// you can bind the
-// magicProperty of myReactiveInstance
-// to myObj's magicProperty
-myReactiveInstance.bind('magicProperty', myObj)
+// add reactive inteface to MyReactive's prototype
+reactive.call(MyReactive.prototype)
 
-myReactiveInstance.magicProperty = 'hello reactive!'
-// will print 'hello reactive!'
-console.log(myObj.magicProperty)
-```
-This can be userfull when building user interfaces because...
-```javascript
-// you can of course bind a reactive object
-// with different properties another object
+// create an instance and a target object
+let myReactive = new MyReactive(), myTarget = {}
+
+// you can bind the "magic" of myReactive to myTarget's "magic" property
+myReactive.bind('magic', myTarget)
+
+// changes on myReactive.magic will be reflected to myTarget.magic
+myReactive.magic = 'hello reactive!'
+
+// the following statement will print 'hello reactive!'
+console.log(myTarget.magic)
+
+// You can use reactive to update the text inside HTML elements
 let element = document.querySelector('#my-element')
 if(element) {
-	myReactiveInstance.bind(
-		'magicProperty',
+	myReactive.bind(
+		'magic',
 		element,
 		'innerHTML'
 	)
-	// the html content of #my-element
-	// will be updated when the magicProperty change
 }
-myReactiveInstance.magicProperty = 'hello again!'
-```
-sometimes can be userfull also to bind a method of an object to a bindable reactive's property
-```javascript
-// and you can surely use it with functions
-myReactiveInstance.bind(
-	'magicProperty',
+myReactive.magic = 'hello again!'
+
+// You can also bind the property changes to a function
+myReactive.bind(
+	'magic',
 	console.log.bind(console)
 )
-
-// now we will also print the magicProperty value
-// in console when the magicProperty change
-myReactiveInstance.magicProperty = 'woooow!!'
+// will call console.log
+myReactive.magic = 'woooow!!'
 ```
