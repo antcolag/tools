@@ -1,9 +1,12 @@
 Debug
 ===
 
-Debugging utilities wrapped in hendlers.
-Most of the debugging functionality are skipped
-when the ```DEBUGGING``` member of the module is falsy
+The module contains collection of functions for type checking and to handle
+statements like throw and debug, as functions.
+
+It also exposes the ```DEBUGGING``` member of the module controlls the behaviour
+of some functions. Can be changed using the DEBUG function exposesd in the
+module.
 
 ASSERT
 ---
@@ -95,8 +98,27 @@ Sets the debugging status
 ```javascript
 import { DEBUG } from './debug.js'
 DEBUG(false)
-console.log('debugging?', debug.DEBUGGING)
+console.log('are in debugging mode?', debug.DEBUGGING)
 DEBUG(true)
-console.log('debugging?', debug.DEBUGGING)
+console.log('are in debugging mode?', debug.DEBUGGING)
 ```
 ---
+
+Good and crap
+---
+
+Functions for type checking
+
+```javascript
+const num = 1
+
+// throw if type of num is not Number
+good(num, Number)
+
+// throw if type of num is object
+crap(num, Object)
+
+// more than one type can be checked
+good(1, Boolean, Number)
+
+crap(1, Boolean, Object)
