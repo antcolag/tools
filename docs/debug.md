@@ -87,7 +87,6 @@ import { pause } from './debug.js'
 // will stop the execution and start the debugger
 pause()
 ```
----
 
 ## DEBUG
 
