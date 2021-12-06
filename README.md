@@ -6,13 +6,13 @@ collected in few ES6 modules.
 ## What it provide
 
 In this library you can find utilities for
-* [base utils](docs/utils.md)
-* [base tools](docs/tools.md)
+* [HTML printing](docs/dom.md)
+* [test suite](docs/test.md)
 * [debuging library](docs/debug.md)
 * [observer pattern interface](docs/observe.md)
 * [reactive pattern interface](docs/reactive.md)
-* [test suite](docs/test.md)
-* [HTML printing](docs/dom.md)
+* [base utils](docs/utils.md)
+* [base tools](docs/tools.md)
 
 # Some examples
 
