@@ -1,4 +1,4 @@
-Dom
+Dom printer
 ===
 
 It provides a class that exports functions to build HTML fragments.
