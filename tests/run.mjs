@@ -292,9 +292,7 @@ export const tests = {
 
 								/*
 
-${
-	unescape(JSON.stringify({x: 1111, a:'b'})).replace(/\}/, '\\}')
-}
+${ JSON.stringify({x: 1111, a:'b'}).replace(/\}/, '\\}') }
 
 
 								*/
